@@ -12,8 +12,8 @@ Proyecto enfocado al desarrollo de un producto de datos para predecir la acredit
 
 ### Resumen de  datos con los que se trabajaran
 
-- Número de registros: 215K
-- Número de columnas: 17
+- Número de registros: **215K**
+- Número de columnas: **17**
 - ¿Qué variables son y qué información tiene?
 
 | Variable | Tipo  | Descripción |
