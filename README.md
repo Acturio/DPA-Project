@@ -1,7 +1,7 @@
 # DPA-Project
 Proyecto enfocado al desarrollo de un producto de datos para predecir la acreditación de inspecciones de restaurantes en Chicago
 
-###Integrantes del equipo
+### Integrantes del equipo
 
 | Nombre |
 | :------- |
@@ -10,7 +10,7 @@ Proyecto enfocado al desarrollo de un producto de datos para predecir la acredit
 | Oscar Arturo Bringas López|
 | Aide Jazmín González Cruz|
 
-###Resumen de  datos con los que se trabajaran
+### Resumen de  datos con los que se trabajaran
 
 - Número de registros: 215K
 - Número de columnas: 17
@@ -36,10 +36,10 @@ Proyecto enfocado al desarrollo de un producto de datos para predecir la acredit
 |Longitude|Number|Longutud del establecimiento|
 |Location|Location|Latitud y Longitud (geopoint)|
     
-###Pregunta analítica a contestar con el modelo predictivo
+### Pregunta analítica a contestar con el modelo predictivo
 
 - ¿El establecimiento pasará o no la inspección?
 
-###Frecuencia de actualización de los datos
+### Frecuencia de actualización de los datos
 
 - La frecuencia de datos fuente es diaria, pero en este proyecto se realizará semanalmente de acuerdo a los requerimientos establecidos.
