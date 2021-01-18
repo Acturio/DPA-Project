@@ -1,2 +1,3 @@
 # ignore evarything in the following folders
 conf/local/**
+src/utils/.ipynb_checkpoints/
