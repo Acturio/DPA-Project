@@ -1,3 +1,5 @@
 # ignore evarything in the following folders
 conf/local/**
 src/utils/.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+data/Food_Inspections.csv
