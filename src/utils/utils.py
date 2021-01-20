@@ -110,6 +110,7 @@ def barplots(x,y,df,title, order, xlim, x_label, y_label):
     a.set_title(title)
     
     
+
 # Función para crear gráficas de barra desagregadas por variable categórica
     
 def facet_grids(x,y,data,col):
