@@ -43,3 +43,7 @@ Proyecto enfocado al desarrollo de un producto de datos para predecir la acredit
 ### Frecuencia de actualización de los datos
 
 - La frecuencia de datos fuente es diaria, pero en este proyecto se realizará semanalmente de acuerdo a los requerimientos establecidos.
+
+
+### Requerimientos: 
+- Para poder ejectutar notebooks y scripts es necesario tener dentro de la carpeta ´data´ el archivo en formato _csv_ al corte del 17 de enro de 2021 con el nombre: Food_Inspections.csv
