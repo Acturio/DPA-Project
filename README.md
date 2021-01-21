@@ -46,4 +46,4 @@ Proyecto enfocado al desarrollo de un producto de datos para predecir la acredit
 
 
 ### Requerimientos: 
-- Para poder ejectutar notebooks y scripts es necesario tener dentro de la carpeta ´data´ el archivo en formato _csv_ al corte del 17 de enro de 2021 con el nombre: Food_Inspections.csv
+- Para poder ejectutar notebooks y scripts es necesario almacenar dentro de la carpeta ´data´ el archivo en formato _csv_ al corte del 17 de enro de 2021 con el nombre: Food_Inspections.csv
