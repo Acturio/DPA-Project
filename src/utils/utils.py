@@ -127,3 +127,91 @@ def facet_grids(x,y,data,col):
             label.set_size(7)
             label.set_rotation(90)
         ax.yaxis.set_major_formatter(FuncFormatter(number_formatter))
+     
+    
+# Función que obtiene los valores unicos por columna       
+ 
+def unicos_val_by_col(df_pkl):
+   #Obtiene los valores únicos por columa, recibe un dataframe.
+    for col in list(df_pkl):
+        print(col + ": " , len(df_pkl[col].unique().tolist()))      
+        
+
+def clean_column(col):
+    return col.lower()\
+              .replace('/','_')\
+              .replace(' ','_')
+        
+    
+    
+    
+def numeric_profiling(df_pkl, col):
+    """
+    Profiling for numeric columns. 
+    
+    :param: column to analyze
+    :return: dictionary
+    """
+    profiling = {}
+
+    profiling.update({'max': df_pkl[col].max(),
+                     'min': df_pkl[col].min(),
+                     'mean': df_pkl[col].mean(),
+                     'stdv': df_pkl[col].std(),
+                     '25%': df_pkl[col].quantile(.25),
+                     'median': df_pkl[col].median(),
+                     '75%': df_pkl[col].quantile(.75),
+                     'kurtosis': df_pkl[col].kurt(),
+                     'skewness': df_pkl[col].skew(),
+                     'uniques': df_pkl[col].nunique(),
+                     'valores_unicos': df_pkl[col].nunique(),
+                     'renglones_totales': df_pkl[col].size,
+                     'faltantes_totales': df_pkl[col].isna().sum(),
+                     'prop_missings': df_pkl[col].isna().sum()/df_pkl.shape[0]*100,
+                     'top1_repeated': get_repeated_values(df_pkl, col, 1),
+                     'top2_repeated': get_repeated_values(df_pkl, col, 2),
+                     'top3_repeated': get_repeated_values(df_pkl, col, 3)})    
+    
+    return profiling
+
+
+
+
+# Para variable categóricas y fechas
+def categorical_profiling(df, col):
+    """
+    Profiling para variables categóricas.  
+    :parametros: dataframe --> df ; columna a analizar --> col
+    :return: diccionario de valores importantes
+    """
+    profiling = {}
+
+    profiling.update({'mode': df[col].mode().values,
+                     'numero_categorias': df[col].nunique(),
+                     'nombres_categoria': df[col].unique(),
+                     'valores_unicos': df[col].nunique(),
+                     'renglones_totales': df[col].size,
+                     'faltantes_totales': df[col].isna().sum(),
+                     'proporcion_faltantes': df[col].isna().sum()/df[col].size*100,                      
+                     'top1': get_repeated_values(df, col, 1),
+                     'top2': get_repeated_values(df, col, 2),
+                     'top3': get_repeated_values(df, col, 3)})
+    
+    return profiling
+
+
+def get_repeated_values(df_pkl, col, top):
+    top_5 = df_pkl.groupby([col])[col]\
+                    .count()\
+                    .sort_values(ascending = False)\
+                    .head(3)
+    indexes_top_5 = top_5.index
+    
+    if ((top == 1) and (len(indexes_top_5) > 0)):
+        return indexes_top_5[0]
+    elif ((top == 2) and (len(indexes_top_5) > 1)):
+        return indexes_top_5[1]
+    elif ((top == 3) and (len(indexes_top_5) > 2)):
+        return indexes_top_5[2]
+    else: 
+        return 'undefined'
