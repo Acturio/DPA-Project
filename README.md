@@ -52,7 +52,7 @@ Proyecto enfocado al desarrollo de un producto de datos para predecir la acredit
 
 - Obtener token de la API de Food inspections
 
-- Tener las credenciales de AWS (Access key ID y Secret access key) dados por el administrador de la indfaestructura en AWS, y guardarlos en un archivo credentials.yml y guardarlos dentro de la carpeta conf/local(credentials.yml), con la siguiente estructura:
+- Tener las credenciales de AWS (Access key ID y Secret access key) dados por el administrador de la infraestructura en AWS, y guardarlos en un archivo `credentials.yml` y guardarlos dentro de la carpeta `conf/local/credentials.yml`, con la siguiente estructura:
 
 
 ```
@@ -139,7 +139,7 @@ guardar_ingesta(bucket, bucket_path_hist, datos_his)
 - Para obtener los datos consecutivos se usa la función `ingesta_consecutiva`, que recibe como parámetros el cliente, una fecha a partir de donde se extraerán los datos y el límite de los mismos, se podrá llamar de la siguiente manera:
 
 ```
-datos_cons = ingesta_consecutiva(cliente, '2021-01-01', 2000)
+datos_cons = ingesta_consecutiva(cliente, '2021-02-14', 2000)
 ```
 
 Si se le pasa `None` al segundo parámetro (fecha), restará al día actual 7 días para obtener los datos de una semana atrás.
