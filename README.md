@@ -46,4 +46,113 @@ Proyecto enfocado al desarrollo de un producto de datos para predecir la acredit
 
 
 ### Requerimientos: 
-- Para poder ejectutar notebooks y scripts es necesario almacenar dentro de la carpeta _data_ el archivo en formato _csv_ al corte del 17 de enero de 2021 con el nombre: Food_Inspections.csv
+- Actualizar el repositorio (si ya se tiene) `git pull origin main`
+
+- Instalar los paquetes descritos en el archivo requirements.txt `pip install -r requirements.txt`
+
+- Obtener token de la API de Food inspections
+
+- Tener las credenciales de AWS (Access key ID y Secret access key) dados por el administrador de la indfaestructura en AWS, y guardarlos en un archivo credentials.yml y guardarlos dentro de la carpeta conf/local(credentials.yml), con la siguiente estructura:
+
+
+```
+---
+s3:
+   aws_access_key_id: "TU_ACCESS_KEY_IN"
+   aws_secret_access_key: "SECRET_ACCESS_KEY"
+   
+food_inspections: 
+   api_token: "TU_TOKEN" 
+```
+
+- Para probar las funciones de los archivos `src/utils/general.py` y `src/pipeline/ingesta_almacenamiento.py`, es necesario estar ubicado en la raíz del proyecto.
+
+- Ejecutar `export PYTHONPATH=$PWD`
+
+- Utilizar un ambiente virtual con python superior o igual a 3.7.4., ejemplo: `pyenv activate nombre_de_tu_ambiente`
+
+- Se ejecuta `python`
+
+- Para probar `src/utils/general.py` se ejecuta: 
+
+  `from src.utils.general import read_yaml_file, get_s3_credentials, get_api_token`
+  
+  para cargar la librería.
+  
+- Con el siguiente comando se lee un archivo `.yml`, regresando el contenido en la variable `ry` para visualizarlo.
+
+```
+ry = read_yaml_file("conf/local/credentials.yaml")
+ry
+```
+  
+- Con el siguiente comando se obtienen las credenciales S3, regresando el contenido en la variable `s3_c` para visualizarlo.
+
+```
+s3_c = get_s3_credentials("conf/local/credentials.yaml")
+s3_c
+```
+  
+- Con el siguiente comando se obtiene el token, regresando el contenido en la variable `token` para visualizarlo.
+
+```
+token = get_api_token("conf/local/credentials.yaml")
+token
+```
+- Para probar `src/pipeline/ingesta_almacenamiento.py` se ejecuta: 
+
+  `from src.pipeline.ingesta_almacenamiento import get_client, ingesta_inicial, get_s3_resource, guardar_ingesta, ingesta_consecutiva`
+  
+  para cargar la librería.
+
+- Para obtener el cliente se usa la función `get_client` como sigue:
+```
+cliente = get_client()
+```
+
+- Para realizar la obtención de datos de la ingesta inicial, se implementa la función `ingesta_inicial` que recibe como parámetros un cliente y el límite de datos, como se indica a continuación.
+
+```
+datos_his = ingesta_inicial(cliente, 300000)
+```
+
+- Para obtener el recurso de S3, se usa la función `get_s3_resource` y se implementa como sigue
+
+```
+s3_resource = get_s3_resource()
+```
+
+- Se declaran las siguientes variables, con el nombre del bucket y los paths donde se guardará la ingesta inicial y consecutiva.
+
+```
+bucket = "data-product-architecture-equipo-n"
+bucket_path_hist = "ingestion/initial/historic-inspections-"
+bucket_path_cons = "ingestion/consecutive/consecutive-inspections-"
+```
+
+- Para guardar la ingesta se usa la función `guardar_ingesta`, que recibe como parámetros el nombre del bucket, el path y los datos, se implementa como sigue:
+
+```
+guardar_ingesta(bucket, bucket_path_hist, datos_his)
+```
+
+- Para obtener los datos consecutivos se usa la función `ingesta_consecutiva`, que recibe como parámetros el cliente, una fecha a partir de donde se extraerán los datos y el límite de los mismos, se podrá llamar de la siguiente manera:
+
+```
+datos_cons = ingesta_consecutiva(cliente, '2021-01-01', 2000)
+```
+
+Si se le pasa `None` al segundo parámetro (fecha), restará al día actual 7 días para obtener los datos de una semana atrás.
+
+- Finalmente se puede usar nuevamente la función `guardar_ingesta` para cargar en el bucket los datos consecutivos.
+
+```
+guardar_ingesta(bucket, bucket_path_cons, datos_cons)
+```
+
+
+
+
+
+
+
