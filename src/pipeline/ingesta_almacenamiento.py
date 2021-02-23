@@ -4,15 +4,13 @@ from datetime import date, timedelta
 import boto3
 import pickle
 
-def get_client():
+def get_client(token):
     """
     Esta función regresa un cliente que se puede conectar a la API de inspecciones
     de establecimiento dándole un token previamente generado.
     :param: none (integrado yam file)
     :return: client API
     """
-
-    token = get_api_token("conf/local/credentials.yaml")
 
     # The Host Name for the API endpoint (the https:// part will be added automatically)
     data_url = 'data.cityofchicago.org'

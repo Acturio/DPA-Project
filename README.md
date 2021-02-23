@@ -46,77 +46,71 @@ Proyecto enfocado al desarrollo de un producto de datos para predecir la acredit
 
 
 ### Requerimientos: 
-- Actualizar el repositorio (si ya se tiene) `git pull origin main`
+- Actualizar el repositorio (si ya se tiene) `git pull origin main` o clonarlo en caso de que no.
 
 - Instalar los paquetes descritos en el archivo requirements.txt `pip install -r requirements.txt`
 
-- Obtener token de la API de Food inspections
+- Obtener token de la API de Food inspections. Se puede obtener un token [aquí](https://data.cityofchicago.org/profile/edit/developer_settings)
 
-- Tener las credenciales de AWS (Access key ID y Secret access key) dados por el administrador de la infraestructura en AWS, y guardarlos en un archivo `credentials.yml` y guardarlos dentro de la carpeta `conf/local/credentials.yml`, con la siguiente estructura:
+- Se debe contar con credenciales de AWS (Access key ID y Secret access key) dados por el administrador de la infraestructura en AWS, y guardarlos en un archivo `credentials.yml`. El archivo con las credenciales debe estar en la carpeta `conf/local/credentials.yml`. La estructura del archivo `credentials.yml` debe tener una estructura como la que se presenta a continuación:
 
 
 ```
 ---
 s3:
-   aws_access_key_id: "TU_ACCESS_KEY_IN"
+   aws_access_key_id: "TU_ACCESS_KEY_ID"
    aws_secret_access_key: "SECRET_ACCESS_KEY"
    
 food_inspections: 
    api_token: "TU_TOKEN" 
 ```
 
-- Para probar las funciones de los archivos `src/utils/general.py` y `src/pipeline/ingesta_almacenamiento.py`, es necesario estar ubicado en la raíz del proyecto.
+- Para ejecutar las funciones del proyecto, es importante ubicarse en la raíz del proyecto y seguir las siguientes instrucciones en la línea de comandos:
 
 - Ejecutar `export PYTHONPATH=$PWD`
 
 - Utilizar un ambiente virtual con python superior o igual a 3.7.4., ejemplo: `pyenv activate nombre_de_tu_ambiente`
 
-- Se ejecuta `python`
+- Ejecutar: `python`
 
-- Para probar `src/utils/general.py` se ejecuta: 
+- Importar las librerías del módulo `src/utils/general.py` a través de los siguiente comandos: 
 
   `from src.utils.general import read_yaml_file, get_s3_credentials, get_api_token`
+  `import src.utils.constants`
   
-  para cargar la librería.
-  
-- Con el siguiente comando se lee un archivo `.yml`, regresando el contenido en la variable `ry` para visualizarlo.
+- Con el siguiente comando se lee un archivo `.yml`, el cual encuentra las credenciales introducidas en el archivo yaml.
 
 ```
 ry = read_yaml_file("conf/local/credentials.yaml")
-ry
 ```
   
-- Con el siguiente comando se obtienen las credenciales S3, regresando el contenido en la variable `s3_c` para visualizarlo.
+- Con el siguiente comando se obtienen las credenciales S3, las cuales se obtienen también a través del archivo yaml creado anteriormente.
 
 ```
 s3_c = get_s3_credentials("conf/local/credentials.yaml")
-s3_c
 ```
   
-- Con el siguiente comando se obtiene el token, regresando el contenido en la variable `token` para visualizarlo.
+- A continuación, se obtiene el token de acceso a la API, mismo que servirá para poder descargar los datos.
 
 ```
 token = get_api_token("conf/local/credentials.yaml")
-token
 ```
-- Para probar `src/pipeline/ingesta_almacenamiento.py` se ejecuta: 
+- Para cargar las librerías que permiten realizar la esctracción de datos y almacenamiento, se ejecutan los siguientes comandos: 
 
   `from src.pipeline.ingesta_almacenamiento import get_client, ingesta_inicial, get_s3_resource, guardar_ingesta, ingesta_consecutiva`
   
-  para cargar la librería.
-
-- Para obtener el cliente se usa la función `get_client` como sigue:
+- Para obtener el cliente se usa la función `get_client`, agregando el token que anteriormente fue generado. La implementación se muestra a continuación:
 ```
-cliente = get_client()
+cliente = get_client(token)
 ```
 
-- Para realizar la obtención de datos de la ingesta inicial, se implementa la función `ingesta_inicial` que recibe como parámetros un cliente y el límite de datos, como se indica a continuación.
+- Para realizar la obtención de datos de la ingesta inicial, se implementa la función `ingesta_inicial` que recibe como parámetros un cliente y el límite de datos, como se indica a continuación:
 
 ```
 datos_his = ingesta_inicial(cliente, 300000)
 ```
 
-- Para obtener el recurso de S3, se usa la función `get_s3_resource` y se implementa como sigue
+- Para obtener el recurso de S3, se usa la función `get_s3_resource` y se implementa como sigue:
 
 ```
 s3_resource = get_s3_resource()
@@ -125,9 +119,9 @@ s3_resource = get_s3_resource()
 - Se declaran las siguientes variables, con el nombre del bucket y los paths donde se guardará la ingesta inicial y consecutiva.
 
 ```
-bucket = "data-product-architecture-equipo-n"
-bucket_path_hist = "ingestion/initial/historic-inspections-"
-bucket_path_cons = "ingestion/consecutive/consecutive-inspections-"
+bucket = constants.bucket
+bucket_path_hist = constants.bucket_path_hist
+bucket_path_cons = constants.bucket_path_cons
 ```
 
 - Para guardar la ingesta se usa la función `guardar_ingesta`, que recibe como parámetros el nombre del bucket, el path y los datos, se implementa como sigue:
@@ -150,6 +144,7 @@ Si se le pasa `None` al segundo parámetro (fecha), restará al día actual 7 d�
 guardar_ingesta(bucket, bucket_path_cons, datos_cons)
 ```
 
+Una vez que este comando ha finalizado, puede dirigirse al bucket S3 de AWS en donde se realizó la ingesta de los datos para verificar que efectivamente han sido almacenados satisfactoriamente.
 
 
 
