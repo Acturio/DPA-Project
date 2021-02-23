@@ -76,8 +76,7 @@ food_inspections:
 - Importar las librerías del módulo `src/utils/general.py` a través de los siguiente comandos: 
 
   `from src.utils.general import read_yaml_file, get_s3_credentials, get_api_token`
-  `import src.utils.constants`
-  
+    
 - Con el siguiente comando se lee un archivo `.yml`, el cual encuentra las credenciales introducidas en el archivo yaml.
 
 ```
@@ -99,7 +98,27 @@ token = get_api_token("conf/local/credentials.yaml")
 
   `from src.pipeline.ingesta_almacenamiento import get_client, ingesta_inicial, get_s3_resource, guardar_ingesta, ingesta_consecutiva`
   
+  `import src.utils.constants as cte`
+  
+  esta libería usa internamente un archivo de constantes, el cual esta en la ruta `src/utils/constants.py` y contiene la siguiente información
+  
+```
+# The Host Name for the API endpoint (the https:// part will be added automatically)
+DATA_URL = 'data.cityofchicago.org'
+# The data set at the API endpoint
+DATA_SET = '4ijn-s7e5'
+# Nombre del bucket
+BUCKET = "data-product-architecture-equipo-n"
+# Path de ingesta histrórica
+BUCKET_PATH_HIST = "ingestion/initial/historic-inspections-"
+# Path de ingesta consecutiva
+BUCKET_PATH_CONS = "ingestion/consecutive/consecutive-inspections-"
+```
+
+estos valores se pueden sustiruir pos los propios (nombre de bucket y paths) para probar la ingestión de datos.
+  
 - Para obtener el cliente se usa la función `get_client`, agregando el token que anteriormente fue generado. La implementación se muestra a continuación:
+
 ```
 cliente = get_client(token)
 ```
@@ -119,9 +138,9 @@ s3_resource = get_s3_resource()
 - Se declaran las siguientes variables, con el nombre del bucket y los paths donde se guardará la ingesta inicial y consecutiva.
 
 ```
-bucket = constants.bucket
-bucket_path_hist = constants.bucket_path_hist
-bucket_path_cons = constants.bucket_path_cons
+bucket = cte.BUCKET
+bucket_path_hist = cte.BUCKET_PATH_HIST
+bucket_path_cons = cte.BUCKET_PATH_CONS
 ```
 
 - Para guardar la ingesta se usa la función `guardar_ingesta`, que recibe como parámetros el nombre del bucket, el path y los datos, se implementa como sigue:
