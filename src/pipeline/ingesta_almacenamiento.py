@@ -1,6 +1,7 @@
 from src.utils.general import get_s3_credentials, get_api_token
 from sodapy import Socrata
 from datetime import date, timedelta
+import src.utils.constants as cte
 import boto3
 import pickle
 
@@ -11,12 +12,8 @@ def get_client(token):
     :param: none (integrado yam file)
     :return: client API
     """
-
-    # The Host Name for the API endpoint (the https:// part will be added automatically)
-    data_url = 'data.cityofchicago.org'
     # Create the client to point to the API endpoint, with app token created in the prior steps
-    client = Socrata(data_url, token)
-
+    client = Socrata(cte.DATA_URL, token)
     return client
 
 
@@ -28,13 +25,11 @@ def ingesta_inicial(client, limite):
     :param: Cliente API, límite de datos
     :return: pickle con datos binarios
     """
-    # The data set at the API endpoint
-    data_set = '4ijn-s7e5'
     # Set the timeout to 60 seconds
     client.timeout = 60
     # Retrieve the first 'limite' results returned as JSON object from the API
     # The SoDaPy library converts this JSON object to a Python list of dictionaries
-    results = client.get(data_set, limit=limite)  
+    results = client.get(cte.DATA_SET, where="inspection_date >= '2021-01-01' ", limit=limite)  
     # Convert pickle
     bd_historica = pickle.dumps(results)
 
@@ -89,8 +84,6 @@ def ingesta_consecutiva(client, fecha, limite):
     :param: Cliente API, fecha inicial desde donde se extraeran los datos, límite de datos
     :return: pickle con datos binarios
     """
-    # The data set at the API endpoint
-    data_set='4ijn-s7e5' 
     # Set the timeout to 60 seconds    
     client.timeout = 60
         
@@ -101,7 +94,7 @@ def ingesta_consecutiva(client, fecha, limite):
     else:
         where_cond = "inspection_date >= '" + fecha + "' "
         
-    results = client.get(data_set, where = where_cond, limit = limite)
+    results = client.get(cte.DATA_SET, where = where_cond, limit = limite)
         
     bd_consecutiva = pickle.dumps(results) 
     
