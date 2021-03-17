@@ -249,7 +249,10 @@ PYTHONPATH='.' luigi \
 - Así mismo verificar el estatus de las tareas en `http:\\localhost:8082` en el `Central Scheduler` de `luigi`, si omite la opción `--local-schedule` a la hora de ejecutar los comandos. Si todo fue correcto, observará la siguiente salida:
 
 
-![Alt text](results/img/ckeckpoint3.png?raw=true "Ckeckpoint 3 Central Scheduler")
+<p align="center">
+  <img src="results/img/ckeckpoint3.png" title="Ckeckpoint 3 Central Scheduler">
+</p>
+
 
 
 
