@@ -165,6 +165,92 @@ guardar_ingesta(bucket, bucket_path_cons, datos_cons)
 
 Una vez que este comando ha finalizado, puede dirigirse al bucket S3 de AWS en donde se realizó la ingesta de los datos para verificar que efectivamente han sido almacenados satisfactoriamente.
 
+### Primeros pasos con Luigi: 
+
+En esta parte se muestra como correr una ingesta histórica y consecutiva de datos usando el orquestador `luigi`. Para ello requiere seguir los siguientes pasos. 
+
+- Actualizar el repositorio (si ya se tiene) `git pull origin main` o clonarlo en caso de que no.
+
+- Inicie su ambiente virtual `pyenv activate nombre_de_tu_ambiente`
+
+- Instalar los paquetes descritos en el archivo requirements.txt `pip install -r requirements.txt` o en caso de que ya tenga la parte anterior ejecutar sólo `pip install luigi`
+
+- Para activar el `Central Scheduler` de `luigi` ingrese `luigid --port 8082`
+
+- Para correr una ingesta inicial (histórica), en otra ventana dentro de su mismo ambiente, y coloquese en la raíz del proyecto e ingrese las siguientes líneas de código
+
+```
+PYTHONPATH='.' luigi \
+--module src.pipeline.LuigiIngestionTasks IngestionTask \
+--local-scheduler \
+--path-cred ./conf/local/credentials.yaml \
+--initial true \
+--limit 100 \
+--date '2021-01-01'
+```
+
+Donde:
+
+`src.pipeline.LuigiIngestionTasks` es la tarea encargada de hacer la ingestión de datos, extrae a travéz de la API de Food inspections los datos que serán guardados en un `pickle`.
+
+`local-scheduler` con esta opción en la línea de comandos no se muestra el resultado en el `Central Scheduler`, para mostrar se debe omitir esta opción.
+
+`path-cred ./conf/local/credentials.yaml` recuerde que debe contar con su archivo `credentials.yml` en la carpeta `conf/local/`
+
+`--initial true` con esta bandera en `true` indica que se hará una ingesta inicial (histórica). En caso de una ingesta consecutiva deberá ir en `false`
+
+`--limit` esta bandera indica el limite de datos, para la ingesta histórica se sugiere vaya en *300000* el cual es su dato por default, en este ejemplo se a colocado 100.
+
+`--date` con la bandera date se indica desde que fecha se requiere la ingesta inicial.
+
+- Para una ingesta consecutiva se corre la siguiente secuencia de comandos, de acuerdo a las opciones descritas anteriormente.
+
+```
+PYTHONPATH='.' luigi \
+--module src.pipeline.LuigiIngestionTasks IngestionTask \
+--local-scheduler \
+--path-cred ./conf/local/credentials.yaml \
+--initial false \
+--limit 1000 \
+--date '2021-03-15'
+```
+
+- Estas ingestas generaran un archvio `pickle` por lo que se creara una carpeta llamada `ingestion` en la raíz del proyecto, la cuál contendra 2 carpetas: `initial` y `consecutive`, y dentro de ellas encontrará el archivo histórico (historic-inspections-2021-01-01.pkl para el ejemplo mostrado) y la ingesta consecutiva (consecutive-inspections-2021-03-15.pkl para el ejemplo mostrado) respectivamente.
+
+- Para guardar estos archivos en S3 se usa la tarea `LuigiTasks2`, siguiendo las siguientes líneas de código.
+
+```
+PYTHONPATH='.' luigi \
+--module src.pipeline.LuigiTasks2 ExportFileTask \
+--path-cred ./conf/local/credentials.yaml \
+--initial true \
+--limit 300000 \
+--date '2021-03-15' \
+--bucket-path 'data-product-architecture-equipo-n'
+--local-scheduler \
+```
+
+Donde adicionalmente puede ingresar el nombre del bucket en S3, con la bandera `--bucket-path` seguido del nombre de su `bucket`, el cuál por default toma el valor de la constante `BUCKET`('data-product-architecture-equipo-n'). En este caso se carga la ingesta inicial dado por `--initial true` y las opciones `--limit`, `--date`, `path-cred` serán pasadas a la tarea 1 (`IngestionTask`) en caso de que no se haya ejecutado.
+
+- Para guardar en S3 una ingesta consecutiva es similar
+
+```
+PYTHONPATH='.' luigi \
+--module src.pipeline.LuigiTasks2 ExportFileTask \
+--path-cred ./conf/local/credentials.yaml \
+--initial false \
+--limit 1000 \
+--date '2021-0-15' \
+--local-scheduler \
+```
+
+- Una vez ejecutados correctamente las tareas, podrá verificar que sus archivos se encuentran en `AWS`.
+
+- Así mismo verificar el estatus de las tareas en `http:\\localhost:8082` en el `Central Scheduler` de `luigi`, si omite la opción `--local-schedule` a la hora de ejecutar los comandos. Si todo fue correcto, observará la siguiente salida:
+
+
+![Alt text](results/img/ckeckpoint3.png?raw=true "Ckeckpoint 3 Central Scheduler")
+
 
 
 
