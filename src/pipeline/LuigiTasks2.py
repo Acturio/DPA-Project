@@ -14,6 +14,7 @@ class ExportFileTask(luigi.Task):
     initial = luigi.BoolParameter(default=True, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
     limit = luigi.IntParameter(default = 300000)
     date = luigi.DateParameter(default = None)
+    initial_date = luigi.DateParameter(default = None)
     bucket_path = luigi.Parameter(default = cte.BUCKET)# Bucket en archivo de constantes
     
     # Se requiere IngestionTask
@@ -24,12 +25,10 @@ class ExportFileTask(luigi.Task):
     # Se carga el archivo a ser usado
     def input(self):
         
-        hoy = datetime.today().strftime('%Y-%m-%d')
-        
         if self.initial:
-            file_name = cte.BUCKET_PATH_HIST + '{}.pkl'.format(hoy)
+            file_name = cte.BUCKET_PATH_HIST + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
         else:
-            file_name = cte.BUCKET_PATH_CONS + '{}.pkl'.format(hoy)
+            file_name = cte.BUCKET_PATH_CONS + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
         
         with open(file_name, 'rb') as f:
             data = pickle.load(f)
@@ -42,14 +41,12 @@ class ExportFileTask(luigi.Task):
         client_s3 = luigi.contrib.s3.S3Client(aws_access_key_id = s3_c["aws_access_key_id"],
                              aws_secret_access_key = s3_c["aws_secret_access_key"])
         
-        hoy = datetime.today().strftime('%Y-%m-%d')
-        
         if self.initial:
             file_type = cte.BUCKET_PATH_HIST 
         else:
             file_type = cte.BUCKET_PATH_CONS
             
-        output_path = "s3://{}/{}{}.pkl".format(cte.BUCKET, file_type, hoy)
+        output_path = "s3://{}/{}{}.pkl".format(cte.BUCKET, file_type, self.date.strftime('%Y-%m-%d'))
 
         return luigi.contrib.s3.S3Target(path = output_path, client = client_s3)
     
@@ -67,7 +64,8 @@ class ExportFileTask(luigi.Task):
             path_cred = self.path_cred, 
             bucket = self.bucket_path, 
             bucket_path = file_type, 
-            data = data
+            data = data,
+            fecha = self.date.strftime('%Y-%m-%d')
         )
 
     

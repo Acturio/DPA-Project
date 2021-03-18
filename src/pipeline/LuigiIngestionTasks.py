@@ -15,20 +15,16 @@ class IngestionTask(luigi.Task):
     initial = luigi.BoolParameter(default=True, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
     limit = luigi.IntParameter(default = 300000)
     date = luigi.DateParameter(default = None)
+    initial_date = luigi.DateParameter(default = None)
                     
     def output(self):
         
-        hoy = datetime.today().strftime('%Y-%m-%d')
-        
         if self.initial:
-#            type_insp = 'historical'
-            file_name = cte.BUCKET_PATH_HIST + '{}.pkl'.format(hoy)
+            # 'historical'
+            file_name = cte.BUCKET_PATH_HIST + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
         else:
-#            type_insp = 'consecutive'
-            file_name = cte.BUCKET_PATH_CONS + '{}.pkl'.format(hoy)
-                
-#        file_name = 'results/food_inspections/{}/{}-inspections-{}.pkl'.\
-#                     format(hoy, type_insp, hoy)
+            # 'consecutive'
+            file_name = cte.BUCKET_PATH_CONS + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
                 
         return luigi.local_target.LocalTarget(file_name, format = luigi.format.Nop)
         
@@ -43,6 +39,8 @@ class IngestionTask(luigi.Task):
             datos = ing.ingesta_inicial(
                 cliente, 
                 data_set = cte.DATA_SET, 
+                fecha_inicio = self.initial_date, 
+                fecha_fin = self.date,
                 limit = self.limit
             )
             
@@ -50,7 +48,7 @@ class IngestionTask(luigi.Task):
             datos = ing.ingesta_consecutiva(
                 client = cliente, 
                 data_set = cte.DATA_SET, 
-                fecha = self.date.strftime('%Y-%m-%d'), 
+                fecha = self.date, 
                 limit = self.limit
             )
 
