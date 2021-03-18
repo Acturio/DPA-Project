@@ -17,7 +17,7 @@ def get_client(token, data_url):
     return client
 
 
-def ingesta_inicial(client, data_set, limit):
+def ingesta_inicial(client, data_set, fecha_inicio, fecha_fin , limit):
     """
     Esta función recibe como parámetros el cliente con el que nos podemos comunicar con la API,
     y el límite de registros que queremos obtener al llamar a la API.
@@ -27,9 +27,17 @@ def ingesta_inicial(client, data_set, limit):
     """
     # Set the timeout to 60 seconds
     client.timeout = 60
+    
+    if fecha_inicio is None:
+        fecha_inicio = '2010-01-01'
+        
     # Retrieve the first 'limite' results returned as JSON object from the API
     # The SoDaPy library converts this JSON object to a Python list of dictionaries
-    results = client.get(data_set, where = "inspection_date >= '2010-01-01' ", limit = limit)  
+    results = client.get(
+        data_set, 
+        where = 'inspection_date between "{}" and "{}"'.format(str(fecha_inicio), str(fecha_fin)), 
+        limit = limit
+        )  
 
 
     return results
@@ -55,7 +63,7 @@ def get_s3_resource(path_cred):
     return s3
 
 
-def guardar_ingesta(path_cred, bucket, bucket_path, data):
+def guardar_ingesta(path_cred, bucket, bucket_path, data, fecha):
     """
     Esta función recibe como parámetros el nombre de tu bucket de S3,
     la ruta en el bucket en donde se guardarán los datos y los datos ingestados en pkl.
@@ -65,10 +73,9 @@ def guardar_ingesta(path_cred, bucket, bucket_path, data):
     # Obtiene el recurso S3
     s3_resource = get_s3_resource(path_cred)
 
-    today = date.today()
     # ingestion/initial/historic-inspections-2020-02-02.pkl
     # ingestion/consecutive/consecutive-inspections-2020-11-03.pkl
-    file_name = bucket_path + today.strftime('%Y-%m-%d') + ".pkl"
+    file_name = bucket_path + fecha + ".pkl"
     
     results = pickle.dumps(data)
     s3_resource.Object(bucket, file_name).put(Body = results)
@@ -92,7 +99,8 @@ def ingesta_consecutiva(client, data_set, fecha, limit):
         where_cond = "inspection_date >= '" + fecha_ini.strftime('%Y-%m-%d') + "' "
         
     else:
-        where_cond = "inspection_date >= '" + fecha + "' "
+        fecha_ini = fecha - timedelta(7)
+        where_cond = "inspection_date >= '" + fecha_ini.strftime('%Y-%m-%d') + "' "
         
     results = client.get(data_set, where = where_cond, limit = limit)
     
