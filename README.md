@@ -133,25 +133,25 @@ Esta librería permite realizar la extracción de datos y almacenamiento.
 esta libería usa internamente un archivo de constantes, el cual esta en la ruta `src/utils/constants.py`, que ya se describio anteriormente.
 
   
-- Para obtener el cliente se usa la función `get_client`, agregando el token que anteriormente fue generado. La implementación se muestra a continuación:
+- Para obtener el cliente se usa la función `get_client`, agregando el token que anteriormente fue generado y la url de los datos. La implementación se muestra a continuación:
 
 ```
-cliente = get_client(token)
+cliente = get_client(token, cte.DATA_URL)
 ```
 
-- Para realizar la obtención de datos de la ingesta inicial, se implementa la función `ingesta_inicial` que recibe como parámetros un cliente y el límite de datos, como se indica a continuación:
+- Para realizar la obtención de datos de la ingesta inicial, se implementa la función `ingesta_inicial` que recibe como parámetros un cliente, el `dataset`, fecha de inicio de datos (por default '2010-01-01' si se especifica `None`), fecha de corte de datos y el límite de datos, como se indica a continuación:
 
 ```
-datos_his = ingesta_inicial(cliente, 300000)
+datos_his = ingesta_inicial(cliente, cte.DATA_SET, None, '2021-02-21', 300000)
 ```
 
-- Para obtener el recurso de S3, se usa la función `get_s3_resource` y se implementa como sigue:
+- Para obtener el recurso de S3, se usa la función `get_s3_resource`, que recibe el `path` del archivo de credenciales y se implementa como sigue:
 
 ```
-s3_resource = get_s3_resource()
+s3_resource = get_s3_resource('conf/local/credentials.yaml')
 ```
 
-- Se declaran las siguientes variables, con el nombre del bucket y los paths donde se guardará la ingesta inicial y consecutiva.
+- Se declaran las siguientes variables, con el nombre del `bucket` y los paths donde se guardará la ingesta inicial y consecutiva.
 
 ```
 bucket = cte.BUCKET
@@ -159,16 +159,16 @@ bucket_path_hist = cte.BUCKET_PATH_HIST
 bucket_path_cons = cte.BUCKET_PATH_CONS
 ```
 
-- Para guardar la ingesta se usa la función `guardar_ingesta`, que recibe como parámetros el nombre del bucket, el path y los datos, se implementa como sigue:
+- Para guardar la ingesta se usa la función `guardar_ingesta`, que recibe como parámetros el `path` del archivo de credenciales, nombre del bucket, el path del bucket, los datos y la fecha de los datos, se implementa como sigue:
 
 ```
-guardar_ingesta(bucket, bucket_path_hist, datos_his)
+guardar_ingesta('conf/local/credentials.yaml', bucket, bucket_path_hist, datos_his, '2021-02-21')
 ```
 
-- Para obtener los datos consecutivos se usa la función `ingesta_consecutiva`, que recibe como parámetros el cliente, una fecha a partir de donde se extraerán los datos y el límite de los mismos, se podrá llamar de la siguiente manera:
+- Para obtener los datos consecutivos se usa la función `ingesta_consecutiva`, que recibe como parámetros el cliente, el `dataset`, una fecha a partir de donde se extraerán los datos y el límite de los mismos, se podrá llamar de la siguiente manera:
 
 ```
-datos_cons = ingesta_consecutiva(cliente, '2021-02-14', 2000)
+datos_cons = ingesta_consecutiva(cliente, cte.DATA_SET, '2021-02-21',  2000)
 ```
 
 Si se le pasa `None` al segundo parámetro (fecha), restará al día actual 7 días para obtener los datos de una semana atrás.
