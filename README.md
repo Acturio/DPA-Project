@@ -191,7 +191,7 @@ En esta parte se muestra como correr una ingesta histórica y consecutiva de dat
 
 - Instalar los paquetes descritos en el archivo requirements.txt `pip install -r requirements.txt` o en caso de que ya tenga la parte anterior ejecutar sólo `pip install luigi`
 
-- Para activar el `Central Scheduler` de `luigi` abra una terminal e ingrese `luigid --port 8082`
+- Para activar el `Central Scheduler` de `luigi` abra una terminal e ingrese `luigid`
 
 #### Ingesta
 
@@ -260,13 +260,15 @@ PYTHONPATH='.' luigi \
 --path-cred ./conf/local/credentials.yaml \
 --initial false \
 --limit 1000 \
---date '2021-0-15' \
+--date '2021-03-15' \
 --local-scheduler \
 ```
 
 - Una vez ejecutados correctamente las tareas, podrá verificar que sus archivos se encuentran en `AWS`.
 
-- Así mismo verificar el estatus de las tareas en `http:\\localhost:8082` en el `Central Scheduler` de `luigi`, si omite la opción `--local-schedule` a la hora de ejecutar los comandos. Si todo fue correcto, observará la siguiente salida:
+- Así mismo verificar el estatus de las tareas en `http:\\localhost:8082` en el `Central Scheduler` de `luigi`, si omite la opción `--local-schedule` a la hora de ejecutar los comandos. 
+
+- Si todo fue correcto, observará la siguiente salida:
 
 ![](./results/img/checkpoint3.png) 
 
