@@ -213,13 +213,13 @@ Descripción:
 
 ***--local-scheduler*** con esta opción no se muestra el resultado en el `Central Scheduler`, para reflejar el resultado en el este se debe omitir esta opción.
 
-***--path-cred** se indica la ruta del archivo que contiene las credenciales, en este caso se encuentra en `./conf/local/credentials.yaml`, recuerde que debe contar con su archivo `credentials.yml` en la carpeta `conf/local/`
+***--path-cred*** se indica la ruta del archivo que contiene las credenciales, en este caso se encuentra en `./conf/local/credentials.yaml`, recuerde que debe contar con su archivo `credentials.yml` en la carpeta `conf/local/`
 
 ***--initial*** con esta bandera en `true` indica que se hará una ingesta inicial (histórica). En caso de una ingesta consecutiva deberá ir en `false`
 
-***--limit** esta bandera indica el limite de datos, para la ingesta histórica se sugiere vaya en *300000*, el cual es el dato por default, para este ejemplo se a colocado el valor de 100.
+***--limit*** esta bandera indica el limite de datos, para la ingesta histórica se sugiere vaya en *300000*, el cual es el dato por default, para este ejemplo se a colocado el valor de 100.
 
-***--date** con esta la bandera se indica desde que fecha se requiere la ingesta inicial.
+***--date*** con esta la bandera se indica desde que fecha se requiere la ingesta inicial.
 
 - Para una ingesta consecutiva se corre la siguiente secuencia de comandos, de acuerdo a las opciones descritas anteriormente.
 
