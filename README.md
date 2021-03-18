@@ -195,7 +195,7 @@ En esta parte se muestra como correr una ingesta histórica y consecutiva de dat
 
 #### Ingesta
 
-- Para correr una ingesta inicial (histórica) se usa la tarea `IngestionTask` que se encuentra en la librería `LuigiIngestionTasks.py` en la ruta `src.pipeline`, abra otra ventana dentro de su mismo ambiente, y coloquese en la raíz del proyecto e ingrese las siguientes líneas de código:
+- Para correr una **ingesta inicial** (histórica) se usa la tarea `IngestionTask` que se encuentra en la librería `LuigiIngestionTasks.py` en la ruta `src.pipeline`, abra otra ventana dentro de su mismo ambiente, y coloquese en la raíz del proyecto e ingrese las siguientes líneas de código:
 
 ```
 PYTHONPATH='.' luigi \
@@ -203,8 +203,8 @@ PYTHONPATH='.' luigi \
 --local-scheduler \
 --path-cred ./conf/local/credentials.yaml \
 --initial true \
---limit 100 \
---date '2021-01-01'
+--limit 300000 \
+--date '2021-02-21'
 ```
 
 Descripción:
@@ -221,7 +221,7 @@ Descripción:
 
 ***--date*** con esta la bandera se indica desde que fecha se requiere la ingesta inicial.
 
-- Para una ingesta consecutiva se corre la siguiente secuencia de comandos, de acuerdo a las opciones descritas anteriormente.
+- Para una **ingesta consecutiva** se corre la siguiente secuencia de comandos, de acuerdo a las opciones descritas anteriormente.
 
 ```
 PYTHONPATH='.' luigi \
@@ -229,44 +229,44 @@ PYTHONPATH='.' luigi \
 --local-scheduler \
 --path-cred ./conf/local/credentials.yaml \
 --initial false \
---limit 1000 \
---date '2021-03-15'
+--limit 2000 \
+--date '2021-03-01'
 ```
 
 - Estas ingestas generaran un archivo tipo `pickle`, por lo que se creara una carpeta llamada `ingestion` en la raíz del proyecto, la cuál contendra 2 carpetas: `initial` y `consecutive`, y dentro de ellas encontrará el archivo histórico (historic-inspections-2021-01-01.pkl para el ejemplo mostrado) y la ingesta consecutiva (consecutive-inspections-2021-03-15.pkl para el ejemplo mostrado) respectivamente.
 
 #### Almacenamiento
 
-- Para guardar estos archivos en S3 se usa la tarea `ExportFileTask` que se encuentra en la librería `LuigiTasks2.py` en la ruta `src.pipeline`, siguiendo las siguientes líneas de código.
+Para guardar estos archivos en S3 se usa la tarea `ExportFileTask` que se encuentra en la librería `LuigiExportTasks.py` en la ruta `src.pipeline`, siguiendo las siguientes líneas de código.
+
+- Para guardar en S3 la **ingesta inicial** (histórica) se tiene:
 
 ```
 PYTHONPATH='.' luigi \
---module src.pipeline.LuigiTasks2 ExportFileTask \
+--module src.pipeline.LuigiExportTasks ExportFileTask \
 --path-cred ./conf/local/credentials.yaml \
 --initial true \
 --limit 300000 \
---date '2021-03-15' \
---bucket-path 'data-product-architecture-equipo-n'
---local-scheduler \
+--date '2021-02-21'
 ```
 
-Donde adicionalmente puede ingresar el nombre del bucket en S3, con la bandera `--bucket-path` seguido del nombre de su `bucket`, el cuál por default toma el valor de la constante `BUCKET`('data-product-architecture-equipo-n'). En este caso se carga la ingesta inicial dado por `--initial true` y las opciones `--limit`, `--date`, `path-cred` serán pasadas a la tarea 1 (`IngestionTask`) en caso de que no se haya ejecutado.
+Donde adicionalmente puede ingresar el nombre del bucket en S3, con la bandera `--bucket-path` seguido del nombre de su `bucket` (ejemplo `--bucket-path 'data-product-architecture-equipo-n`), el cuál por default toma el valor de la constante `BUCKET`. En este caso se carga la ingesta inicial dado por `--initial true` y las opciones `--limit`, `--date`, `path-cred` serán pasadas a la tarea 1 (`IngestionTask`) en caso de que no se haya ejecutado. 
 
-- Para guardar en S3 una ingesta consecutiva es similar
+
+- Para guardar en S3 una **ingesta consecutiva** es similar, sólo pasando en la opción `--initial` el valor de `false`:
 
 ```
 PYTHONPATH='.' luigi \
---module src.pipeline.LuigiTasks2 ExportFileTask \
+--module src.pipeline.LuigiExportTasks ExportFileTask \
 --path-cred ./conf/local/credentials.yaml \
 --initial false \
---limit 1000 \
---date '2021-03-15' \
---local-scheduler \
+--limit 2000 \
+--date '2021-03-01'
 ```
 
-- Una vez ejecutados correctamente las tareas, podrá verificar que sus archivos se encuentran en `AWS`.
+- Una vez ejecutados correctamente las tareas, podrá verificar que sus archivos se encuentran en `AWS` en el bucket especificado y en la ruta `ingestion/initial/` para cargas iniciales y en la ruta `ingestion/consecutive/` para cargas consecutivas.
 
-- Así mismo verificar el estatus de las tareas en `http:\\localhost:8082` en el `Central Scheduler` de `luigi`, si omite la opción `--local-schedule` a la hora de ejecutar los comandos. 
+- Así mismo verificar el estatus de las tareas en `http:\\localhost:8082` en el `Central Scheduler` de `luigi`, siempre y cuando haya omitido la opción `--local-schedule` a la hora de ejecutar los comandos. 
 
 - Si todo fue correcto, observará la siguiente salida:
 
