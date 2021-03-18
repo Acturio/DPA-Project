@@ -3,3 +3,5 @@ conf/local/**
 src/utils/.ipynb_checkpoints/
 notebooks/.ipynb_checkpoints/
 data/Food_Inspections.csv
+ingestion/consecutive/*
+ingestion/initial/*

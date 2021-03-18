@@ -5,7 +5,7 @@ import src.utils.constants as cte
 import boto3
 import pickle
 
-def get_client(token):
+def get_client(token, data_url):
     """
     Esta función regresa un cliente que se puede conectar a la API de inspecciones
     de establecimiento dándole un token previamente generado.
@@ -13,11 +13,11 @@ def get_client(token):
     :return: client API
     """
     # Create the client to point to the API endpoint, with app token created in the prior steps
-    client = Socrata(cte.DATA_URL, token)
+    client = Socrata(data_url, token)
     return client
 
 
-def ingesta_inicial(client, limite):
+def ingesta_inicial(client, data_set, fecha_inicio, fecha_fin , limit):
     """
     Esta función recibe como parámetros el cliente con el que nos podemos comunicar con la API,
     y el límite de registros que queremos obtener al llamar a la API.
@@ -27,16 +27,23 @@ def ingesta_inicial(client, limite):
     """
     # Set the timeout to 60 seconds
     client.timeout = 60
+    
+    if fecha_inicio is None:
+        fecha_inicio = '2010-01-01'
+        
     # Retrieve the first 'limite' results returned as JSON object from the API
     # The SoDaPy library converts this JSON object to a Python list of dictionaries
-    results = client.get(cte.DATA_SET, where="inspection_date >= '2021-01-01' ", limit=limite)  
-    # Convert pickle
-    bd_historica = pickle.dumps(results)
+    results = client.get(
+        data_set, 
+        where = 'inspection_date between "{}" and "{}"'.format(str(fecha_inicio), str(fecha_fin)), 
+        limit = limit
+        )  
 
-    return bd_historica
+
+    return results
 
 
-def get_s3_resource():
+def get_s3_resource(path_cred):
     """
     Esta función regresa un resource de S3 para poder guardar datos
     en el bucket (checar script de aws_boto_s3).
@@ -44,7 +51,7 @@ def get_s3_resource():
     :return: recurso S3
     """
     # "../../conf/local/credentials.yaml"
-    s3_creds = get_s3_credentials("conf/local/credentials.yaml")
+    s3_creds = get_s3_credentials(path_cred)
 
     session = boto3.Session(
         aws_access_key_id=s3_creds['aws_access_key_id'],
@@ -56,7 +63,7 @@ def get_s3_resource():
     return s3
 
 
-def guardar_ingesta(bucket, bucket_path, data):
+def guardar_ingesta(path_cred, bucket, bucket_path, data, fecha):
     """
     Esta función recibe como parámetros el nombre de tu bucket de S3,
     la ruta en el bucket en donde se guardarán los datos y los datos ingestados en pkl.
@@ -64,19 +71,19 @@ def guardar_ingesta(bucket, bucket_path, data):
     :return: none(guarda datos s3)
     """
     # Obtiene el recurso S3
-    s3_resource = get_s3_resource()
+    s3_resource = get_s3_resource(path_cred)
 
-    today = date.today()
     # ingestion/initial/historic-inspections-2020-02-02.pkl
     # ingestion/consecutive/consecutive-inspections-2020-11-03.pkl
-    file_name = bucket_path + today.strftime('%Y-%m-%d') + ".pkl"
-
-    s3_resource.Object(bucket, file_name).put(Body=data)
+    file_name = bucket_path + fecha + ".pkl"
+    
+    results = pickle.dumps(data)
+    s3_resource.Object(bucket, file_name).put(Body = results)
 
     print("Ingesta guardada")
 
 
-def ingesta_consecutiva(client, fecha, limite):
+def ingesta_consecutiva(client, data_set, fecha, limit):
     """
     Esta función recibe como parámetros el cliente con el que nos podemos comunicar con la API,
     la fecha de la que se quieren obtener nuevos datos al llamar a la API y
@@ -92,10 +99,9 @@ def ingesta_consecutiva(client, fecha, limite):
         where_cond = "inspection_date >= '" + fecha_ini.strftime('%Y-%m-%d') + "' "
         
     else:
-        where_cond = "inspection_date >= '" + fecha + "' "
+        fecha_ini = fecha - timedelta(7)
+        where_cond = "inspection_date >= '" + fecha_ini.strftime('%Y-%m-%d') + "' "
         
-    results = client.get(cte.DATA_SET, where = where_cond, limit = limite)
-        
-    bd_consecutiva = pickle.dumps(results) 
+    results = client.get(data_set, where = where_cond, limit = limit)
     
-    return bd_consecutiva
+    return results
