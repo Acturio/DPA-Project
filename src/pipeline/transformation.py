@@ -454,7 +454,6 @@ def transform(path):
     df_final['type'] = categoric_trasformation('type', df_final)
     df_final['facility_type'] = categoric_trasformation('facility_type', df_final)
     df_final['risk'] = categoric_trasformation('risk', df_final)
-    df_final['address'] = categoric_trasformation('address', df_final)
     df_final['zip'] = categoric_trasformation('zip', df_final)
     # Númericas
     df_final['label'] = int_transformation('label', df_final)
