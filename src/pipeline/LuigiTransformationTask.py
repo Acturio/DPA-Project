@@ -57,9 +57,9 @@ class TransformTask(luigi.Task):
         )
   
       if self.initial:
-          file_type = "processed-data/historic-inspections-"
+          file_type = "processed-data/clean-historic-inspections-"
       else:
-          file_type = "processed-data/consecutive-inspections-"
+          file_type = "processed-data/clean-consecutive-inspections-"
           
       output_path = "s3://{}/{}{}.pkl".format(cte.BUCKET, file_type, self.date.strftime('%Y-%m-%d'))
 
