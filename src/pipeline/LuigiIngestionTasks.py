@@ -30,7 +30,7 @@ class IngestionTask(luigi.Task):
         
     def run(self):
         
-        s3_c = gral.get_s3_credentials(self.path_cred)
+        #s3_c = gral.get_s3_credentials(self.path_cred)
         my_token = gral.get_api_token(self.path_cred)
         
         cliente = ing.get_client(data_url = cte.DATA_URL, token = my_token)

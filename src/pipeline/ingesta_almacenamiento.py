@@ -62,6 +62,25 @@ def get_s3_resource(path_cred):
 
     return s3
 
+def get_s3_client(path_cred):
+    """
+    Esta función regresa un resource de S3 para poder guardar datos
+    en el bucket (checar script de aws_boto_s3).
+    :param: none (llama función get_s3_credentials para credenciales)
+    :return: recurso S3
+    """
+    # "../../conf/local/credentials.yaml"
+    s3_creds = get_s3_credentials(path_cred)
+
+    session = boto3.Session(
+        aws_access_key_id=s3_creds['aws_access_key_id'],
+        aws_secret_access_key=s3_creds['aws_secret_access_key']
+    )
+
+    s3 = session.client('s3')
+
+    return s3
+
 
 def guardar_ingesta(path_cred, bucket, bucket_path, data, fecha):
     """
