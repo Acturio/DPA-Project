@@ -56,30 +56,6 @@ def categoric_trasformation(col, df):
     return df[col].astype(str)
 
 
-def split_fecha(col, df):
-    """
-    Recibe la columna fecha que hay que transformar en 3 columnas: año, mes, dia y
-    el data frame al que pertenece.
-    :param: column, dataframe
-    :return: dataframe con 2 columnas mas (mes, día) y semanas
-    """
-    # df[col + '_año'] = df[col].dt.year.astype(str)
-    df[col + '_mes'] = df[col].dt.month.astype(str)
-    df[col + '_dia'] = df[col].dt.day.astype(str)
-
-    # Cambio a enteros
-    df[col + '_mes'] = int_transformation(col + '_mes', df)
-    df[col + '_dia'] = int_transformation(col + '_dia', df)
-    # Como strings
-    # df[col + '_mes'] = df[col + '_mes'].apply(two_dig)
-    # df[col + '_dia'] = df[col + '_dia'].apply(two_dig)
-
-    df['week'] = df[col].dt.week
-    df['day_of_week'] = df[col].dt.day_name()
-
-    return df
-
-
 def clean(df):
     """
     Recibe un dataframe y le aplica limpieza de datos

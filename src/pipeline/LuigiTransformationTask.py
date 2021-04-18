@@ -69,9 +69,9 @@ class TransformTask(luigi.Task):
     def run(self):
 
       if self.initial:
-          file_type = "processed-data/historic-inspections-"
+          file_type = "processed-data/clean-historic-inspections-"
       else:
-          file_type = "processed-data/consecutive-inspections-"
+          file_type = "processed-data/clean-consecutive-inspections-"
 
       data = self.input()
       output_path = "{}{}.pkl".format(file_type, self.date.strftime('%Y-%m-%d'))
