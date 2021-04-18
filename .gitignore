@@ -6,3 +6,5 @@ data/Food_Inspections.csv
 ingestion/consecutive/*
 ingestion/initial/*
 processed-data/*
+sandbox/*
+*/.DS_Store
