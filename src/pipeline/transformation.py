@@ -1,15 +1,15 @@
-from utils.utils import load_df, save_df
 import pandas as pd
 import numpy as np
+from src.utils import utils as u 
 
 
-def load_ingestion(path='../output/'):
+def load_ingestion(path):
     """
     Recibe el path en donde se encuentra el pickle que generamos durante la ingestión.
     :param: path
     :return: pickle
     """
-    df = load_df(path + 'ingest_df.pkl')
+    df = u.load_df(path)
     return df
 
 
@@ -78,20 +78,6 @@ def split_fecha(col, df):
     df['day_of_week'] = df[col].dt.day_name()
 
     return df
-
-
-def save_transformation(df, path='../output/'):
-    """
-    Guarda en formato pickle (ver notebook feature_engineering.ipynb)
-    el data frame que ya tiene los datos transformados.
-    El pickle se debe llamar transformation_df.pkl y se debe guardar
-    en la carpeta output.
-    :param: dataframe, path
-    :return: file save
-    """
-    # pickle.dump(df, open(path + "transformation_df.pkl", "wb"))
-    # utils function, debería guardar el picjle llamado transformation_df.pkl en la carpeta ouput
-    save_df(df, path + 'transformation_df_DPA.pkl')
 
 
 def clean(df):
@@ -181,7 +167,7 @@ def agrupa_tipos(df_final):
                                                 "supportive living",
                                                 "supportive living facility",
                                                 "youth housing",
-                                                ],"Assistance_service")
+                                                ],"AssistanceService")
 
     df_final['type'] = df_final['type'].replace(["banquet",
                                                 "banquet dining",
@@ -203,7 +189,7 @@ def agrupa_tipos(df_final):
                                                 "church/special events",
                                                 "event space",
                                                 "lounge/banquet hall",
-                                                "special event",],"BanquetService/Church")
+                                                "special event",],"BanquetService-Church")
 
     df_final['type'] = df_final['type'].replace(["bar",
                                                 "bar/grill",
@@ -232,7 +218,7 @@ def agrupa_tipos(df_final):
                                                 "drug store/grocery",
                                                 "drug treatment facility",
                                                 "drug/food store",
-                                                "grocery/drug store"],"Drug/Grocery")
+                                                "grocery/drug store"],"Drug-Grocery")
 
     df_final['type'] = df_final['type'].replace(["art center",
                                                 "blockbuster video",
@@ -249,7 +235,7 @@ def agrupa_tipos(df_final):
                                                 "theater",
                                                 "theatre",
                                                 "vfw hall",
-                                                "video store"],"Entertainment services")
+                                                "video store"],"EntertainmentServices")
 
     df_final['type'] = df_final['type'].replace(["convenience/gas station",
                                                 "gas station",
@@ -268,7 +254,7 @@ def agrupa_tipos(df_final):
                                                 "grocery/gas station",
                                                 "grocery/service gas station",
                                                 "retail food/gas station",
-                                                "service gas station"],"Gas station/Grosery")
+                                                "service gas station"],"GasStation-Grosery")
 
     df_final['type'] = df_final['type'].replace(["(convenience store)",
                                                 "bakery",
@@ -325,7 +311,7 @@ def agrupa_tipos(df_final):
                                                 "snack shop",
                                                 "store",
                                                 "warehouse",
-                                                "wholesale"],"Grocery/Almacen/Convenience store")
+                                                "wholesale"],"Grocery-Almacen-ConvenienceStore")
 
     df_final['type'] = df_final['type'].replace(["health care store",
                                                 "health center",
@@ -342,7 +328,7 @@ def agrupa_tipos(df_final):
                                                 "nutrition store",
                                                 "packaged health foods",
                                                 "repackaging plant",
-                                                "weight loss program",],"Health store")
+                                                "weight loss program",],"HealthStore")
 
     df_final['type'] = df_final['type'].replace(["hot dog station",
                                                 "kiosk",
@@ -439,33 +425,40 @@ def agrupa_tipos(df_final):
     return df_final
 
 
-def transform(path):
+def transform(data, save_path):
     """
     Recibe la ruta del pickle que hay que transformar y devuelve en una ruta los datos transformados en pickle.
     :param: path
     :return: file
     """
     print("Inicio proceso transform")
-    df_final = load_ingestion(path)
+    #df_final = load_ingestion(path)
+
     # Limpieza de datos
-    df_final = clean(df_final)
+    df_final = clean(data)
+
     # Transformaciones
+
     # Categoricas
     df_final['type'] = categoric_trasformation('type', df_final)
     df_final['facility_type'] = categoric_trasformation('facility_type', df_final)
     df_final['risk'] = categoric_trasformation('risk', df_final)
-    df_final['address'] = categoric_trasformation('address', df_final)
     df_final['zip'] = categoric_trasformation('zip', df_final)
+
     # Númericas
     df_final['label'] = int_transformation('label', df_final)
     df_final['latitude'] = numeric_transformation('latitude', df_final)
     df_final['longitude'] = numeric_transformation('longitude', df_final)
+
     # Transformando fechas.
     df_final['inspection_date'] = date_transformation('inspection_date', df_final)
-    # Ordenando datos por fecha de inspección
+
+    # Ordenando datos por fecha de inspeccion
     df_final = df_final.sort_values(['inspection_date'])
+
     # Reseteando indice con datos ordenados por fecha
     df_final = df_final.reset_index(drop=True)
 
-    save_transformation(df_final, path)
-    print("Finalizó proceso transformación")
+    u.save_df(df_final, save_path)
+
+    return df_final

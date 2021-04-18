@@ -6,6 +6,7 @@ import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt 
 from matplotlib.ticker import FuncFormatter
+import pickle
 
 # Función number_formater
 
@@ -215,3 +216,31 @@ def get_repeated_values(df_pkl, col, top):
         return indexes_top_5[2]
     else: 
         return 'undefined'
+
+
+def load_df(path):
+    """
+    Carga datos dado una ruta
+    :param: path
+    :return: dataframe
+    """
+    # print("load")
+    # print(path)
+    # df_pkl = pickle.load(open(path, "rb"))
+    file_p = open(path, 'rb')
+    df_pkl = pickle.load(file_p)
+    file_p.close()
+    
+    return df_pkl
+
+def save_df(df, path):
+    """
+    Gurada un dataframe en una ruta
+    :param: dateframe, path
+    :return: file save
+    """
+    #print(path)
+    #pickle.dump(df, open(path, "wb"))
+    file_p = open(path, 'wb')
+    pickle.dump(df, file_p)
+    file_p.close()
