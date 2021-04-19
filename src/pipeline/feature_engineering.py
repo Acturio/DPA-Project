@@ -1,5 +1,6 @@
-from src.utils.utils import load_df, save_df
-from src.pipeline.transformation import int_transformation
+from siuba import *
+from src.utils import utils as u 
+from  src.pipeline import transformation as t
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -12,37 +13,30 @@ import numpy as np
 import datetime
 import time
 import warnings
-from siuba import *
 
 warnings.filterwarnings('ignore')
 
 
-class NoTransformer(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-    def transform(self, X):
-        assert isinstance(X, pd.DataFrame)
-        return X
-
-# --------------------- Funciones Auxiliares ---------------------------
-
 def split_fecha(col, df):
     """
-    Recibe la columna fecha que hay que transformar en 3 columnas: año, mes, dia y
+    Recibe la columna fecha que hay que transformar en 3 columnas: año, mes, dia y 
     el data frame al que pertenece.
     :param: column, dataframe
     :return: dataframe con 2 columnas mas (mes, día) y semanas
     """
-    df[col + '_anio'] = df[col].dt.year.astype(str)
-    df[col + '_mes'] = df[col].dt.month.astype(str)
-    df[col + '_dia'] = df[col].dt.day.astype(str)
+    df[col + '_anio'] = df[col].dt.year.astype(str) 
+    df[col + '_mes'] = df[col].dt.month.astype(str) 
+    df[col + '_dia'] = df[col].dt.day.astype(str)     
+    
     # Cambio a enteros
-    df[col + '_anio'] = int_transformation(col + '_anio', df)
-    df[col + '_mes'] = int_transformation(col + '_mes', df)
-    df[col + '_dia'] = int_transformation(col + '_dia', df)
+    df[col + '_anio'] = t.int_transformation(col + '_anio', df)
+    df[col + '_mes'] = t.int_transformation(col + '_mes', df)
+    df[col + '_dia'] = t.int_transformation(col + '_dia', df)
+    
     df['week'] = df[col].dt.week
     df['day_of_week'] = df[col].dt.day_name()
-    # Fines de semana
+    
+    # Fines de semana 
     df['weekday']=df[col].map(lambda x: 'Y' if x.weekday()<5 else 'N')
     
     return df
@@ -54,33 +48,35 @@ def ciclic_variables(col, df):
     :param: column, dataframe
     :return: dataframe con variable cíclica creada corresondientemente
     """
+    
     if (col == 'day_of_week'):
-        no_dia_semana = {'Sunday': 1, 'Monday': 2, 'Tuesday': 3, 'Wednesday': 4,
-                         'Thursday': 5, 'Friday': 6, 'Saturday': 7}
+        no_dia_semana = {'Sunday':1, 'Monday':2, 'Tuesday':3, 'Wednesday':4, 
+                         'Thursday':5, 'Friday':6, 'Saturday':7}
         df['day_no'] = df[col].apply(lambda x: no_dia_semana[x])
-        # max_day_no = np.max(df['day_no'])
+        #max_day_no = np.max(df['day_no'])
         max_day_no = 7
-        df['sin_day_no'] = np.sin(2 * np.pi * df['day_no'] / max_day_no)
-        df['cos_day_no'] = np.cos(2 * np.pi * df['day_no'] / max_day_no)
-
-    if (col == 'week'):
+        df['sin_day_no'] = np.sin(2*np.pi*df['day_no']/max_day_no)
+        df['cos_day_no'] = np.cos(2*np.pi*df['day_no']/max_day_no)
+        
+    if(col == 'week'):
         # converting the hour into a sin, cos coordinate
         WEEKS = 53
-        df['sin_week'] = np.sin(2 * np.pi * df[col] / WEEKS)
-        df['cos_week'] = np.cos(2 * np.pi * df[col] / WEEKS)
-
-    if (col == 'inspection_date_mes'):
+        df['sin_week'] = np.sin(2*np.pi*df[col]/WEEKS)
+        df['cos_week'] = np.cos(2*np.pi*df[col]/WEEKS) 
+        
+    if(col == 'inspection_date_mes'):
         MONTH = 12
-        df['sin_month'] = np.sin(2 * np.pi * df[col] / MONTH)
-        df['cos_month'] = np.cos(2 * np.pi * df[col] / MONTH)
-
-    if (col == 'inspection_date_dia'):
+        df['sin_month'] = np.sin(2*np.pi*df[col]/MONTH)
+        df['cos_month'] = np.cos(2*np.pi*df[col]/MONTH) 
+        
+    if(col == 'inspection_date_dia'):
         # converting the hour into a sin, cos coordinate
         DAYS = 31
-        df['sin_days'] = np.sin(2 * np.pi * df[col] / DAYS)
-        df['cos_days'] = np.cos(2 * np.pi * df[col] / DAYS)
-
+        df['sin_days'] = np.sin(2*np.pi*df[col]/DAYS)
+        df['cos_days'] = np.cos(2*np.pi*df[col]/DAYS)    
+            
     return df
+
 
 def get_distance(df):
     """
@@ -90,194 +86,218 @@ def get_distance(df):
     """
     lat_c = df['latitude'].median()
     lon_c = df['longitude'].median()
-    df['lat'] = lat_c- df['latitude'].astype(float)
-    df['lon'] = lon_c - df['longitude'].astype(float)
-#     df['lat'] = lat_c.astype(float) - df['latitude'].astype(float)
-#     df['lon'] = lon_c.astype(float) - df['longitude'].astype(float)
+    
+    df['lat'] = lat_c- df['latitude'].astype(float) 
+    df['lon'] = lon_c - df['longitude'].astype(float) 
+    
     df['distance'] = np.sqrt(df['lat']**2+df['lon']**2)
+    
     df = (df
-        >> group_by (_.inspection_date_anio, _.inspection_date_mes)
+        >> group_by (_.inspection_date_anio, _.inspection_date_mes) 
         >> mutate(mediana_ym_lat = _.latitude.median(), mediana_ym_lon = _.longitude.median())
         >> ungroup()
         >> mutate(distancia_ym = ( (_.mediana_ym_lat - _.latitude)**2 +  (_.mediana_ym_lon - _.longitude)**2 ) **(1/2) )
         >> mutate(distancia_ym_mht = abs (_.mediana_ym_lat - _.latitude) +  abs(_.mediana_ym_lon - _.longitude) ) )
+
     df = pd.DataFrame(df.drop(['lat','lon','mediana_ym_lat', 'mediana_ym_lon'], axis=1))
+    
     return df
 
-def feature_generation(data, save_path):
+def limpieza_dic(palabra, lista_diccionario):
+    
+    laSuma=0
+    for i in lista_diccionario: 
+        laSuma = laSuma + (i in palabra)
+    return laSuma
+
+
+def clean_dummy(df):
+    
+    ############# DUMMY TYPE ##################
+    dic_cafe = ['coffe', 'cafe', 'tea']
+    dic_restaurante = ['restaurant', 'taqueria','kitchen', 'dining','diner', 'roof', 'grill','sushi','feeding','soup']
+    dic_bar = ['bar', 'taverna', 'pub','tavern', 'liquor', 'brewery']
+    dic_school = [ 'school', 'training program', 'charter school','college' ]
+    dic_assistence = ['hospital', "children's services", 'nursing', 'years old', 'day care', 'daycare' ,'care center', 'assissted living', 
+                                  'term care', 'rehab','supportive living facility', 'non -profit', 'shelter', ' living', ' facility' ]
+    dic_banquet = ['banquet','event', 'catering', 'church','lounge', 'religious' ]
+    dic_drug = ['drug, pharmacy']
+    dic_gas = ['gas station']
+    dic_entertaiment= ['art center', 'gallery', 'movie', 'museum', 'night club', 'pool', 'stadium', 'theater', 'video', ' spa', 'spa ', 'music', 'club0', 'fitness center' ]
+    dic_kiosko = ['kiosk', 'mobile']
+    dic_grocery = ['bakery', 'grocery', 'foods', 'snack', 'store', 'ice cream', 'candy store', 'liquor store','popcorn', 'shop', 'retail','wholesale', 'market', 'paleteria', 'food', 
+                           'packag', 'distribut', 'gelato', 'convenience', 'pantry']
+    dic_health = ['nutrition', 'herbal',  'health', 'weight loss' ]
+    dic_commisary = ['commissary', 'commiasary']
+       
+    
+    df['tf_cafe_serv']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_cafe) >0  else 0)
+    df['tf_restaurant_serv']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_restaurante) >0  else 0)
+    df['tf_bar_serv']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_bar) >0  else 0)
+    df['tf_school_serv']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_school) >0  else 0)
+    df['tf_assistence_serv']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_assistence) >0  else 0)
+    df['tf_banquet_serv']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_banquet) >0  else 0)
+    df['tf_drug_serv']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_drug) >0  else 0)
+    df['tf_gas_station_serv']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_gas) >0  else 0)
+    df['tf_entertaiment_serv']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_entertaiment) >0  else 0)
+    df['tf_kiosko_mobil_serv']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_kiosko) >0  else 0)
+    df['tf_grocery_almacen_conve_serv']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_grocery) >0  else 0)
+    df['tf_health_store']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_health) >0  else 0)    
+    df['tf_commissary_serv']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_commisary) >0  else 0)    
+    
+    
+    df['BandServ'] = df[['tf_cafe_serv',  'tf_restaurant_serv' ,  'tf_bar_serv' ,  'tf_school_serv' , 'tf_assistence_serv' , 'tf_banquet_serv', 'tf_drug_serv' , 'tf_drug_serv' , 'tf_gas_station_serv', 
+                                          'tf_entertaiment_serv' , 'tf_kiosko_mobil_serv' , 'tf_grocery_almacen_conve_serv' , 'tf_health_store', 'tf_commissary_serv' ]].sum(axis=1)
+    df['tf_others_serv'] = df['BandServ'].apply(lambda x: 1 if x <1 else 0)
+    df.drop(['BandServ'], axis = 'columns',  inplace = True)
+    
+    ############# DUMMY RIESGO ##################
+    df['risk_all'] = df['risk'].apply(lambda x: 1 if x == 'All'   else 0 )
+    df['risk_high'] = df['risk'].apply(lambda x: 1 if x =='Risk 1 (High)' else 0 )
+    df['risk_medium'] = df['risk'].apply(lambda x: 1 if x =='Risk 2 (Medium)' else 0 )
+    df['risk_low'] = df['risk'].apply(lambda x: 1 if x == 'Risk 3 (Low)' else 0 )
+    
+    df['Bandrisk'] = df[['risk_all','risk_high','risk_medium','risk_low'] ].sum(axis=1)
+    df['risk_other'] = df['Bandrisk'].apply(lambda x: 1 if x <1 else 0)
+    df.drop(['Bandrisk'], axis = 'columns',  inplace = True)
+    
+    ############# DUMMY INSPECTION TYPE ##################
+    dic_canvass = ['canvas']    
+    dic_license = ['license','tag removal','license task force / not -for-profit clu']    
+    dic_licuor = ['task 1474','liquor','task force','taskforce','tavern 1470']      
+    dic_complaint = ['complain','two people ate and got sick.']    
+    dic_reinsp  = ['re-inspection','recent inspection','reinspection','recall inspection','re inspection',
+                   'recently inspected','short form fire-complaint','changed court date','citation re-issued'] 
+    dic_illegal = ['illegal operation']           
+    dic_notready = ['not ready']        
+    dic_outofbussines = ['out of business','consultation','no entry','business not located','out ofbusiness'] 
+    dic_prelicense = ['pre-license consultation']
+           
+    df['type_canvass']=df['inspection_type'].apply(lambda x: 1 if limpieza_dic(x,dic_canvass) >0  else 0)    
+    df['type_license']=df['inspection_type'].apply(lambda x: 1 if limpieza_dic(x,dic_license) >0  else 0)    
+    df['type_licuor']=df['inspection_type'].apply(lambda x: 1 if limpieza_dic(x,dic_licuor) >0  else 0)    
+    df['type_complaint']=df['inspection_type'].apply(lambda x: 1 if limpieza_dic(x,dic_complaint) >0  else 0)    
+    df['type_reinsp']=df['inspection_type'].apply(lambda x: 1 if limpieza_dic(x,dic_reinsp) >0  else 0)  
+    df['type_illegal']=df['inspection_type'].apply(lambda x: 1 if limpieza_dic(x,dic_illegal) >0  else 0)    
+    df['type_not_ready']=df['inspection_type'].apply(lambda x: 1 if limpieza_dic(x,dic_notready) >0  else 0)    
+    df['type_out_of_buss']=df['inspection_type'].apply(lambda x: 1 if limpieza_dic(x,dic_outofbussines) >0 else 0)
+    df['type_prelicense']=df['facility_type'].apply(lambda x: 1 if limpieza_dic(x,dic_prelicense) >0  else 0)
+        
+    df['BandType'] = df[['type_canvass','type_license','type_licuor','type_complaint','type_reinsp',
+                         'type_illegal','type_not_ready','type_out_of_buss','type_prelicense']].sum(axis=1)
+    
+    df['type_others'] = df['BandType'].apply(lambda x: 1 if x <1 else 0)
+    df.drop(['BandType'], axis = 'columns',  inplace = True)
+    
+    
+    return df
+
+
+# Para conservar el mismo valor
+class NoTransformer(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        assert isinstance(X, pd.DataFrame)
+        return X
+
+
+def feature_generation(data): 
     """
-    Recibe el data frame que contiene las variables a partir de las cuales
-    crearemos nuevas variables. Estas nuevas variables se guardarán en este
+    Recibe el data frame que contiene las variables a partir de las cuales 
+    crearemos nuevas variables. Estas nuevas variables se guardarán en este 
     mismo data frame.
-    """
+    """    
     # Creación de variables
     # Dividiendo fecha en mes y día, y creando semanas
     data = split_fecha("inspection_date", data)
+    print("Variables temporales creadas satisfactoriamente")
+    
     # Para crear variables ciclícas
     data = ciclic_variables('day_of_week', data)
     data = ciclic_variables('week', data)
     data = ciclic_variables('inspection_date_mes', data)
     data = ciclic_variables('inspection_date_dia', data)
-    # Distancia al centroide
+    print("Variables ciclicas creadas satisfactoriamente")
+    
+    # Medidas de distancia generales y agrupadas 
     data = get_distance(data)
-    # Variables posibles a transformar
-    """
-    'type','risk','zip','weekday','distance',
-    'sin_day_no','cos_day_no','sin_week','cos_week',
-    'sin_month','cos_month','sin_days','cos_days'
-    """
+    print("Variables de distancia a centroides creadas satisfactoriamente")
+ 
+
+    # Se limpian y se crean variables dummy para variables particulares de la base
+    data = clean_dummy(data)
+    print("Limpieza y agrupacion de categorias creadas satisfactoriamente")
+
     # Variables a transformar
     data_input = pd.DataFrame(data,
-                              columns=['type','risk','zip','weekday',
-                                       'distance','distancia_ym_mht','distancia_ym',
-                                       'sin_day_no','cos_day_no','sin_week','cos_week',
-                                       'sin_month','cos_month','sin_days','cos_days'])
+                              columns=[ 'weekday',  'sin_day_no', 'cos_day_no', 'sin_week', 'cos_week', 'sin_month', 'cos_month', 'sin_days', 'cos_days', 
+                                               'distance','distancia_ym', 'distancia_ym_mht', 
+                                               'tf_cafe_serv', 'tf_restaurant_serv', 'tf_bar_serv', 'tf_school_serv', 'tf_assistence_serv', 'tf_banquet_serv', 'tf_drug_serv', 'tf_gas_station_serv',
+                                               'tf_entertaiment_serv',  'tf_kiosko_mobil_serv', 'tf_grocery_almacen_conve_serv', 'tf_health_store', 'tf_commissary_serv', 'tf_others_serv',
+                                               'risk_all', 'risk_high', 'risk_medium', 'risk_low', 'risk_other',
+                                               'type_canvass', 'type_license', 'type_licuor',  'type_complaint', 'type_reinsp', 'type_illegal', 'type_not_ready',
+                                               'type_out_of_buss', 'type_prelicense', 'type_others'])
+    
+
+
     # Transformaciones
-    transformers_2 = [('one_hot', OneHotEncoder(), ['type','risk','zip','weekday']),
-                      ('min_max', MinMaxScaler(), ['distance','distancia_ym_mht','distancia_ym' ]),
-                      ('r_original', NoTransformer(), ['sin_day_no','cos_day_no','sin_week','cos_week',
-                                                       'sin_month','cos_month','sin_days','cos_days'])]
+    transformers_2 = [('one_hot', OneHotEncoder(), ['weekday']),
+                      ('scale', MinMaxScaler(), ['distance','distancia_ym_mht','distancia_ym' ]),
+                      ('', NoTransformer(), ['sin_day_no','cos_day_no','sin_week','cos_week',
+                                               'sin_month','cos_month','sin_days','cos_days',
+                                               'tf_cafe_serv', 'tf_restaurant_serv', 'tf_bar_serv', 'tf_school_serv', 'tf_assistence_serv', 'tf_banquet_serv', 'tf_drug_serv', 'tf_gas_station_serv',
+                                               'tf_entertaiment_serv',  'tf_kiosko_mobil_serv', 'tf_grocery_almacen_conve_serv', 'tf_health_store', 'tf_commissary_serv', 'tf_others_serv',
+                                               'risk_all', 'risk_high', 'risk_medium', 'risk_low', 'risk_other',
+                                               'type_canvass', 'type_license', 'type_licuor',  'type_complaint', 'type_reinsp', 'type_illegal', 'type_not_ready',
+                                               'type_out_of_buss', 'type_prelicense', 'type_others'])]
+
+    print("Transformación OHE y escalamiento realizados satisfactoriamente")
     col_trans_2 = ColumnTransformer(transformers_2, remainder="drop", n_jobs=-1, verbose=True)
     col_trans_2.fit(data_input)
-    input_vars = col_trans_2.transform(data_input)
-    # Solo para medir metricas
-    #pickle.dump(input_vars, open("output/feature_selection_input_vars_DPA.pkl", "wb"))
-    cols = ['AssistanceService', 'BanquetService-Church', 'Bar', 'CoffeShop',
-            'Drug-Grocery', 'EntertainmentServices', 'GasStation-Grosery',
-            'Grocery-Almacen-Convenience store', 'HealthStore', 'Kiosko', 'Others',
-            'Restaurant', 'School',
-            'Risk 1 (High)', 'Risk 2 (Medium)', 'Risk 3 (Low)',
-            '60601', '60602', '60603', '60604', '60605', '60606', '60607', '60608',
-            '60609', '60610', '60611', '60612', '60613', '60614', '60615', '60616',
-            '60617', '60618', '60619', '60620', '60621', '60622', '60623', '60624',
-            '60625', '60626', '60627', '60628', '60629', '60630', '60631', '60632',
-            '60633', '60634', '60636', '60637', '60638', '60639', '60640', '60641',
-            '60642', '60643', '60644', '60645', '60646', '60647', '60649', '60651',
-            '60652', '60653', '60654', '60655', '60656', '60657', '60659', '60660',
-            '60661', '60666', '60707', '60827',
-            #'Fail', 'Pass', 'Pass w/ Conditions',
-            #'latitude','longitude',
-            'N','Y',
+    input_vars = col_trans_2.transform(data_input) 
+
+    input_vars = col_trans_2.transform(data_input)   
+    cols = ['not_weekday', 'not_weekday',  
             'distance','distancia_ym_mht','distancia_ym',
             'sin_day_no','cos_day_no','sin_week','cos_week',
-            'sin_month','cos_month','sin_days','cos_days']
-    # Información del dataframe final
-    df_final = pd.DataFrame(input_vars.todense())
-    df_final.columns = cols
-    #df_final['inspection_date']= data['inspection_date']
-    df_final['label']= data['label']
-    save_df(df_final, save_path)
+            'sin_month','cos_month','sin_days','cos_days',
+            'tf_cafe_serv', 'tf_restaurant_serv', 'tf_bar_serv', 'tf_school_serv', 'tf_assistence_serv', 'tf_banquet_serv', 'tf_drug_serv', 'tf_gas_station_serv',
+            'tf_entertaiment_serv',  'tf_kiosko_mobil_serv', 'tf_grocery_almacen_conve_serv', 'tf_health_store', 'tf_commissary_serv', 'tf_others_serv',
+            'risk_all', 'risk_high', 'risk_medium', 'risk_low', 'risk_other',
+            'type_canvass', 'type_license', 'type_licuor',  'type_complaint', 'type_reinsp', 'type_illegal', 'type_not_ready',
+            'type_out_of_buss', 'type_prelicense', 'type_others']
 
+    print("Creaciòn de tabla y renombre de columnas realizado satisfactoriamente")        
+    
+    # Columnas del dataframe final
+    df_final = pd.DataFrame(input_vars)
+    df_final.columns = cols    
+
+    df_final['label']= data['label']
+    df_final['inspection_id']= data['inspection_id']
+    print("Features generados satisfactoriamente")
+       
     return df_final
 
 
-def feature_selection(data):
-    """
-    Recibe el data frame que contiene las variables de las cuales haremos
-    una selección.
-    """
-    X = data
-    y = data.label
-    X = pd.DataFrame(X.drop(['label'], axis=1))
-
-    np.random.seed(20201124)
-
-    ## Dividiendo datos en train y test
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, shuffle=False, random_state=None)
-
-    # ocuparemos un RF
-    classifier = RandomForestClassifier(oob_score=True, random_state=1234)
-
-    # Definicion de los hiperparametros que queremos probar
-    hyper_param_grid = {'n_estimators': [100, 300],
-                        'max_depth': [1, 10, 15],
-                        'min_samples_split': [2, 5]}
-
-    tscv = TimeSeriesSplit(n_splits=3)
-
-    # Ocupemos grid search!
-    gs = GridSearchCV(classifier,
-                      hyper_param_grid,
-                      scoring='precision',
-                      cv=tscv,
-                      n_jobs=3)
-
-    # ejecutando el RF
-    start_time = time.time()
-    gs.fit(X_train, y_train)
-    print("El proceso en segundos duro: ", time.time() - start_time)
-    print("Mejores parámetros: " + str(gs.best_params_))
-    print("Score:" + str(print(gs.best_score_)))
-    best_e = gs.best_estimator_
-    print("Mejor estimador: " + str(best_e))
-    print("Mejor estimador observado: " + str(gs.best_estimator_.oob_score_))
-
-    cols = ['Assistance_service', 'BanquetService/Church', 'Bar', 'Coffe shop',
-            'Drug/Grocery', 'Entertainment services', 'Gas station/Grosery',
-            'Grocery/Almacen/Convenience store', 'Health store', 'Kiosko', 'Others',
-            'Restaurant', 'School',
-            'Risk 1 (High)', 'Risk 2 (Medium)', 'Risk 3 (Low)',
-            '60601', '60602', '60603', '60604', '60605', '60606', '60607', '60608',
-            '60609', '60610', '60611', '60612', '60613', '60614', '60615', '60616',
-            '60617', '60618', '60619', '60620', '60621', '60622', '60623', '60624',
-            '60625', '60626', '60627', '60628', '60629', '60630', '60631', '60632',
-            '60633', '60634', '60636', '60637', '60638', '60639', '60640', '60641',
-            '60642', '60643', '60644', '60645', '60646', '60647', '60649', '60651',
-            '60652', '60653', '60654', '60655', '60656', '60657', '60659', '60660',
-            '60661', '60666', '60707', '60827',
-            #'Fail', 'Pass', 'Pass w/ Conditions',
-            #'latitude','longitude',
-            'N','Y',
-            'distance',
-            'sin_day_no','cos_day_no','sin_week','cos_week',
-            'sin_month','cos_month','sin_days','cos_days']
-
-    # Importancia de los parámetros
-    feature_importance = pd.DataFrame({'importance': best_e.feature_importances_,
-                                       'feature': list(cols)})
-    print("Importancia de los parámetros")
-    print(feature_importance.sort_values(by="importance", ascending=False))
-
-    # Salvando el mejor modelo obtenido
-    save_df(best_e, path='output/feature_selection_model_DPA.pkl')
-
-    # Regresando dataframe con los features que ocuparemos.
-    # En este caso las variables que aportan más del 7% de información son:
-    final_df = data[[
-        # Variables que aportan 7%
-        'latitude', 'longitude', 'sin_days', 'cos_days',
-        'sin_week', 'cos_week',
-        # Variables que aportan 4% y 3%
-        'sin_day_no', 'cos_day_no', 'sin_month', 'cos_month',
-        # Variables que aportan 1.5% aprox
-        'Risk 1 (High)', 'Risk 2 (Medium)', 'Risk 3 (Low)',
-        'bakery', 'catering', 'childern\'s service facility',
-        'daycare', 'golden diner', 'grocery', 'hospital',
-        'long-term care', 'otros', 'restaurant', 'school',
-        'label'
-    ]]
-
-    return final_df
-
-
-
-def feature_engineering(data):
+def feature_engineering(df_transform, path_save= '../results/pkl_fe.pkl'):
     """
     Guarda en formato pickle (ver notebook feature_engineering.ipynb) el data frame
     que ya tiene los features que ocuparemos. El pickle se debe llamar fe_df.pkl y
     se debe guardar en la carpeta output.
     """
-    print("Inicio proceso feature_engineering")
+    print("Inicio proceso: feature_engineering")
+    # Cargamos pickle de transformación
+    #df_transform= u.load_df(path)
+    
     # Realizamos el feature generation
-    fe_df = feature_generation(data)
-
-    # Corremos el modelo y nos quedamos con los mejores parametros y
-    # las variables que tienen más del 7%
-    df = feature_selection(fe_df)
-
-    # Se salva el dataframe con los features
-    save_df(df, '../output/fe_df.pkl')
-
-    print("Finalizó proceso feature_engineering")
-
-    return df
+    
+    fe_df = feature_generation(df_transform)
+   
+    u.save_df(fe_df, path_save)
+    print("Archivo 'pkl_fe.pkl' escrito correctamente")   
+    print("Finalizó proceso: Feature engineering")
+    
+    return fe_df

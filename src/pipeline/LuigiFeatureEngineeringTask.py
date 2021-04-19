@@ -77,7 +77,7 @@ class FeatureEngineeringTask(luigi.Task):
     output_path = "{}{}.pkl".format(file_type, self.date.strftime('%Y-%m-%d'))
     local_path = "results/" + output_path
 
-    feature_data = feature_generation(data, local_path)
+    feature_data = feature_engineering(data, local_path)
 
     guardar_ingesta(
       path_cred = self.path_cred, 
