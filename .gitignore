@@ -8,3 +8,4 @@ ingestion/initial/*
 processed-data/*
 sandbox/*
 */.DS_Store
+results/feature-engineering
