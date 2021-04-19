@@ -3,10 +3,12 @@ conf/local/**
 src/utils/.ipynb_checkpoints/
 notebooks/.ipynb_checkpoints/
 data/Food_Inspections.csv
-ingestion/consecutive/*
-ingestion/initial/*
-processed-data/*
+ingestion/consecutive/*.pkl
+ingestion/initial/*.pkl
 sandbox/*
-*/.DS_Store
-results/feature-engineering
+.DS_Store
 __pycache__/
+results/processed-data/*.pkl
+results/feature-engineering/*.pkl
+results/ingestion/consecutive/*.pkl
+results/ingestion/initial/*.pkl
