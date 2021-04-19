@@ -9,3 +9,4 @@ processed-data/*
 sandbox/*
 */.DS_Store
 results/feature-engineering
+__pycache__/
