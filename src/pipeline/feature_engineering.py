@@ -189,6 +189,8 @@ def clean_dummy(df):
     df['type_others'] = df['BandType'].apply(lambda x: 1 if x <1 else 0)
     df.drop(['BandType'], axis = 'columns',  inplace = True)
     
+    df['weekday']=df['weekday'].apply(lambda x: 1 if x == 'Y'  else 0)
+
     
     return df
 
@@ -243,9 +245,10 @@ def feature_generation(data):
 
 
     # Transformaciones
-    transformers_2 = [('one_hot', OneHotEncoder(), ['weekday']),
+    transformers_2 = [
+        #('one_hot', OneHotEncoder(), ['weekday']),
                       ('scale', MinMaxScaler(), ['distance','distancia_ym_mht','distancia_ym' ]),
-                      ('', NoTransformer(), ['sin_day_no','cos_day_no','sin_week','cos_week',
+                      ('', NoTransformer(), ['weekday','sin_day_no','cos_day_no','sin_week','cos_week',
                                                'sin_month','cos_month','sin_days','cos_days',
                                                'tf_cafe_serv', 'tf_restaurant_serv', 'tf_bar_serv', 'tf_school_serv', 'tf_assistence_serv', 'tf_banquet_serv', 'tf_drug_serv', 'tf_gas_station_serv',
                                                'tf_entertaiment_serv',  'tf_kiosko_mobil_serv', 'tf_grocery_almacen_conve_serv', 'tf_health_store', 'tf_commissary_serv', 'tf_others_serv',
@@ -259,8 +262,9 @@ def feature_generation(data):
     input_vars = col_trans_2.transform(data_input) 
 
     input_vars = col_trans_2.transform(data_input)   
-    cols = ['not_weekday', 'not_weekday',  
+    cols = [#'not_weekday', 'not_weekday',  
             'distance','distancia_ym_mht','distancia_ym',
+            'weekday',
             'sin_day_no','cos_day_no','sin_week','cos_week',
             'sin_month','cos_month','sin_days','cos_days',
             'tf_cafe_serv', 'tf_restaurant_serv', 'tf_bar_serv', 'tf_school_serv', 'tf_assistence_serv', 'tf_banquet_serv', 'tf_drug_serv', 'tf_gas_station_serv',
