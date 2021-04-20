@@ -17,7 +17,7 @@ class IngestionMetadata(CopyToTable):
 	date = luigi.DateParameter(default = None)
 	initial_date = luigi.DateParameter(default = None)
 	
-	with open('conf/local/credentials.yaml', 'r') as f:
+	with open(cte.CREDENTIALS, 'r') as f:
 	        config = yaml.safe_load(f)
 
 	credentials = config['db']

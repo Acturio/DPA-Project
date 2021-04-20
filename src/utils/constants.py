@@ -8,3 +8,5 @@ BUCKET = "data-product-architecture-equipo-n"
 BUCKET_PATH_HIST = "ingestion/initial/historic-inspections-"
 # Path de ingesta consecutiva
 BUCKET_PATH_CONS = "ingestion/consecutive/consecutive-inspections-"
+# Path local para las credenciales
+CREDENTIALS = 'conf/local/credentials.yaml'

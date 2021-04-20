@@ -22,7 +22,7 @@ class TransformTask(luigi.Task):
 
     # Se requiere ExportFileTask
     def requires(self):
-      return ExportFileTask(
+      return IngestionMetadata(
         self.path_cred,
         self.initial,
         self.limit,
