@@ -1,21 +1,19 @@
 -- creation of ingestion table
-DROP TABLE IF EXISTS raw.ingestion;
+DROP SCHEMA IF EXISTS metadata;
 
-CREATE TABLE raw.ingestion(
-  inspection_id varchar DEFAULT NULL,
-  dba_name varchar DEFAULT NULL,
-  aka_name varchar DEFAULT NULL,
-  license_ varchar DEFAULT NULL,
-  facility_type varchar DEFAULT NULL,
-  risk varchar DEFAULT NULL,
-  address varchar DEFAULT NULL,
-  city varchar DEFAULT NULL,
-  state varchar DEFAULT NULL,
-  inspection_date varchar DEFAULT NULL,
-  inspection_type varchar DEFAULT NULL,
-  results varchar DEFAULT NULL,
-  latitude varchar DEFAULT NULL,
-  longitude varchar DEFAULT NULL,
-  location json DEFAULT NULL,
-  violations varchar DEFAULT NULL
+CREATE SCHEMA metadata;
+
+DROP TABLE IF EXISTS metadata.ingestion;
+
+CREATE TABLE metadata.ingestion
+(
+	file_name varchar,
+	data_date date,
+	processing_date TIMESTAMPTZ,
+	nrows INTEGER,
+	ncols INTEGER,
+	extension_file varchar,
+	col_names varchar,
+	source varchar,
+	dataset varchar	
 );
