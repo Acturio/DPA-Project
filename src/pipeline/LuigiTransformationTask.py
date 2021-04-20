@@ -75,7 +75,9 @@ class TransformTask(luigi.Task):
 
       data = self.input()
       output_path = "{}{}.pkl".format(file_type, self.date.strftime('%Y-%m-%d'))
-      clean_data = transform(data, output_path)
+      local_path = "results/" + output_path
+
+      clean_data = transform(data, local_path)
 
       guardar_ingesta(
         path_cred = self.path_cred, 
@@ -89,6 +91,10 @@ class TransformTask(luigi.Task):
 
 if __name__ == '__main__':
     luigi.run()
+
+
+
+
 
 
 
