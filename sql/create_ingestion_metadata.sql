@@ -1,5 +1,5 @@
 -- creation of ingestion table
-DROP SCHEMA IF EXISTS metadata;
+DROP SCHEMA IF EXISTS metadata CASCADE;
 
 CREATE SCHEMA metadata;
 
