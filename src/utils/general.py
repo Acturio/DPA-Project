@@ -54,7 +54,7 @@ def ingestion_metadata(data, file_name, data_date):
      "processing_data" : date_time,
      "nrows" : data.shape[0],
      "ncols" : data.shape[1],
-     "extension" : file_name[-3:-1],
+     "extension" : file_name[-3:],
      "col_names" : ",".join(list(data.columns.values)),
      "source" : "data.cityofchicago.org",
      "dataset" : "4ijn-s7e5"
