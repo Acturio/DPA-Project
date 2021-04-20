@@ -16,39 +16,41 @@ class IngestionMetadata(CopyToTable):
 	limit = luigi.IntParameter(default = 300000)
 	date = luigi.DateParameter(default = None)
 	initial_date = luigi.DateParameter(default = None)
+	
+	with open('conf/local/credentials.yaml', 'r') as f:
+	        config = yaml.safe_load(f)
 
-	config = read_yaml_file(self.path_cred)
-  credentials = config['db']
+	credentials = config['db']
 
-  user = credentials['user']
-  password = credentials['pass']
-  database = credentials['database']
-  host = credentials['host']
-  port = credentials['port']
+	user = credentials['user']
+	password = credentials['pass']
+	database = credentials['database']
+	host = credentials['host']
+	port = credentials['port']
 
-  table = 'metadata.ingestion'
+	table = 'metadata.ingestion'
 
-  columns = [("file_name", "VARCHAR"),
-						 ("data_date", "DATE"),
-						 ("processing_date", "TIMESTAMPTZ"),
-						 ("nrows", "INTEGER"),
-						 ("ncols", "INTEGER"),
-						 ("extension_file","VARCHAR"),
-						 ("col_names", "VARCHAR"),
-						 ("source","VARCHAR"),
-						 ("dataset", "VARCHAR")
-						 ]
+	columns = [("file_name", "VARCHAR"),
+                                                 ("data_date", "DATE"),
+                                                 ("processing_date", "TIMESTAMPTZ"),
+                                                 ("nrows", "INTEGER"),
+                                                 ("ncols", "INTEGER"),
+                                                 ("extension_file","VARCHAR"),
+                                                 ("col_names", "VARCHAR"),
+                                                 ("source","VARCHAR"),
+                                                 ("dataset", "VARCHAR")
+                                                 ]
 
 
-	def requires():
-		return IngestionTask(
-			self.path_cred,
-			self.initial,
-      self.limit,
-      self.date,
-      self.initial_date,
-      self.bucket_path
-			)
+	def requires(self):
+                return IngestionTask(
+                        self.path_cred,
+                        self.initial,
+                        self.limit,
+                        self.date,
+                        self.initial_date
+                      )
+
 
 	def input(self):
 
@@ -66,11 +68,11 @@ class IngestionMetadata(CopyToTable):
 
 		if self.initial:
 			file_name = 'historic-inspections-{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
-    else:
+		else:
 			file_name = 'consecutive-inspections-{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
 		
 		data = ingestion_metadata(self.input(), file_name, self.date)
 		records = data.to_records(index=False)
-    r = list(records)
+		r = list(records)
 		for element in r:
 			yield element
