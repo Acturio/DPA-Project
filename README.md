@@ -58,7 +58,7 @@ Con este proyecto pensamos contestar la siguiente pregunta:
 
 El presente proyecto se elabora siguiendo una estructura en la nube, usando los servicios de AWS cuyo diagrama se muestra a continuación:
 
-![](./results/img/infrastructure.png) 
+![](./results/img/ec2_architecture.png) 
 
 
 Se accede de manera local desde una PC/Laptop, y el filtro de entrada es nuestramáquina bastion que funciona como cadenero de la infrestructura en la nube, y este por medio de SSH permite la coneción a la maquina EC2 que es la que tiene comunicación con la RDS y contiene el código del proyecto.
