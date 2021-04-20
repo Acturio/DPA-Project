@@ -89,3 +89,57 @@ def export_metadata(data, data_date, initial):
        }
 
     return pd.DataFrame(df, index=[0])
+
+
+def transform_metadata(data, data_date, initial):
+
+    if initial:
+        file_name = 'clean-historic-inspections-{}.pkl'.format(data_date.strftime('%Y-%m-%d'))
+        dataset = "clean-historic-inspections"
+    else:
+        file_name = 'clean-consecutive-inspections-{}.pkl'.format(data_date.strftime('%Y-%m-%d'))
+        dataset = "clean-consecutive-inspections"
+
+    source = "s3://data-product-architecture-equipo-n/processed-data/"
+    date_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+
+    df = {
+        "file_name": file_name,
+        "data_date": data_date,
+        "processing_data" : date_time,
+        "nrows" : data.shape[0],
+        "ncols" : data.shape[1],
+        "extension" : file_name[-3:],
+        "col_names" : ",".join(list(data.columns.values)),
+        "source" : source,
+        "dataset" : dataset
+       }
+
+    return pd.DataFrame(df, index=[0])
+
+
+def feature_metadata(data, data_date, initial):
+
+    if initial:
+        file_name = 'feature-historic-inspections-{}.pkl'.format(data_date.strftime('%Y-%m-%d'))
+        dataset = "feature-historic-inspections"
+    else:
+        file_name = 'feature-consecutive-inspections-{}.pkl'.format(data_date.strftime('%Y-%m-%d'))
+        dataset = "feature-consecutive-inspections"
+
+    source = "s3://data-product-architecture-equipo-n/feature-engineering/"
+    date_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+
+    df = {
+        "file_name": file_name,
+        "data_date": data_date,
+        "processing_data" : date_time,
+        "nrows" : data.shape[0],
+        "ncols" : data.shape[1],
+        "extension" : file_name[-3:],
+        "col_names" : ",".join(list(data.columns.values)),
+        "source" : source,
+        "dataset" : dataset
+       }
+
+    return pd.DataFrame(df, index=[0])

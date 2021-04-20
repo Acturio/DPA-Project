@@ -7,7 +7,7 @@ import src.utils.constants as cte
 
 from src.utils import general as gral
 from src.pipeline.ingesta_almacenamiento import get_s3_client, guardar_ingesta
-from src.pipeline.LuigiTransformationTask import TransformTask
+from src.pipeline.LuigiTransformationMetadataTask import TransformationMetadataTask
 from src.pipeline.feature_engineering import *
 
 class FeatureEngineeringTask(luigi.Task):
@@ -19,9 +19,9 @@ class FeatureEngineeringTask(luigi.Task):
   initial_date = luigi.DateParameter(default = None)
   bucket_path = luigi.Parameter(default = cte.BUCKET)
 
-  # Se requiere TransformTask
+  # Se requiere TransformationMetadataTask
   def requires(self):
-    return TransformTask(
+    return TransformationMetadataTask(
       self.path_cred,
       self.initial,
       self.limit,
