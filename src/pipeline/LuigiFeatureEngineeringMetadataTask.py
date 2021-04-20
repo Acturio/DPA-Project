@@ -11,7 +11,7 @@ import yaml
 import pickle
 
 
-class TransformationMetadataTask(CopyToTable):
+class FeatureMetadataTask(CopyToTable):
 
 	path_cred = luigi.Parameter(default = 'credentials.yaml')
 	initial = luigi.BoolParameter(default=True, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
