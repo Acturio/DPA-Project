@@ -3,7 +3,7 @@ import luigi
 import luigi.contrib.s3
 from src.utils import general as gral
 from src.pipeline import ingesta_almacenamiento as ing
-from src.pipeline.LuigiIngestionTasks import IngestionTask
+from src.pipeline.LuigiIngestionMetadataTask import IngestionMetadata
 import src.utils.constants as cte
 from datetime import date, timedelta, datetime
 import pickle

@@ -1,6 +1,7 @@
 from luigi.contrib.postgres import CopyToTable
 from src.utils.general import ingestion_metadata, read_yaml_file
 from src.utils.utils import load_df
+from src.pipeline.LuigiIngestionTasks import IngestionTask
 import src.utils.constants as cte
 import pandas as pd
 import luigi
