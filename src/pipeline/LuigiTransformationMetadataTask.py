@@ -60,7 +60,7 @@ class TransformationMetadataTask(CopyToTable):
 		if self.initial:
 			file_name = "processed-data/clean-historic-inspections-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
 		else:
-			file_name = "processed-data/clean-consecutive-inspections-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d')
+			file_name = "processed-data/clean-consecutive-inspections-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
 
 		s3 = get_s3_client(self.path_cred)
 		s3_object = s3.get_object(Bucket = self.bucket_path, Key = file_name)
