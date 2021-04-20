@@ -25,8 +25,10 @@ class IngestionTask(luigi.Task):
         else:
             # 'consecutive'
             file_name = cte.BUCKET_PATH_CONS + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
-                
-        return luigi.local_target.LocalTarget(file_name, format = luigi.format.Nop)
+
+        local_path = "results/" + file_name
+               
+        return luigi.local_target.LocalTarget(local_path, format = luigi.format.Nop)
         
     def run(self):
         
