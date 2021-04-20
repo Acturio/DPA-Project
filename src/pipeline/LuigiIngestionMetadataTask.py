@@ -1,7 +1,7 @@
 from luigi.contrib.postgres import CopyToTable
 from src.utils.general import ingestion_metadata, read_yaml_file
 from src.utils.utils import load_df
-from src.pipeline.LuigiIngestionTasks import IngestionTask
+from src.pipeline.LuigiIngestionTask import IngestionTask
 import src.utils.constants as cte
 import pandas as pd
 import luigi
@@ -16,7 +16,7 @@ class IngestionMetadata(CopyToTable):
 	limit = luigi.IntParameter(default = 300000)
 	date = luigi.DateParameter(default = None)
 	initial_date = luigi.DateParameter(default = None)
-	
+
 	with open(cte.CREDENTIALS, 'r') as f:
 	        config = yaml.safe_load(f)
 

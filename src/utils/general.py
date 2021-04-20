@@ -62,7 +62,7 @@ def ingestion_metadata(data, file_name, data_date):
     return pd.DataFrame(df, index=[0])
 
 
-def export_metadata(data, file_name, data_date, initial):
+def export_metadata(data, data_date, initial):
 
     if initial:
         file_name = 'historic-inspections-{}.pkl'.format(data_date.strftime('%Y-%m-%d'))
@@ -70,7 +70,7 @@ def export_metadata(data, file_name, data_date, initial):
         dataset = "historic-inspections"
     else:
         file_name = 'consecutive-inspections-{}.pkl'.format(data_date.strftime('%Y-%m-%d'))
-        subfloder = "consecutive"
+        subfolder = "consecutive"
         dataset = "consecutive-inspections"
 
     source = "s3://data-product-architecture-equipo-n/ingestion/" + subfolder

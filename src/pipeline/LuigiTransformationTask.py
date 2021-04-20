@@ -7,7 +7,7 @@ import src.utils.constants as cte
 
 from src.utils import general as gral
 from src.pipeline.ingesta_almacenamiento import get_s3_client, guardar_ingesta
-from src.pipeline.LuigiExportTasks import ExportFileTask
+from src.pipeline.LuigiExportMetadataTask import ExportMetadataTask
 from src.pipeline.transformation import *
 
 
@@ -22,7 +22,7 @@ class TransformTask(luigi.Task):
 
     # Se requiere ExportFileTask
     def requires(self):
-      return IngestionMetadata(
+      return ExportMetadataTask(
         self.path_cred,
         self.initial,
         self.limit,

@@ -28,9 +28,9 @@ class ExportFileTask(luigi.Task):
     def input(self):
         
         if self.initial:
-            file_name = cte.BUCKET_PATH_HIST + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
+            file_name = "results/" + cte.BUCKET_PATH_HIST + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
         else:
-            file_name = cte.BUCKET_PATH_CONS + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
+            file_name = "results/" + cte.BUCKET_PATH_CONS + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
         
         with open(file_name, 'rb') as f:
             data = pickle.load(f)
