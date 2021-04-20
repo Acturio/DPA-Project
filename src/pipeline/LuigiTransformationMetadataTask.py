@@ -67,7 +67,7 @@ class TransformationMetadataTask(CopyToTable):
 		body = s3_object['Body']
 		my_pickle = pickle.loads(body.read())
 		
-    data = pd.DataFrame(my_pickle)
+		data = pd.DataFrame(my_pickle)
 		return data
 
 	def rows(self):

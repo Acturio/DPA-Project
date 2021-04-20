@@ -1,5 +1,5 @@
 from luigi.contrib.postgres import CopyToTable
-from src.utils.general import transform_metadata, read_yaml_file
+from src.utils.general import feature_metadata, read_yaml_file
 from src.utils.utils import load_df
 from src.pipeline.LuigiFeatureEngineeringTask import FeatureEngineeringTask
 from src.pipeline.ingesta_almacenamiento import get_s3_client
@@ -67,7 +67,7 @@ class FeatureMetadataTask(CopyToTable):
 		body = s3_object['Body']
 		my_pickle = pickle.loads(body.read())
 		
-    data = pd.DataFrame(my_pickle)
+		data = pd.DataFrame(my_pickle)
 		return data
 
 	def rows(self):
