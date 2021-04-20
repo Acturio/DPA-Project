@@ -1,20 +1,28 @@
-# DPA-Project
-Proyecto enfocado al desarrollo de un producto de datos para predecir la acreditación de inspecciones de restaurantes en Chicago
+# DPA-Project: Food Inspections
 
-### Integrantes del equipo
+Este proyecto esta enfocado para realizar una predicción de los establecimientos de comida en la Ciudad de Chicago a los que se les hará una inspección, y por tanto priorizar las visitas a aquellos que tengan más probabilidad de cometer una violación.
 
-| Nombre |
-| :------- |
-| Karina Lizette Gamboa Puente|
-| Miguel López Cruz|
-| Oscar Arturo Bringas López|
-| Aide Jazmín González Cruz|
+## Tabla de contenido
 
-### Resumen de  datos con los que se trabajaran
+1. Introducción
+2. Información general
+3. Requerimientos de infraestructura
+4. Instalación
+5. Organización del código
+6. Correr el Pipeline
+7. Colaboradores
+
+## Introducción
+
+Este proyecto esta enfocado a la construcción de una arquitectura de proyecto de datos, para ello se trabajarán con los datos de Food Inspection de la Ciudad de Chicago.
+
+## Información general
+
+A continuación se presenta un resúmen de los datos con los cuales se trabajará:
 
 - Número de registros: **215K**
 - Número de columnas: **17**
-- ¿Qué variables son y qué información tiene?
+- Diccionario de datos:
 
 | Variable | Tipo  | Descripción |
 | :------- | :----:| :---------: |
@@ -38,21 +46,58 @@ Proyecto enfocado al desarrollo de un producto de datos para predecir la acredit
     
 #### Pregunta analítica a contestar con el modelo predictivo
 
+Con este proyecto pensamos contestar la siguiente pregunta:
+
 - ¿El establecimiento pasará o no la inspección?
 
 #### Frecuencia de actualización de los datos
 
-- La frecuencia de datos fuente es diaria, pero en este proyecto se realizará semanalmente de acuerdo a los requerimientos establecidos.
+- La frecuencia de datos fuente es diaria, sin embargo en en este proyecto se realizará semanalmente.
+
+## Requerimientos de infraestructura.
+
+El presente proyecto se elabora siguiendo una estructura en la nube, usando los servicios de AWS cuyo diagrama se muestra a continuación:
+
+![](./results/img/infrastructure.png) 
 
 
-### Requerimientos: 
-- Actualizar el repositorio (si ya se tiene) `git pull origin main` o clonarlo en caso de que no.
+Se accede de manera local desde una PC/Laptop, y el filtro de entrada es nuestramáquina bastion que funciona como cadenero de la infrestructura en la nube, y este por medio de SSH permite la coneción a la maquina EC2 que es la que tiene comunicación con la RDS y contiene el código del proyecto.
 
-- Contar con un ambiente virtual con python superior o igual a 3.7.4.(sugerido)
 
-- Instalar los paquetes descritos en el archivo requirements.txt `pip install -r requirements.txt`
+## Instalación
 
-- Obtener token de la API de Food inspections. Se puede obtener un token [aquí](https://data.cityofchicago.org/profile/edit/developer_settings)
+### Requerimientos
+
+1. **Clonar el repositorio**
+
+- Para comenzar deberá instalar la librería de git para luego clonar el repositorio en la máquina EC2.
+
+```
+git clone https://github.com/Acturio/DPA-Project
+```
+
+2. **Ambiente virtual**
+
+- Deberá instalar un ambiente virtual con python superior o igual a 3.7.4., al cual podra acceder con el siguiente comando como ejemplo: 
+
+```
+pyenv activate nombre_de_tu_ambiente
+```
+
+3. **Librerías**
+
+- Una vez dentro del abiente instalar los paquetes descritos en el archivo requirements.txt 
+
+```
+pip install -r requirements.txt
+```
+
+4. **Credenciales**
+
+
+Se necesitan obtener los siguientes recursos de conexión:
+
+- Obtener token de la `API de Food inspections`. Se puede obtener un token [aquí](https://data.cityofchicago.org/profile/edit/developer_settings)
 
 - Se debe contar con credenciales de AWS (Access key ID y Secret access key) dados por el administrador de la infraestructura en AWS, y guardarlos en un archivo `credentials.yml`. El archivo con las credenciales debe estar en la carpeta `conf/local/credentials.yml`. La estructura del archivo `credentials.yml` debe tener una estructura como la que se presenta a continuación:
 
@@ -65,151 +110,136 @@ s3:
    
 food_inspections: 
    api_token: "TU_TOKEN" 
-```
-
-### Descripción de librerias iniciales
-
-Las librerías que se descrinen a continuación son de uso general del pipeline y se ecnuentran en la carpeta `src`. Para ejecutar las funciones del estás librerías, es importante ubicarse en la raíz del proyecto y seguir las siguientes instrucciones en la línea de comandos:
-
-- Ejecutar `export PYTHONPATH=$PWD`
-
-- Utilizar un ambiente virtual con python superior o igual a 3.7.4., ejemplo: `pyenv activate nombre_de_tu_ambiente`
-
-- Ejecutar: `python`
-
-#### general.py
-
-- La importación de las funciones del módulo `src/utils/general.py` se hace a través del siguiente comando: 
-
-  `from src.utils.general import read_yaml_file, get_s3_credentials, get_api_token`
-    
-- Una vez cargado el módulo, se lee un archivo `.yml`, en el cual encuentra las credenciales introducidas en el archivo `yaml`.
+   
+db:
+  user: "usuario_db"
+  pass: "password_db"
+  host: "host_rds"
+  port: "puerto"
+  database: "nombre_db"
 
 ```
-ry = read_yaml_file("conf/local/credentials.yaml")
-```
-  
-- Con el siguiente comando se obtienen las credenciales S3, las cuales se obtienen también a través del archivo `yaml` creado anteriormente.
+
+- Para la conexión a la base de datos como servicio se necesita un archivo `.pg_service.conf` alojado en la máquina EC2 con la siguiente estructura
 
 ```
-s3_c = get_s3_credentials("conf/local/credentials.yaml")
-```
-  
-- A continuación, se obtiene el token de acceso a la API, mismo que servirá para poder descargar los datos.
-
-```
-token = get_api_token("conf/local/credentials.yaml")
-```
-#### constants.py 
-
-Este archivo contiene algunas constantes que se usarán en el proyecto, su estructura se muestra a continuación:
-  
-```
-# The Host Name for the API endpoint (the https:// part will be added automatically)
-DATA_URL = 'data.cityofchicago.org'
-# The data set at the API endpoint
-DATA_SET = '4ijn-s7e5'
-# Nombre del bucket
-BUCKET = "data-product-architecture-equipo-n"
-# Path de ingesta histrórica
-BUCKET_PATH_HIST = "ingestion/initial/historic-inspections-"
-# Path de ingesta consecutiva
-BUCKET_PATH_CONS = "ingestion/consecutive/consecutive-inspections-"
+# Conexión RDS
+[db_service]
+host=host_rds
+port=puerto
+user=usuario_db
+dbname=nombre_db
+password=password_db 
 ```
 
-estos valores se pueden sustiruir pos los propios (nombre de bucket y paths) para probar la ingestión de datos.
 
-
-#### ingesta_almacenamiento.py
-
-Esta librería permite realizar la extracción de datos y almacenamiento.
-
-- Para cargar las librerías se ejecutan los siguientes comandos: 
-
-  `from src.pipeline.ingesta_almacenamiento import get_client, ingesta_inicial, get_s3_resource, guardar_ingesta, ingesta_consecutiva`
-  
-  `import src.utils.constants as cte`
-  
-esta libería usa internamente un archivo de constantes, el cual esta en la ruta `src/utils/constants.py`, que ya se describio anteriormente.
-
-  
-- Para obtener el cliente se usa la función `get_client`, agregando el token que anteriormente fue generado y la url de los datos. La implementación se muestra a continuación:
+Y se deberá ejecutar lo siguiente para guadarlo en las variables globales (en este ejemplo guardamos el archivo `.pg_service.conf` en `home`)
 
 ```
-cliente = get_client(token, cte.DATA_URL)
+export PGSERVICEFILE=${HOME}/.pg_service.conf   
+export PGSERVICE=db_service
 ```
 
-- Para realizar la obtención de datos de la ingesta inicial, se implementa la función `ingesta_inicial` que recibe como parámetros un cliente, el `dataset`, fecha de inicio de datos (por default '2010-01-01' si se especifica `None`), fecha de corte de datos y el límite de datos, como se indica a continuación:
+De esta manera se puede conectar a la base de postgresql corriendo el siguiente comando:
 
 ```
-datos_his = ingesta_inicial(cliente, cte.DATA_SET, None, '2021-02-21', 300000)
+psql service=db_service
 ```
 
-- Para obtener el recurso de S3, se usa la función `get_s3_resource`, que recibe el `path` del archivo de credenciales y se implementa como sigue:
+Para crear el squema de metadata se corre el siguiente query 
 
 ```
-s3_resource = get_s3_resource('conf/local/credentials.yaml')
+psql service=db_service -f ruta_repositoro/sql/create_metadata.sql
 ```
 
-- Se declaran las siguientes variables, con el nombre del `bucket` y los paths donde se guardará la ingesta inicial y consecutiva.
+## Organización del código
+
+El repositorio se encuentra organizado de la siguiente manera:
 
 ```
-bucket = cte.BUCKET
-bucket_path_hist = cte.BUCKET_PATH_HIST
-bucket_path_cons = cte.BUCKET_PATH_CONS
+├── README.md          <- The top-level README for developers using this project.
+├── conf
+│   ├── base           <- Space for shared configurations like parameters
+│   └── local          <- Space for local configurations, usually credentials
+│
+├── docs               <- Space for Sphinx documentation
+│
+├── notebooks          <- Jupyter notebooks.
+│
+├── references         <- Data dictionaries, manuals, and all other explanatory materials.
+│
+├── results            <- Intermediate analysis as HTML, PDF, LaTeX, etc.
+│
+├── requirements.txt   <- The requirements file
+│
+├── .gitignore         <- Avoids uploading data, credentials, outputs, system files etc
+│
+├── infrastructure
+├── sql
+├── setup.py
+└── src                <- Source code for use in this project.
+    ├── __init__.py    <- Makes src a Python module
+    │
+    ├── utils      <- Functions used across the project
+    │
+    │
+    ├── etl       <- Scripts to transform data from raw to intermediate
+    │
+    │
+    ├── pipeline
+
 ```
 
-- Para guardar la ingesta se usa la función `guardar_ingesta`, que recibe como parámetros el `path` del archivo de credenciales, nombre del bucket, el path del bucket, los datos y la fecha de los datos, se implementa como sigue:
+
+## Correr el Pipeline
+
+
+- Desde la EC2 podrá ejecutar el siguiente pipele, es importante ubicarse en la raíz del proyecto
+
+
+- Deberá ingresar a la máquina de bastion desde su máquina en el comando.
 
 ```
-guardar_ingesta('conf/local/credentials.yaml', bucket, bucket_path_hist, datos_his, '2021-02-21')
+ssh -i llave_publica_aws usuario@host_bastion
 ```
 
-- Para obtener los datos consecutivos se usa la función `ingesta_consecutiva`, que recibe como parámetros el cliente, el `dataset`, una fecha a partir de donde se extraerán los datos y el límite de los mismos, se podrá llamar de la siguiente manera:
+- Una vez en bastion deberá conectarse a la EC2
 
 ```
-datos_cons = ingesta_consecutiva(cliente, cte.DATA_SET, '2021-02-21',  2000)
+ssh -i llave_publica_aws usuario@host_ec2
 ```
 
-Si se le pasa `None` al segundo parámetro (fecha), restará al día actual 7 días para obtener los datos de una semana atrás.
+Como sugerencia le recomendmos abrir 3 terminales con los 2 procedimientos decritos previamente.
 
-- Finalmente se puede usar nuevamente la función `guardar_ingesta` para cargar en el bucket los datos consecutivos.
+- En la primera ventana ejecutamos `luigid` dentro de nuestro ambiente vitural.
 
-```
-guardar_ingesta(bucket, bucket_path_cons, datos_cons)
-```
+- La segunda ventana nos servirá para ejecutar el pipeline, el cuál debe correr con la siguiente estructura:
 
-Una vez que este comando ha finalizado, puede dirigirse al bucket S3 de AWS en donde se realizó la ingesta de los datos para verificar que efectivamente han sido almacenados satisfactoriamente.
-
-### Primeros pasos con Luigi: 
-
-En esta parte se muestra como correr una ingesta histórica y consecutiva de datos usando el orquestador `luigi`. Para ello requiere seguir los siguientes pasos. 
-
-- Actualizar el repositorio (si ya se tiene) `git pull origin main` o clonarlo en caso de que no.
-
-- Inicie su ambiente virtual `pyenv activate nombre_de_tu_ambiente`
-
-- Instalar los paquetes descritos en el archivo requirements.txt `pip install -r requirements.txt` o en caso de que ya tenga la parte anterior ejecutar sólo `pip install luigi`
-
-- Para activar el `Central Scheduler` de `luigi` abra una terminal e ingrese `luigid`
-
-#### Ingesta
-
-- Para correr una **ingesta inicial** (histórica) se usa la tarea `IngestionTask` que se encuentra en la librería `LuigiIngestionTasks.py` en la ruta `src.pipeline`, abra otra ventana dentro de su mismo ambiente, y coloquese en la raíz del proyecto e ingrese las siguientes líneas de código:
+*Histórico*
 
 ```
 PYTHONPATH='.' luigi \
---module src.pipeline.LuigiIngestionTasks IngestionTask \
---local-scheduler \
+--module src.pipeline.LuigiFeatureEngineeringMetadataTask FeatureMetadataTask \
 --path-cred ./conf/local/credentials.yaml \
---initial true \
+--initial initial \
 --limit 300000 \
 --date '2021-02-21'
 ```
 
+*Consecutivo*
+
+```
+PYTHONPATH='.' luigi \
+--module src.pipeline.LuigiFeatureEngineeringMetadataTask FeatureMetadataTask \
+--path-cred ./conf/local/credentials.yaml \
+--initial false \
+--limit 2000 \
+--date '2021-03-01'
+```
+
 Descripción:
 
-***-- module*** se especifica el modulo a cargar, en este caso se llama a `src.pipeline.LuigiIngestionTasks` seguido del nombre de la tarea `IngestionTask` encargada de hacer la ingestión de datos, extrae a travéz de la API de Food inspections los datos que serán guardados en un `pickle`.
+***-- module*** se especifica el modulo a cargar, seguido del nombre de la tarea.
 
 ***--local-scheduler*** con esta opción no se muestra el resultado en el `Central Scheduler`, para reflejar el resultado en el este se debe omitir esta opción.
 
@@ -223,45 +253,19 @@ Descripción:
 
 - Para una **ingesta consecutiva** se corre la siguiente secuencia de comandos, de acuerdo a las opciones descritas anteriormente.
 
-```
-PYTHONPATH='.' luigi \
---module src.pipeline.LuigiIngestionTasks IngestionTask \
---local-scheduler \
---path-cred ./conf/local/credentials.yaml \
---initial false \
---limit 2000 \
---date '2021-03-01'
-```
 
-- Estas ingestas generaran un archivo tipo `pickle`, por lo que se creara una carpeta llamada `ingestion` en la raíz del proyecto, la cuál contendra 2 carpetas: `initial` y `consecutive`, y dentro de ellas encontrará el archivo histórico (historic-inspections-2021-01-01.pkl para el ejemplo mostrado) y la ingesta consecutiva (consecutive-inspections-2021-03-15.pkl para el ejemplo mostrado) respectivamente.
-
-#### Almacenamiento
-
-Para guardar estos archivos en S3 se usa la tarea `ExportFileTask` que se encuentra en la librería `LuigiExportTasks.py` en la ruta `src.pipeline`, siguiendo las siguientes líneas de código.
-
-- Para guardar en S3 la **ingesta inicial** (histórica) se tiene:
+- Finalmente la tercera ventana nos servirá para mantener la conexión a la base de datos para supervisar la carga de datos. Para ello usaremos la línea de comando descrita en la parte de conexiones.
 
 ```
-PYTHONPATH='.' luigi \
---module src.pipeline.LuigiExportTasks ExportFileTask \
---path-cred ./conf/local/credentials.yaml \
---initial true \
---limit 300000 \
---date '2021-02-21'
+psql service=db_service
 ```
-
-Donde adicionalmente puede ingresar el nombre del bucket en S3, con la bandera `--bucket-path` seguido del nombre de su `bucket` (ejemplo `--bucket-path 'data-product-architecture-equipo-n`), el cuál por default toma el valor de la constante `BUCKET`. En este caso se carga la ingesta inicial dado por `--initial true` y las opciones `--limit`, `--date`, `path-cred` serán pasadas a la tarea 1 (`IngestionTask`) en caso de que no se haya ejecutado. 
-
-
-- Para guardar en S3 una **ingesta consecutiva** es similar, sólo pasando en la opción `--initial` el valor de `false`:
-
+ y se podrán ejecutar los `selects` a las tablas de metadata para observar los datos insertados
+ 
 ```
-PYTHONPATH='.' luigi \
---module src.pipeline.LuigiExportTasks ExportFileTask \
---path-cred ./conf/local/credentials.yaml \
---initial false \
---limit 2000 \
---date '2021-03-01'
+SELECT * FROM metadata.ingestion;
+SELECT * FROM metadata.almacenamiento;
+SELECT * FROM metadata.cleaning;
+SELECT * FROM metadata.feature;
 ```
 
 - Una vez ejecutados correctamente las tareas, podrá verificar que sus archivos se encuentran en `AWS` en el bucket especificado y en la ruta `ingestion/initial/` para cargas iniciales y en la ruta `ingestion/consecutive/` para cargas consecutivas.
@@ -270,10 +274,20 @@ PYTHONPATH='.' luigi \
 
 - Si todo fue correcto, observará la siguiente salida:
 
-![](./results/img/checkpoint3.png) 
+![](./results/img/checkpoint4.png) 
 
 
 
+![](./results/img/checkpoint4_2.png) 
+
+### Colaboradores
+
+| Nombre |
+| :------- |
+| Karina Lizette Gamboa Puente|
+| Oscar Arturo Bringas López|
+| Aide Jazmín González Cruz|
+| Miguel López Cruz|
 
 
 
