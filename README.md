@@ -99,7 +99,7 @@ Se necesitan obtener los siguientes recursos de conexión:
 
 - Obtener token de la `API de Food inspections`. Se puede obtener un token [aquí](https://data.cityofchicago.org/profile/edit/developer_settings)
 
-- Se debe contar con credenciales de AWS (Access key ID y Secret access key) dados por el administrador de la infraestructura en AWS, y guardarlos en un archivo `credentials.yml`. El archivo con las credenciales debe estar en la carpeta `conf/local/credentials.yml`. La estructura del archivo `credentials.yml` debe tener una estructura como la que se presenta a continuación:
+- Se debe contar con credenciales de AWS (Access key ID y Secret access key) dados por el administrador de la infraestructura en AWS, y guardarlos en un archivo `credentials.yaml`. El archivo con las credenciales debe estar en la carpeta `conf/local/credentials.yaml`. La estructura del archivo `credentials.yaml` debe tener una estructura como la que se presenta a continuación:
 
 
 ```
@@ -243,7 +243,7 @@ Descripción:
 
 ***--local-scheduler*** con esta opción no se muestra el resultado en el `Central Scheduler`, para reflejar el resultado en el este se debe omitir esta opción.
 
-***--path-cred*** se indica la ruta del archivo que contiene las credenciales, en este caso se encuentra en `./conf/local/credentials.yaml`, recuerde que debe contar con su archivo `credentials.yml` en la carpeta `conf/local/`
+***--path-cred*** se indica la ruta del archivo que contiene las credenciales, en este caso se encuentra en `./conf/local/credentials.yaml`, recuerde que debe contar con su archivo `credentials.yaml` en la carpeta `conf/local/`
 
 ***--initial*** con esta bandera en `true` indica que se hará una ingesta inicial (histórica). En caso de una ingesta consecutiva deberá ir en `false`
 
