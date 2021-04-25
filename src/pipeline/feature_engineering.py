@@ -214,23 +214,23 @@ def feature_generation(data):
     # Creación de variables
     # Dividiendo fecha en mes y día, y creando semanas
     data = split_fecha("inspection_date", data)
-    print("Variables temporales creadas satisfactoriamente")
+    # print("Variables temporales creadas satisfactoriamente")
     
     # Para crear variables ciclícas
     data = ciclic_variables('day_of_week', data)
     data = ciclic_variables('week', data)
     data = ciclic_variables('inspection_date_mes', data)
     data = ciclic_variables('inspection_date_dia', data)
-    print("Variables ciclicas creadas satisfactoriamente")
+    #print("Variables ciclicas creadas satisfactoriamente")
     
     # Medidas de distancia generales y agrupadas 
     data = get_distance(data)
-    print("Variables de distancia a centroides creadas satisfactoriamente")
+    # print("Variables de distancia a centroides creadas satisfactoriamente")
  
 
     # Se limpian y se crean variables dummy para variables particulares de la base
     data = clean_dummy(data)
-    print("Limpieza y agrupacion de categorias creadas satisfactoriamente")
+  #  print("Limpieza y agrupacion de categorias creadas satisfactoriamente")
 
     # Variables a transformar
     data_input = pd.DataFrame(data,
@@ -256,7 +256,7 @@ def feature_generation(data):
                                                'type_canvass', 'type_license', 'type_licuor',  'type_complaint', 'type_reinsp', 'type_illegal', 'type_not_ready',
                                                'type_out_of_buss', 'type_prelicense', 'type_others'])]
 
-    print("Transformación OHE y escalamiento realizados satisfactoriamente")
+    #print("Transformación OHE y escalamiento realizados satisfactoriamente")
     col_trans_2 = ColumnTransformer(transformers_2, remainder="drop", n_jobs=-1, verbose=True)
     col_trans_2.fit(data_input)
     input_vars = col_trans_2.transform(data_input) 
@@ -273,7 +273,7 @@ def feature_generation(data):
             'type_canvass', 'type_license', 'type_licuor',  'type_complaint', 'type_reinsp', 'type_illegal', 'type_not_ready',
             'type_out_of_buss', 'type_prelicense', 'type_others']
 
-    print("Creaciòn de tabla y renombre de columnas realizado satisfactoriamente")        
+   #  print("Creaciòn de tabla y renombre de columnas realizado satisfactoriamente")        
     
     # Columnas del dataframe final
     df_final = pd.DataFrame(input_vars)
@@ -281,7 +281,7 @@ def feature_generation(data):
 
     df_final['label']= data['label']
     df_final['inspection_id']= data['inspection_id']
-    print("Features generados satisfactoriamente")
+    #print("Features generados satisfactoriamente")
        
     return df_final
 
@@ -293,6 +293,7 @@ def feature_engineering(df_transform, path_save= '../results/pkl_fe.pkl'):
     se debe guardar en la carpeta output.
     """
     print("Inicio proceso: feature_engineering")
+    start_time = time.time()
     # Cargamos pickle de transformación
     #df_transform= u.load_df(path)
     
@@ -302,6 +303,6 @@ def feature_engineering(df_transform, path_save= '../results/pkl_fe.pkl'):
    
     u.save_df(fe_df, path_save)
     print("Archivo 'pkl_fe.pkl' escrito correctamente")   
-    print("Finalizó proceso: Feature engineering")
+    print("Finalizó proceso: Feature engineering en ", time.time() - start_time)
     
     return fe_df

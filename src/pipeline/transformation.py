@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from src.utils import utils as u 
+import time
 
 
 def generate_label(df):
@@ -10,7 +11,8 @@ def generate_label(df):
     :param: dataframe
     :return: dataframe
     """
-    df['label'] = np.where(df.results.isin(['Pass','Pass w/ Conditions']), 1, 0)
+    df['label'] = np.where(df.results.isin(['Pass','Pass w/ Conditions']), 0, 1)
+    # se considerará como exito el detectar que NO PASO LA INSPECCION
     return df
 
 def date_transformation(col, df):
@@ -101,6 +103,7 @@ def transform(df ,path_save):
     :return: file
     """
     print("Inicio proceso: Transformación y limpieza")
+    start_time = time.time()
     #df = u.load_df(path)
     
     # Limpieza de datos
@@ -110,6 +113,6 @@ def transform(df ,path_save):
     u.save_df(df_final, path_save)
     print("Archivo 'pkl_transform.pkl' escrito correctamente")   
     
-    print("Finalizó proceso:  Transformación y limpieza")
+    print("Finalizó proceso:  Transformación y limpieza en ", time.time() - start_time)
     
     return df_final
