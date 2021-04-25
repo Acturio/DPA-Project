@@ -10,3 +10,5 @@ BUCKET_PATH_HIST = "ingestion/initial/historic-inspections-"
 BUCKET_PATH_CONS = "ingestion/consecutive/consecutive-inspections-"
 # Path local para las credenciales
 CREDENTIALS = 'conf/local/credentials.yaml'
+
+CREDENTIALS_TEST = './conf/local/credentials2.yaml'

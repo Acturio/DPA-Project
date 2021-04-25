@@ -1,7 +1,7 @@
 from luigi.contrib.postgres import CopyToTable
 from src.utils.general import ingestion_metadata, read_yaml_file
 from src.utils.utils import load_df
-from src.pipeline.LuigiIngestionTask import IngestionTask
+from src.pipeline.LuigiIngestionTestTask import IngestionTest
 import src.utils.constants as cte
 import pandas as pd
 import luigi
@@ -43,7 +43,7 @@ class IngestionMetadata(CopyToTable):
 
 
 	def requires(self):
-                return IngestionTask(
+                return IngestionTest(
                         self.path_cred,
                         self.initial,
                         self.limit,
