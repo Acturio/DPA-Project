@@ -62,5 +62,103 @@ CREATE TABLE metadata.feature
         dataset varchar 
 );
 
+-- FALTA TABLA DE ENTRENAMIENTO Y SELECCIÓN -------------
+
+-- Creation of table metadata.entrenamiento
+DROP TABLE IF EXISTS metadata.entrenamiento;
+CREATE TABLE metadata.entrenamiento
+(
+        file_name varchar,
+	processing_date TIMESTAMPTZ,
+        estimator varchar,
+        scoring varchar,
+        params varchar,
+        mean_test_score decimal(10,6),
+        rank_test_score integer
+);
+
+-- Creation of table metadata.seleccion
+DROP TABLE IF EXISTS metadata.seleccion;
+CREATE TABLE metadata.seleccion
+(
+        processing_date TIMESTAMPTZ,
+        base_estimator varchar,
+        params varchar,
+        value_params varchar,
+        num_features INTEGER,
+        oob_score decimal(10,6) 
+);
+
 -- Drop luigi table
 DROP TABLE IF EXISTS public.table_updates;
+
+-- METADATA TEST ---------------------------------------
+
+-- Creation of table metadata.test_ingestion
+DROP TABLE IF EXISTS metadata.test_ingestion;
+CREATE TABLE metadata.test_ingestion
+(
+	file_name varchar,
+	data_date date,
+	processing_date TIMESTAMPTZ,
+	test_name varchar,
+	result boolean	
+);
+
+-- Creation of table metadata.test_almacenamiento
+DROP TABLE IF EXISTS metadata.test_almacenamiento;
+CREATE TABLE metadata.test_almacenamiento
+(
+        file_name varchar,
+	data_date date,
+	processing_date TIMESTAMPTZ,
+	test_name varchar,
+	result boolean
+);
+
+-- Creation of table metadata.test_cleaning
+DROP TABLE IF EXISTS metadata.test_cleaning;
+CREATE TABLE metadata.test_cleaning
+(
+        file_name varchar,
+	data_date date,
+	processing_date TIMESTAMPTZ,
+	test_name varchar,
+	result boolean 
+);
+
+-- Creation of table metadata.test_feature
+DROP TABLE IF EXISTS metadata.test_feature;
+CREATE TABLE metadata.test_feature
+(
+        file_name varchar,
+	data_date date,
+	processing_date TIMESTAMPTZ,
+	test_name varchar,
+	result boolean
+);
+
+-- Creation of table metadata.test_entrenamiento
+DROP TABLE IF EXISTS metadata.test_entrenamiento;
+CREATE TABLE metadata.test_entrenamiento
+(
+        file_name varchar,
+	data_date date,
+	processing_date TIMESTAMPTZ,
+	test_name varchar,
+	result boolean
+);
+
+-- Creation of table metadata.test_seleccion
+DROP TABLE IF EXISTS metadata.test_seleccion;
+CREATE TABLE metadata.test_seleccion
+(
+        file_name varchar,
+	data_date date,
+	processing_date TIMESTAMPTZ,
+	test_name varchar,
+	result boolean
+);
+
+
+
