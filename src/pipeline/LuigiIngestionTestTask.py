@@ -42,7 +42,7 @@ class IngestionTests(marbles.core.TestCase, marbles.mixins.DateTimeMixins):
 
 
 
-class IngestionTest(CopyToTable):
+class IngestionTestTask(CopyToTable):
 
 	path_cred = luigi.Parameter(default = 'credentials.yaml')
 	initial = luigi.BoolParameter(default=True, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
@@ -97,7 +97,7 @@ class IngestionTest(CopyToTable):
 			file_name = 'historic-inspections-{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
 		else:
 			file_name = 'consecutive-inspections-{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
-		print(self.date)
+
 		test = IngestionTests(path_cred = self.path_cred, data = self.input(), my_date = self.date)
 		print("Realizando prueba unitaria: Validación de Fecha")
 		test_val = test.test_get_date_validation()
@@ -110,6 +110,7 @@ class IngestionTest(CopyToTable):
 		print("Realizando prueba unitaria: Validación de número de columnas")
 		test_ncol = test.test_get_ncol_file_validation()
 		print("Prueba uitaria aprobada")
+
 		date_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 		data_test = {
 			"file_name": [file_name, file_name, file_name],

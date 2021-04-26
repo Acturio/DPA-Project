@@ -1,7 +1,7 @@
 from luigi.contrib.postgres import CopyToTable
 from src.utils.general import ingestion_metadata, read_yaml_file
 from src.utils.utils import load_df
-from src.pipeline.LuigiIngestionTestTask import IngestionTest
+from src.pipeline.LuigiIngestionTestTask import IngestionTestTask
 import src.utils.constants as cte
 import pandas as pd
 import luigi
@@ -9,7 +9,7 @@ import psycopg2
 import yaml
 
 
-class IngestionMetadata(CopyToTable):
+class IngestionMetadataTask(CopyToTable):
 
 	path_cred = luigi.Parameter(default = 'credentials.yaml')
 	initial = luigi.BoolParameter(default=True, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
@@ -43,7 +43,7 @@ class IngestionMetadata(CopyToTable):
 
 
 	def requires(self):
-                return IngestionTest(
+                return IngestionTestTask(
                         self.path_cred,
                         self.initial,
                         self.limit,
