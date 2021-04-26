@@ -1,7 +1,7 @@
 from luigi.contrib.postgres import CopyToTable
 from src.utils.general import transform_metadata, read_yaml_file
 from src.utils.utils import load_df
-from src.pipeline.LuigiTransformationTestTask import ExportTestTask
+from src.pipeline.LuigiTransformationTestTask import TransformationTestTask
 from src.pipeline.ingesta_almacenamiento import get_s3_client
 import src.utils.constants as cte
 import pandas as pd
@@ -46,7 +46,7 @@ class TransformationMetadataTask(CopyToTable):
 
 
 	def requires(self):
-		return ExportTestTask(
+		return TransformationTestTask(
       					self.path_cred,
       					self.initial,
      					  self.limit,
