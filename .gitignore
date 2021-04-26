@@ -12,3 +12,5 @@ results/processed-data/*.pkl
 results/feature-engineering/*.pkl
 results/ingestion/consecutive/*.pkl
 results/ingestion/initial/*.pkl
+results/models/best-models/*.pkl
+results/models/training-models/*.pkl

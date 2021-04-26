@@ -2,6 +2,7 @@ from  src.pipeline import transformation as transf
 from  src.pipeline import feature_engineering as fe
 from src.pipeline import modeling as mod
 from src.pipeline.ingesta_almacenamiento import get_s3_client, guardar_ingesta
+from src.utils import general as gral
 from src.pipeline.LuigiFeatureEngineeringMetadataTask import FeatureMetadataTask
 
 import luigi
@@ -70,7 +71,7 @@ class TrainingModelTask(luigi.Task):
     models = mod.training(
       df_fe = data, 
       path_save_models = models_filename, 
-      excercise = self.exercise
+      exercise = self.exercise
       )
 
     guardar_ingesta(
