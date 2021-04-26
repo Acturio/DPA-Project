@@ -143,14 +143,14 @@ def training(df_fe, path_save_models='models.pkl' , exercise=True) :
     
     if exercise == True : 
         X_train_id, y_train= sampling(df_fe)
-        auto_variables = auto_selection_variables ( X_train_id, y_train)
+        auto_variables = auto_selection_variables(X_train_id, y_train)
         models = train_models(X_train_id, y_train, auto_variables)
         print("Se concluye proceso de entrenamiento para ejercicio en ", time.time() - start_time, ' segundos')
     
     else : 
         X_train_id = df_fe.drop(['label'], axis=1)
         y_train = df_fe.label
-        auto_variables = auto_selection_variables ( X_train_id, y_train)
+        auto_variables = auto_selection_variables(X_train_id, y_train)
         models = train_models(X_train_id, y_train, auto_variables, path_save_models)
         print("Se concluye proceso de entrenamiento con datos completos en  ", time.time() - start_time, ' segundos')
         
