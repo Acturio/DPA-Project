@@ -32,18 +32,18 @@ class TrainingModelTask(luigi.Task):
 
   def input(self):
 
-		if self.initial:
-			file_name = "feature-engineering/feature-historic-inspections-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
-		else:
-			file_name = "feature-engineering/feature-consecutive-inspections-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
+    if self.initial:
+    	file_name = "feature-engineering/feature-historic-inspections-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
+    else:
+    	file_name = "feature-engineering/feature-consecutive-inspections-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
 
-		s3 = get_s3_client(self.path_cred)
-		s3_object = s3.get_object(Bucket = self.bucket_path, Key = file_name)
-		body = s3_object['Body']
-		my_pickle = pickle.loads(body.read())
+    s3 = get_s3_client(self.path_cred)
+    s3_object = s3.get_object(Bucket = self.bucket_path, Key = file_name)
+    body = s3_object['Body']
+    my_pickle = pickle.loads(body.read())
 		
-		data = pd.DataFrame(my_pickle)
-		return data
+    data = pd.DataFrame(my_pickle)
+    return data
 
 
   def output(self):
