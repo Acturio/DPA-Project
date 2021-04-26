@@ -1,8 +1,9 @@
 from  src.pipeline import transformation as transf
 from  src.pipeline import feature_engineering as fe
 from src.pipeline import modeling as mod
-
+from src.pipeline.ingesta_almacenamiento import get_s3_client, guardar_ingesta
 from src.pipeline.LuigiFeatureEngineeringMetadataTask import FeatureMetadataTask
+
 import luigi
 import boto3
 import pandas as pd
