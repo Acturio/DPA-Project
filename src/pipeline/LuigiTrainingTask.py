@@ -65,7 +65,7 @@ class TrainingModelTask(luigi.Task):
   def run(self):
 
     data = self.input()
-    models_filename = "results/models/training-models/food-inspections-models-" + self.date.strftime('%Y-%m-%d')
+    models_filename = "results/models/training-models/food-inspections-models-" + self.date.strftime('%Y-%m-%d') + ".pkl"
     file_type = "models/training-models/food-inspections-models-"
 
     models = mod.training(
