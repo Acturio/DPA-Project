@@ -14,10 +14,10 @@ import pickle
 import marbles.core
 import marbles.mixins
 
-class ExportTest(marbles.core.TestCase, marbles.mixins.DateTimeMixins):
+class TransformTest(marbles.core.TestCase, marbles.mixins.DateTimeMixins):
 
 	def __init__(self, my_date, path_cred, data):
-		super(ExportTest, self).__init__()
+		super(TransformTest, self).__init__()
 		self.date = my_date
 		self.path_cred = path_cred
 		self.data = data
@@ -44,7 +44,7 @@ class ExportTest(marbles.core.TestCase, marbles.mixins.DateTimeMixins):
 
 
 
-class ExportTestTask(CopyToTable):
+class TransformationTestTask(CopyToTable):
 
 	path_cred = luigi.Parameter(default = 'credentials.yaml')
 	initial = luigi.BoolParameter(default=True, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
@@ -104,7 +104,7 @@ class ExportTestTask(CopyToTable):
 		else:
 			file_name = "processed-data/clean-consecutive-inspections-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
 
-		test = ExportTest(path_cred = self.path_cred, data = self.input(), my_date = self.date)
+		test = TransformTest(path_cred = self.path_cred, data = self.input(), my_date = self.date)
 
 		print("Realizando prueba unitaria: Validación de Fecha")
 		test_val = test.test_get_date_validation()
