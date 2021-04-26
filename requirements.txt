@@ -52,6 +52,9 @@ kiwisolver==1.2.0
 llvmlite==0.34.0
 lockfile==0.12.2
 luigi==3.0.2
+marbles==0.12.1
+marbles.core==0.12.1
+marbles.mixins==0.12.1
 markdown2==2.3.5
 MarkupSafe==1.1.1
 matplotlib==3.3.2
