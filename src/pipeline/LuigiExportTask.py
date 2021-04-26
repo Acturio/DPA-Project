@@ -3,7 +3,7 @@ import luigi
 import luigi.contrib.s3
 from src.utils import general as gral
 from src.pipeline import ingesta_almacenamiento as ing
-from src.pipeline.LuigiIngestionMetadataTask import IngestionMetadata
+from src.pipeline.LuigiIngestionMetadataTask import IngestionMetadataTask
 import src.utils.constants as cte
 from datetime import date, timedelta, datetime
 import pickle
@@ -20,7 +20,7 @@ class ExportFileTask(luigi.Task):
     # Se requiere IngestionTask
     def requires(self):
         
-        return IngestionMetadata(
+        return IngestionMetadataTask(
             self.path_cred, self.initial, self.limit, self.date, self.initial_date
             )
     
