@@ -51,7 +51,7 @@ class ExportTestTask(CopyToTable):
 	limit = luigi.IntParameter(default = 300000)
 	date = luigi.DateParameter(default = None)
 	initial_date = luigi.DateParameter(default = None)
-  bucket_path = luigi.Parameter(default = cte.BUCKET)
+	bucket_path = luigi.Parameter(default = cte.BUCKET)
 
 	with open(cte.CREDENTIALS, 'r') as f:
 	        config = yaml.safe_load(f)
