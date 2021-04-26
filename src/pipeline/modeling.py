@@ -87,7 +87,7 @@ def auto_selection_variables ( X_train_id,  y_train ):
 
 
 
-def train_models(X_train_id, y_train, auto_variables, path_save_models= 'models.pkl' ):
+def train_models(X_train_id, y_train, auto_variables, path_save_models):
 
     X_train = X_train_id[auto_variables]
 
@@ -137,14 +137,14 @@ def train_models(X_train_id, y_train, auto_variables, path_save_models= 'models.
 
 
 ### TRAINING FUNCTION ###
-def training(df_fe, path_save_models='models.pkl' , exercise=True) :
+def training(df_fe, path_save_models, exercise=True) :
     
     start_time = time.time()
     
     if exercise == True : 
         X_train_id, y_train= sampling(df_fe)
         auto_variables = auto_selection_variables(X_train_id, y_train)
-        models = train_models(X_train_id, y_train, auto_variables)
+        models = train_models(X_train_id, y_train, auto_variables, path_save_models)
         print("Se concluye proceso de entrenamiento para ejercicio en ", time.time() - start_time, ' segundos')
     
     else : 
