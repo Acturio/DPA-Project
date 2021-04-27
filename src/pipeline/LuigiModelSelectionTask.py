@@ -61,11 +61,10 @@ class ModelSelectionTask(luigi.Task):
   def run(self):
 
     models = self.input()
-    file_type = "models/best-models/best-model-consecutive-"
+    file_type = "models/best-models/best-food-inspections-model-"
     output_path = "{}{}.pkl".format(file_type, self.date.strftime('%Y-%m-%d'))
-    local_path = "results/" + output_path + self.date.strftime('%Y-%m-%d') + ".pkl"
     
-    best_model = mod.best_model(models, local_path)
+    best_model = mod.best_model(models)
     
     guardar_ingesta(
       path_cred = self.path_cred,

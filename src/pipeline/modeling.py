@@ -192,7 +192,7 @@ def metadata_models(models_ejercicio, date= ''):
 
 
 ## BEST MODEL SELECCION ##
-def best_model(models_ejercicio, save_best_path): 
+def best_model(models_ejercicio): 
     
     scores = []
     best_estimator = []
@@ -203,8 +203,6 @@ def best_model(models_ejercicio, save_best_path):
     max_score = max(scores)  
     max_score_index = scores.index(max_score)
     best_model = best_estimator[max_score_index]
-    
-    u.save_df(best_model, save_best_path)
     
     return best_model
 

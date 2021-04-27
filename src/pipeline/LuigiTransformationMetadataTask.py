@@ -47,13 +47,13 @@ class TransformationMetadataTask(CopyToTable):
 
 	def requires(self):
 		return TransformationTestTask(
-      					self.path_cred,
-      					self.initial,
-     					  self.limit,
-      					self.date,
-      					self.initial_date,
-      					self.bucket_path
-      					)
+			self.path_cred,
+			self.initial,
+			self.limit,
+			self.date,
+			self.initial_date,
+			self.bucket_path
+		)
 
 	def input(self):
 

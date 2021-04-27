@@ -4,6 +4,7 @@ from src.utils.utils import load_df
 from src.pipeline.LuigiModelSelectionTask import ModelSelectionTask
 from src.pipeline.ingesta_almacenamiento import get_s3_client
 from datetime import date
+from src.pipeline import modeling as mod
 from time import gmtime, strftime
 import src.utils.constants as cte
 import pandas as pd
@@ -31,9 +32,11 @@ class ModelSelectionTest(marbles.core.TestCase, marbles.mixins.DateTimeMixins):
     return True
 
   def test_n_models_validation(self):
-    data = self.data
-    nrow = data.shape[0]
-    self.assertGreater(nrow, 0, note = "El archivo debe contener al menos 1 modelo")
+    if self.data:
+      val = True
+    else:
+      val = False
+    self.assertTrue(val, note = "El archivo debe contener al menos 1 modelo")
     return True
 
 
@@ -61,13 +64,11 @@ class ModelSelectionTestTask(CopyToTable):
 
   table = 'metadata.test_seleccion'
 
-  columns = [("processing_date", "TIMESTAMPTZ"),
+  columns = [("file_name", "VARCHAR"),
              ("data_date", "DATE"),
-             ("base_estimator", "VARCHAR"),
-             ("params", "VARCHAR"),
-             ("value_params", "VARCHAR"),
-             ("num_features", "INTEGER"),
-             ("oob_score", "DOUBLE")
+             ("processing_date", "TIMESTAMPTZ"),
+             ("test_name", "VARCHAR"),
+             ("result", "BOOLEAN")
              ]
 
   def requires(self):
@@ -77,6 +78,7 @@ class ModelSelectionTestTask(CopyToTable):
 			self.limit,
 			self.date,
 			self.initial_date,
+      self.bucket_path,
       self.exercise
 		)
 
@@ -94,7 +96,6 @@ class ModelSelectionTestTask(CopyToTable):
   def rows(self):
 
     file_name = "models/best-models/best-food-inspections-model-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
-
     test = ModelSelectionTest(path_cred = self.path_cred, data = self.input(), my_date = self.date)
 
     print("Realizando prueba unitaria: Validación de Fecha")
@@ -111,7 +112,7 @@ class ModelSelectionTestTask(CopyToTable):
     	"data_date": [self.date, self.date],
     	"processing_date": [date_time, date_time],
     	"test_name": ["test_get_date_validation", 
-                    "test_get_nrow_file_validation"],
+                    "test_n_models_validation"],
     	"result": [test_val, test_nmodels]
     }
 

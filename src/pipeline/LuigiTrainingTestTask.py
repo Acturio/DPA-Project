@@ -75,6 +75,7 @@ class TrainingModelTestTask(CopyToTable):
 			self.limit,
 			self.date,
 			self.initial_date,
+      self.bucket_path,
       self.exercise
 		)
 
