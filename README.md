@@ -1,6 +1,6 @@
 # DPA-Project: Food Inspections
 
-Este proyecto esta enfocado para realizar una predicción de los establecimientos de comida en la Ciudad de Chicago a los que se les hará una inspección, y por tanto priorizar las visitas a aquellos que tengan más probabilidad de cometer una violación.
+Este proyecto esta enfocado a realizar una predicción de los establecimientos de comida en la Ciudad de Chicago que tengan más probabilidad de cometer una violación y por lo tanto se les hará una inspección, de esta manera se priorizarán las visitas a estos establecimientos.
 
 ## Tabla de contenido
 
@@ -61,7 +61,7 @@ El presente proyecto se elabora siguiendo una estructura en la nube, usando los 
 ![](./results/img/ec2_architecture.png) 
 
 
-Se accede de manera local desde una PC/Laptop, y el filtro de entrada es nuestramáquina bastion que funciona como cadenero de la infrestructura en la nube, y este por medio de SSH permite la coneción a la maquina EC2 que es la que tiene comunicación con la RDS y contiene el código del proyecto.
+Se accede de manera local desde una PC/Laptop, y el filtro de entrada es nuestra máquina de bastion que funciona como cadenero de la infrestructura en la nube, y este por medio de SSH permite la conexión a la maquina EC2 que es la que contiene el código del proyecto y  tiene comunicación con la RDS.
 
 
 ## Instalación
@@ -70,7 +70,9 @@ Se accede de manera local desde una PC/Laptop, y el filtro de entrada es nuestra
 
 1. **Clonar el repositorio**
 
-- Para comenzar deberá instalar la librería de git para luego clonar el repositorio en la máquina EC2.
+- Para comenzar deberá [instalar la librería de git](https://github.com/git-guides/install-git), para ello puede seguirlos pasos descritos en esta página.
+
+- Clonar el repositorio en la máquina EC2.
 
 ```
 git clone https://github.com/Acturio/DPA-Project
@@ -78,7 +80,7 @@ git clone https://github.com/Acturio/DPA-Project
 
 2. **Ambiente virtual**
 
-- Deberá instalar un ambiente virtual con python superior o igual a 3.7.4., al cual podra acceder con el siguiente comando como ejemplo: 
+- Deberá instalar [pyenv](https://github.com/pyenv/pyenv), para configurar un ambiente virtual [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv) con python superior o igual a 3.7.4., al cual podra acceder con el siguiente comando como ejemplo: 
 
 ```
 pyenv activate nombre_de_tu_ambiente
@@ -86,7 +88,7 @@ pyenv activate nombre_de_tu_ambiente
 
 3. **Librerías**
 
-- Una vez dentro del abiente instalar los paquetes descritos en el archivo requirements.txt 
+- Una vez dentro del abiente instalar los paquetes descritos en el archivo requirements.txt con el siguiente comando:
 
 ```
 pip install -r requirements.txt
@@ -97,9 +99,9 @@ pip install -r requirements.txt
 
 Se necesitan obtener los siguientes recursos de conexión:
 
-- Obtener token de la `API de Food inspections`. Se puede obtener un token [aquí](https://data.cityofchicago.org/profile/edit/developer_settings)
+- Obtener token de la `API de Food inspections`, para ello de clic [aquí](https://data.cityofchicago.org/profile/edit/developer_settings)
 
-- Se debe contar con credenciales de AWS (Access key ID y Secret access key) dados por el administrador de la infraestructura en AWS, y guardarlos en un archivo `credentials.yaml`. El archivo con las credenciales debe estar en la carpeta `conf/local/credentials.yaml`. La estructura del archivo `credentials.yaml` debe tener una estructura como la que se presenta a continuación:
+- Se debe contar con credenciales de AWS (Access key ID y Secret access key) dados por el administrador de la infraestructura en AWS, y guardarlos en un archivo `credentials.yaml`. El archivo con las credenciales debe estar en la carpeta `conf/local/credentials.yaml` y deberá estar en la lista de `git ignore` para que sus datos esten seguros. La estructura del archivo `credentials.yaml` debe tener una estructura como la que se presenta a continuación:
 
 
 ```
@@ -193,6 +195,8 @@ El repositorio se encuentra organizado de la siguiente manera:
 
 ## Correr el Pipeline
 
+- Se deberá configurar un ***Foxy-Proxy*** para que tu browser pueda mostrar contenido de los web services que ocuparemos en el EMR. Para ello deberás seguir las [instrucciones](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-connect-master-node-proxy.html) en este tutoria, ya que dependiendo del navegador que se tenga los pasos de configuración son diferentes, además es recomendable hacerlo sobre `Chrome` ya que es el navegador con más compatibilidad con la funciónque se busca.
+
 
 - Desde la EC2 podrá ejecutar el siguiente pipele, es importante ubicarse en la raíz del proyecto
 
@@ -211,7 +215,7 @@ ssh -i llave_publica_aws usuario@host_ec2
 
 Como sugerencia le recomendmos abrir 3 terminales con los 2 procedimientos decritos previamente.
 
-- En la primera ventana ejecutamos `luigid` dentro de nuestro ambiente vitural.
+- En la primera ventana ejecutamos `luigid` dentro de nuestro ambiente virtual, esto nos permitirá acceder al servicio de `Foxy-Proxy` que se configuró en el inicio de este apartado, y sirve para habilitar el scheduler en nuestro navegador local ingresado la dirección `http:\\localhost:8082`.
 
 - La segunda ventana nos servirá para ejecutar el pipeline, el cuál debe correr con la siguiente estructura:
 
