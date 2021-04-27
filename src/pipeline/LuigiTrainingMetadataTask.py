@@ -71,11 +71,10 @@ class TrainingModelMetadataTask(CopyToTable):
 		
 		models_filename = "results/models/training-models/food-inspections-models-metadata-" 
 		models_filename = models_filename + self.date.strftime('%Y-%m-%d') + ".pkl"
-		 
+
 		data = mod.metadata_models(
 			self.input(), 
-			date = self.date.strftime('%Y-%m-%d'),
-			path_save_metadata = models_filename
+			date = self.date.strftime('%Y-%m-%d')
 		)
 		records = data.to_records(index=False)
 		r = list(records)

@@ -82,6 +82,7 @@ DROP TABLE IF EXISTS metadata.seleccion;
 CREATE TABLE metadata.seleccion
 (
         processing_date TIMESTAMPTZ,
+        data_date date,
         base_estimator varchar,
         params varchar,
         value_params varchar,
