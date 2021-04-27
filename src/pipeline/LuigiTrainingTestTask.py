@@ -48,8 +48,10 @@ class TrainingModelTestTask(CopyToTable):
   exercise = luigi.BoolParameter(default=False, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
 
   # Load postgres credentials
-  print(path_cred)
-  credentials = get_db_credentials(path_cred)
+  with open(cte.CREDENTIALS, 'r') as f:
+    config = yaml.safe_load(f)
+
+  credentials = config['db']
 
   user = credentials['user']
   password = credentials['pass']
@@ -57,7 +59,7 @@ class TrainingModelTestTask(CopyToTable):
   host = credentials['host']
   port = credentials['port']
 
-  table = 'metadata.test_cleaning'
+  table = 'metadata.test_entrenamiento'
 
   columns = [("file_name", "VARCHAR"),
              ("data_date", "DATE"),
