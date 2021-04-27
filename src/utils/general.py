@@ -33,7 +33,7 @@ def get_s3_credentials(credentials_file):
     return s3_creds
 
 def get_db_credentials(credentials_file):
-        """
+    """
     Regresa credenciales de conexión a postgres
     :param: file_name
     :return: db credentials
