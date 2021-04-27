@@ -32,6 +32,17 @@ def get_s3_credentials(credentials_file):
 
     return s3_creds
 
+def get_db_credentials(credentials_file):
+        """
+    Regresa credenciales de conexión a postgres
+    :param: file_name
+    :return: db credentials
+    """
+    credentials = read_yaml_file(credentials_file)
+    db_creds = credentials['db']
+
+    return db_creds
+
 
 def get_api_token(credentials_file):
     """
