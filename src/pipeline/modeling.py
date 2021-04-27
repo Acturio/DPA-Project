@@ -11,6 +11,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from siuba import *
 import time
+from time import gmtime, strftime
 
 
 
@@ -107,7 +108,7 @@ def train_models(X_train_id, y_train, auto_variables, path_save_models):
         },
         'logistic_grid_search':{
             'C':np.logspace(-3,3,7),
-            'penalty':['l1','l2']
+            'penalty':['l2']
         }
     }
 
@@ -168,7 +169,7 @@ def training(df_fe, path_save_models, exercise=True) :
 
 
 ### METADATA TRAINING FUNCTION ###
-def metadata_models(models_ejercicio, fecha= '' , path_save_metadata= 'models_metadata.pkl'):
+def metadata_models(models_ejercicio, date= ''):
     
     cv_results_f = pd.DataFrame([])
 
@@ -177,14 +178,13 @@ def metadata_models(models_ejercicio, fecha= '' , path_save_metadata= 'models_me
         cv_results = pd.DataFrame(models_ejercicio[i].cv_results_) 
         cv_results['estimator']= models_ejercicio[i].estimator
         cv_results['scoring']= models_ejercicio[i].scoring
-        cv_results['fecha']= fecha
+        cv_results['processing_date']= strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        cv_results['data_date']= date
         
         
-        cv_results = cv_results[['fecha', 'estimator', 'scoring', 'params','mean_test_score','rank_test_score']]
+        cv_results = cv_results[['processing_date', 'data_date','estimator', 'scoring', 'params','mean_test_score','rank_test_score']]
 
         cv_results_f = pd.concat([cv_results_f, cv_results], axis=0)
-        
-    u.save_df(cv_results_f, path_save_metadata)
     
     return (cv_results_f)
 
@@ -192,7 +192,7 @@ def metadata_models(models_ejercicio, fecha= '' , path_save_metadata= 'models_me
 
 
 ## BEST MODEL SELECCION ##
-def best_model(models_ejercicio, save_best_path = 'best_model.pkl'): 
+def best_model(models_ejercicio): 
     
     scores = []
     best_estimator = []
@@ -204,25 +204,22 @@ def best_model(models_ejercicio, save_best_path = 'best_model.pkl'):
     max_score_index = scores.index(max_score)
     best_model = best_estimator[max_score_index]
     
-    u.save_df(best_model, save_best_path)
-    
     return best_model
 
 
 ### METADATA BEST MODEL  ###
-def metadata_best_model(best_model, fecha , path_save= 'metadata_best_model.pkl') : 
+def metadata_best_model(best_model, data_date) : 
     
-    df = pd.DataFrame(columns=['fecha', 'base_estimator','params', 'value_params', 'num_features', 'oob_score'])
-    fecha= str(fecha)
-    df['fecha']= [fecha]
+    df = pd.DataFrame(columns=['processing_date','data_date', 'base_estimator','params', 'value_params', 'num_features', 'oob_score'])
+    
+    df['processing_date'] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    df['data_date']= [fecha]
     df['base_estimator']= ([best_model.base_estimator])
     df['params']=([best_model.estimator_params ])
     df['value_params'] = (best_model.get_params)
     df['num_features'] = (best_model.n_features_)
     df['oob_score'] = (best_model.oob_score_)
-    
-    u.save_df(df, path_save)
-    
+        
     return (df)
 
 

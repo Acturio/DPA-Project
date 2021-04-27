@@ -21,7 +21,11 @@ class ExportFileTask(luigi.Task):
     def requires(self):
         
         return IngestionMetadataTask(
-            self.path_cred, self.initial, self.limit, self.date, self.initial_date
+            self.path_cred, 
+            self.initial, 
+            self.limit, 
+            self.date, 
+            self.initial_date
             )
     
     # Se carga el archivo a ser usado

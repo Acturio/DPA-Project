@@ -68,9 +68,9 @@ CREATE TABLE metadata.feature
 DROP TABLE IF EXISTS metadata.entrenamiento;
 CREATE TABLE metadata.entrenamiento
 (
-        file_name varchar,
-	processing_date TIMESTAMPTZ,
-        estimator varchar,
+        processing_date TIMESTAMPTZ,
+        data_date date,
+	estimator varchar,
         scoring varchar,
         params varchar,
         mean_test_score decimal(10,6),
@@ -82,6 +82,7 @@ DROP TABLE IF EXISTS metadata.seleccion;
 CREATE TABLE metadata.seleccion
 (
         processing_date TIMESTAMPTZ,
+        data_date date,
         base_estimator varchar,
         params varchar,
         value_params varchar,

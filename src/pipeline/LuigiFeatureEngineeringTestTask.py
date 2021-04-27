@@ -64,7 +64,7 @@ class FeatureEngineeringTestTask(CopyToTable):
   host = credentials['host']
   port = credentials['port']
 
-  table = 'metadata.test_cleaning'
+  table = 'metadata.test_feature'
 
   columns = [("file_name", "VARCHAR"),
              ("data_date", "DATE"),
@@ -79,7 +79,8 @@ class FeatureEngineeringTestTask(CopyToTable):
 			self.initial,
 			self.limit,
 			self.date,
-			self.initial_date
+			self.initial_date,
+      self.bucket_path
 		)
 
   def input(self):
