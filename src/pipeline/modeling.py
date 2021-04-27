@@ -210,15 +210,11 @@ def best_model(models_ejercicio):
 ### METADATA BEST MODEL  ###
 def metadata_best_model(best_model, data_date) : 
     
-    df = pd.DataFrame(columns=['processing_date','data_date', 'base_estimator','params', 'value_params', 'num_features', 'oob_score'])
+    df = pd.DataFrame(columns=['processing_date','data_date','value_params'])
     
-    df['processing_date'] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    df['data_date']= [fecha]
-    df['base_estimator']= ([best_model.base_estimator])
-    df['params']=([best_model.estimator_params ])
+    df['processing_date'] = [strftime("%Y-%m-%d %H:%M:%S", gmtime())]
+    df['data_date']= [data_date]
     df['value_params'] = (best_model.get_params)
-    df['num_features'] = (best_model.n_features_)
-    df['oob_score'] = (best_model.oob_score_)
         
     return (df)
 
