@@ -95,17 +95,26 @@ def train_models(X_train_id, y_train, auto_variables, path_save_models):
                           'random_forest': 'rf_grid_search',
                           'logistic': 'logistic_grid_search'}
 
-    grid_search_dict = {'tree_grid_search': {'max_depth': [5, 10, 15],
-                                                                        'min_samples_leaf': [3, 5, 7]},
-                                        'rf_grid_search': {'n_estimators': [30, 50, 100],
-                                                                   'max_depth': [5, 10, 15],
-                                                                   'min_samples_leaf': [3, 5, 10]},
-                                        'logistic_grid_search':{'C':np.logspace(-3,3,7), 
-                                                                                'penalty':['l1','l2']}}
+    grid_search_dict = {
+        'tree_grid_search': {
+            'max_depth': [5, 10, 15],
+            'min_samples_leaf': [3, 5, 7]
+        },
+        'rf_grid_search': {
+            'n_estimators': [30, 50, 100],
+            'max_depth': [5, 10, 15],
+            'min_samples_leaf': [3, 5, 10]
+        },
+        'logistic_grid_search':{
+            'C':np.logspace(-3,3,7),
+            'penalty':['l1','l2']
+        }
+    }
 
     estimators_dict = {'tree': DecisionTreeClassifier(random_state=1111),
-                           'random_forest': RandomForestClassifier(oob_score=True, random_state=2222),
-                           'logistic': LogisticRegression(random_state=3333) } 
+                       'random_forest': RandomForestClassifier(oob_score=True, random_state=2222),
+                       'logistic': LogisticRegression(random_state=3333) 
+                       } 
     
     scoring_met= 'precision'
     algorithms = ['tree', 'random_forest','logistic']
