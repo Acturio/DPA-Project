@@ -83,11 +83,7 @@ CREATE TABLE metadata.seleccion
 (
         processing_date TIMESTAMPTZ,
         data_date date,
-        base_estimator varchar,
-        params varchar,
-        value_params varchar,
-        num_features INTEGER,
-        oob_score decimal(10,6) 
+        value_params varchar 
 );
 
 -- Drop luigi table
