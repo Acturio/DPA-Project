@@ -219,26 +219,16 @@ Como sugerencia le recomendmos abrir 3 terminales con los 2 procedimientos decri
 
 - La segunda ventana nos servirá para ejecutar el pipeline, el cuál debe correr con la siguiente estructura:
 
-*Histórico*
 
 ```
 PYTHONPATH='.' luigi \
---module src.pipeline.LuigiFeatureEngineeringMetadataTask FeatureMetadataTask \
---path-cred ./conf/local/credentials.yaml \
---initial initial \
---limit 300000 \
---date '2021-02-21'
-```
-
-*Consecutivo*
-
-```
-PYTHONPATH='.' luigi \
---module src.pipeline.LuigiFeatureEngineeringMetadataTask FeatureMetadataTask \
+--module src.pipeline.LuigiModelSelectionMetadataTask ModelSelectionMetadataTask \
 --path-cred ./conf/local/credentials.yaml \
 --initial false \
 --limit 2000 \
---date '2021-03-01'
+--date '2021-04-16' \
+--exercise true \
+--local-scheduler
 ```
 
 Descripción:
@@ -254,6 +244,8 @@ Descripción:
 ***--limit*** esta bandera indica el limite de datos, para la ingesta histórica se sugiere vaya en *300000*, el cual es el dato por default, para este ejemplo se a colocado el valor de 100.
 
 ***--date*** con esta la bandera se indica desde que fecha se requiere la ingesta inicial.
+
+***--exercise*** con esta bandera se le indica si toma una muestra con `true` y si es `false` toma todos los datos.
 
 - Para una **ingesta consecutiva** se corre la siguiente secuencia de comandos, de acuerdo a las opciones descritas anteriormente.
 
@@ -278,11 +270,11 @@ SELECT * FROM metadata.feature;
 
 - Si todo fue correcto, observará la siguiente salida:
 
-![](./results/img/checkpoint4.png) 
+![](./results/img/checkpoint5.png) 
 
 
 
-![](./results/img/checkpoint4_2.png) 
+![](./results/img/checkpoint5_1.png) 
 
 ### Colaboradores
 
