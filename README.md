@@ -243,11 +243,13 @@ Descripción:
 
 ***--limit*** esta bandera indica el limite de datos, para la ingesta histórica se sugiere vaya en *300000*, el cual es el dato por default, para este ejemplo se a colocado el valor de 100.
 
-***--date*** con esta la bandera se indica desde que fecha se requiere la ingesta inicial.
+***--date*** con esta la bandera se indica desde que fecha se requiere la ingesta inicial. **Nota:** En caso de que se le pase como parámetro una fecha mayor al día de hoy, el pipeline fallará e indicará que no se permiten este tipo de fechas.
 
 ***--exercise*** con esta bandera se le indica si toma una muestra con `true` y si es `false` toma todos los datos.
 
 - Para una **ingesta consecutiva** se corre la siguiente secuencia de comandos, de acuerdo a las opciones descritas anteriormente.
+
+
 
 
 - Finalmente la tercera ventana nos servirá para mantener la conexión a la base de datos para supervisar la carga de datos. Para ello usaremos la línea de comando descrita en la parte de conexiones.
