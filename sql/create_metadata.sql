@@ -157,6 +157,20 @@ CREATE TABLE metadata.test_seleccion
 	result boolean
 );
 
+-- Creation of table metadata.test_bias_fairness
+DROP TABLE IF EXISTS metadata.test_bias_fairness;
+CREATE TABLE metadata.test_bias_fairness
+(
+  			file_name varchar,
+	data_date date,
+	processing_date TIMESTAMPTZ,
+	test_name varchar,
+	result boolean 
+);
+
+
+
+
 -- Sesgo e inequidad
 -- Creation of schema sesgo
 DROP SCHEMA IF EXISTS sesgo CASCADE;
