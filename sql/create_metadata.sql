@@ -157,5 +157,80 @@ CREATE TABLE metadata.test_seleccion
 	result boolean
 );
 
+-- Sesgo e inequidad
+-- Creation of schema sesgo
+DROP SCHEMA IF EXISTS sesgo CASCADE;
+CREATE SCHEMA sesgo;
+
+DROP TABLE IF EXISTS sesgo.bias_fairness;
+CREATE TABLE sesgo.bias_fairness
+(
+	fecha_load DATE,
+	fecha DATE,
+	model_id INTEGER,
+	score_threshold VARCHAR,
+	k INTEGER,
+	attribute_name VARCHAR,
+	attribute_value VARCHAR,
+	tpr DOUBLE,
+	tnr DOUBLE,
+	[for] DOUBLE,
+	fdr DOUBLE,
+	fpr DOUBLE,
+	fnr DOUBLE,
+	npv DOUBLE,
+	precision DOUBLE,
+	pp INTEGER,
+	pn INTEGER,
+	ppr DOUBLE,
+	pprev DOUBLE,
+	fp INTEGER,
+	fn INTEGER,
+	tn INTEGER,
+	tp INTEGER,
+	group_label_pos INTEGER,
+	group_label_neg INTEGER,
+	group_size INTEGER,
+	total_entities INTEGER,
+	prev DOUBLE, 
+	ppr_disparity DOUBLE,
+	pprev_disparity DOUBLE,
+	precision_disparity DOUBLE,
+	fdr_disparity DOUBLE,
+	for_disparity DOUBLE,
+	fpr_disparity DOUBLE,
+	fnr_disparity DOUBLE,
+	tpr_disparity DOUBLE,
+	tnr_disparity DOUBLE,
+	npv_disparity DOUBLE,
+	ppr_ref_group_value VARCHAR,
+	pprev_ref_group_value VARCHAR,
+	precision_ref_group_value VARCHAR,
+	fdr_ref_group_value VARCHAR,
+	for_ref_group_value VARCHAR,
+	fpr_ref_group_value VARCHAR,
+	fnr_ref_group_value VARCHAR,
+	tpr_ref_group_value VARCHAR,
+	tnr_ref_group_value VARCHAR,
+	npv_ref_group_value VARCHAR,
+	[Statistical Parity] BOOLEAN,
+	[Impact Parity] BOOLEAN,
+	[FDR Parity] BOOLEAN,
+	[FPR Parity] BOOLEAN,
+	[FOR Parity] BOOLEAN,
+	[FNR Parity] BOOLEAN,
+	[TPR Parity] BOOLEAN,
+	[TNR Parity] BOOLEAN,
+	[NPV Parity] BOOLEAN,
+	[Precision Parity] BOOLEAN,
+	[TypeI Parity] BOOLEAN,
+	[Equalized Odds] BOOLEAN,
+	[Unsupervised Fairness] BOOLEAN,
+	[Supervised Fairness] BOOLEAN
+);
+
+
+
+
 
 
