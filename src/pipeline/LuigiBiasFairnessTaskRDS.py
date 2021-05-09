@@ -7,6 +7,7 @@ from src.pipeline.LuigiModelSelectionMetadataTask import ModelSelectionMetadataT
 
 import luigi
 import boto3
+import yaml
 import pandas as pd
 import pickle
 import luigi.contrib.s3
@@ -23,19 +24,19 @@ class BiasFairnessTask(CopyToTable):
   exercise = luigi.BoolParameter(default=False, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
   
   with open(cte.CREDENTIALS, 'r') as f:
-		config = yaml.safe_load(f)
+    config = yaml.safe_load(f)
 
-	credentials = config['db']
+  credentials = config['db']
 
-	user = credentials['user']
-	password = credentials['pass']
-	database = credentials['database']
-	host = credentials['host']
-	port = credentials['port']
+  user = credentials['user']
+  password = credentials['pass']
+  database = credentials['database']
+  host = credentials['host']
+  port = credentials['port']
 
-	table = 'sesgo.bias_fairness'
+  table = 'sesgo.bias_fairness'
   	          
-	columns = [("fecha_load", "DATE"),
+  columns = [("fecha_load", "DATE"),
              ("fecha", "DATE"),
              ("model_id", "INTEGER"),
              ("score_threshold", "VARCHAR"),
@@ -44,7 +45,7 @@ class BiasFairnessTask(CopyToTable):
              ("attribute_value","VARCHAR"),
              ("tpr","DOUBLE"),
              ("tnr","DOUBLE"),
-             ("for","DOUBLE"),
+             ("f_or","DOUBLE"),
              ("fdr","DOUBLE"),
              ("fpr","DOUBLE"),
              ("fnr","DOUBLE"),
@@ -83,20 +84,21 @@ class BiasFairnessTask(CopyToTable):
              ("tpr_ref_group_value","VARCHAR"),
              ("tnr_ref_group_value","VARCHAR"),
              ("npv_ref_group_value","VARCHAR"),
-             ("Statistical Parity","BOOLEAN"),
-             ("Impact Parity","BOOLEAN"),
-             ("FDR Parity","BOOLEAN"),
-             ("FPR Parity","BOOLEAN"),
-             ("FOR Parity","BOOLEAN"),
-             ("FNR Parity","BOOLEAN"),
-             ("TPR Parity","BOOLEAN"),
-             ("TNR Parity","BOOLEAN"),
-             ("NPV Parity","BOOLEAN"),
-             ("Precision Parity","BOOLEAN"),
-             ("TypeI Parity","BOOLEAN"),
-             ("Equalized Odds","BOOLEAN"),
-             ("Unsupervised Fairness","BOOLEAN"),
-             ("Supervised Fairness","BOOLEAN")
+             ("statistical_parity","BOOLEAN"),
+             ("impact_parity","BOOLEAN"),
+             ("fdr_parity","BOOLEAN"),
+             ("fpr_parity","BOOLEAN"),
+             ("for_parity","BOOLEAN"),
+             ("fnr_parity","BOOLEAN"),
+             ("tpr_parity","BOOLEAN"),
+             ("tnr_parity","BOOLEAN"),
+             ("npv_parity","BOOLEAN"),
+             ("precision_parity","BOOLEAN"),
+             ("typei_parity","BOOLEAN"),
+             ("typeii_parity","BOOLEAN"),
+             ("equalized_odds","BOOLEAN"),
+             ("unsupervised_fairness","BOOLEAN"),
+             ("supervised_fairness","BOOLEAN")
              ]
 
   def requires(self):
@@ -111,36 +113,47 @@ class BiasFairnessTask(CopyToTable):
     )
 
   def input(self):
-  
-    if self.initial:
-    	file_name = "feature-engineering/feature-historic-inspections-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))    	
-    else:
-    	file_name = "feature-engineering/feature-consecutive-inspections-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
         
-    file_best_m = "models/best-models/best-food-inspections-model-"
+    file_best_model = "models/best-models/best-food-inspections-model-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
 
     s3 = get_s3_client(self.path_cred)
-    s3_object = s3.get_object(Bucket = self.bucket_path, Key = file_name)
+    s3_object = s3.get_object(Bucket = self.bucket_path, Key = file_best_model)
     body = s3_object['Body']
-    my_pickle = pickle.loads(body.read())
-		
-    data = pd.DataFrame(my_pickle)
-    return data
+    model_and_features = pickle.loads(body.read())
+
+    data = gral.read_gather_s3(
+      date_string = self.date.strftime('%Y-%m-%d'), 
+      folder = "feature-engineering/feature", 
+      cred_path = self.path_cred,
+      bucket = self.bucket_path
+    )
+
+    data_model_features = {
+      "data": data,
+      "best_model": model_and_features["best_model"],
+      "features": model_and_features["features"]
+    }
+
+    return data_model_features
 
 
   def rows(self):
-    #models_filename = "results/models/training-models/food-inspections-models-metadata-" 
-    #models_filename = models_filename + self.date.strftime('%Y-%m-%d') + ".pkl"
+
+    data_input = self.input()
+
+    data = data_input["data"]
+    best_model = data_input["best_model"]
+    features = data_input["features"]
 
     data = bf.bias_fairness(
       df_fe = data, 
-      best_model = best,
-      auto_variables = autov,
-      path_save_models = bias_fair_filename, 
-      exercise = self.exercise
-      )
+      best_model = best_model,
+      auto_variables = features,
+      fecha = self.date.strftime('%Y-%m-%d')
+    )
+
     records = data.to_records(index=False)
-      r = list(records)
+    r = list(records)
     
     for element in r:
       yield element

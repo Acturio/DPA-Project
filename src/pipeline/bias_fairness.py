@@ -1,5 +1,5 @@
 from src.utils import utils as u 
-from src.pipeline import modeling_complete as e
+from src.pipeline import modeling as e
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_curve , roc_auc_score, roc_curve, PrecisionRecallDisplay
 from aequitas.group import Group
@@ -54,7 +54,8 @@ def predict(df_fe, best_model, auto_variables):
     return results_conjunto
 
 
-def bias_fairness(df_fe, best_model, auto_variables,  fecha= '', path_save= '../results/bias_fairness.pkl'):
+def bias_fairness(df_fe, best_model, auto_variables,  fecha= ''):
+    
     print('Generación de análisis de sesgo e inequidad en base a la metodología de Aequitas ')
     start_time = time.time()
     # Cargamos features, mejor modelo y variables
@@ -80,21 +81,81 @@ def bias_fairness(df_fe, best_model, auto_variables,  fecha= '', path_save= '../
     
     # Si se va a base de datos------------------------------------------------------------------------------
     if fecha != '':
-    	fdf['fecha_load'] = datetime.today().strftime('%Y-%m-%d')
-    	fdf['fecha'] = fecha
-    	fdf= fdf[['fecha_load','fecha','model_id','score_threshold','k','attribute_name','attribute_value','tpr','tnr','for','fdr','fpr',
-    	          'fnr','npv','precision','pp','pn','ppr','pprev','fp','fn','tn','tp','group_label_pos','group_label_neg','group_size',
-                  'total_entities','prev','ppr_disparity','pprev_disparity','precision_disparity','fdr_disparity','for_disparity',
-                  'fpr_disparity','fnr_disparity','tpr_disparity','tnr_disparity','npv_disparity','ppr_ref_group_value',
-                  'pprev_ref_group_value','precision_ref_group_value','fdr_ref_group_value','for_ref_group_value','fpr_ref_group_value',
-                  'fnr_ref_group_value','tpr_ref_group_value','tnr_ref_group_value','npv_ref_group_value','Statistical Parity',
-                  'Impact Parity','FDR Parity','FPR Parity','FOR Parity','FNR Parity','TPR Parity','TNR Parity','NPV Parity',
-                  'Precision Parity','TypeI Parity','TypeII Parity','Equalized Odds','Unsupervised Fairness','Supervised Fairness']]
+        fdf['fecha_load'] = datetime.today().strftime('%Y-%m-%d')
+        fdf['fecha'] = fecha
+        fdf = fdf[
+            ['fecha_load',
+             'fecha',
+             'model_id',
+             'score_threshold',
+             'k',
+             'attribute_name',
+             'attribute_value',
+             'tpr',
+             'tnr',
+             'for',
+             'fdr',
+             'fpr',
+             'fnr',
+             'npv',
+             'precision',
+             'pp',
+             'pn',
+             'ppr',
+             'pprev',
+             'fp',
+             'fn',
+             'tn',
+             'tp',
+             'group_label_pos',
+             'group_label_neg',
+             'group_size',
+             'total_entities',
+             'prev',
+             'ppr_disparity',
+             'pprev_disparity',
+             'precision_disparity',
+             'fdr_disparity',
+             'for_disparity',
+             'fpr_disparity',
+             'fnr_disparity',
+             'tpr_disparity',
+             'tnr_disparity',
+             'npv_disparity',
+             'ppr_ref_group_value',
+             'pprev_ref_group_value',
+             'precision_ref_group_value',
+             'fdr_ref_group_value',
+             'for_ref_group_value',
+             'fpr_ref_group_value',
+             'fnr_ref_group_value',
+             'tpr_ref_group_value',
+             'tnr_ref_group_value',
+             'npv_ref_group_value',
+             'Statistical Parity',
+             'Impact Parity',
+             'FDR Parity',
+             'FPR Parity',
+             'FOR Parity',
+             'FNR Parity',
+             'TPR Parity',
+             'TNR Parity',
+             'NPV Parity',
+             'Precision Parity',
+             'TypeI Parity',
+             'TypeII Parity',
+             'Equalized Odds',
+             'Unsupervised Fairness',
+             'Supervised Fairness'
+             ]]
+        dwb_col = fdf.columns.str.replace('\s+', '_')
+        fdf.columns = map(str.lower, dwb_col)
+        fdf.rename(columns = {'for':'f_or'}, inplace = True)
     #-------------------------------------------------------------------------------------------------------
     
     fdf = fdf.where(pd.notnull(fdf),None)
     
-    u.save_df(fdf, path_save)
+    #u.save_df(fdf, path_save)
     
     print("Proceso sesgo e inequidad finalizado en ", time.time() - start_time)
 
