@@ -89,6 +89,10 @@ def clean(df):
     # Reseteando indice con datos ordenados por fecha
     df = df.reset_index(drop=True)
 
+    # Pasando a minúsculas
+    df['facility_type'] = df['facility_type'].str.lower()
+    df['inspection_type'] = df['inspection_type'].str.lower()
+
     # Nos quedamos con que usaremos para el modelo
     df = df[['inspection_id', 'facility_type', 'inspection_type','risk', 'zip', 'inspection_date','latitude','longitude','label']]  
 
