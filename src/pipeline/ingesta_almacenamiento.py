@@ -50,7 +50,6 @@ def get_s3_resource(path_cred):
     :param: none (llama función get_s3_credentials para credenciales)
     :return: recurso S3
     """
-    # "../../conf/local/credentials.yaml"
     s3_creds = get_s3_credentials(path_cred)
 
     session = boto3.Session(
@@ -59,7 +58,6 @@ def get_s3_resource(path_cred):
     )
 
     s3 = session.resource('s3')
-
     return s3
 
 def get_s3_client(path_cred):
@@ -69,7 +67,6 @@ def get_s3_client(path_cred):
     :param: none (llama función get_s3_credentials para credenciales)
     :return: recurso S3
     """
-    # "../../conf/local/credentials.yaml"
     s3_creds = get_s3_credentials(path_cred)
 
     session = boto3.Session(
@@ -78,7 +75,6 @@ def get_s3_client(path_cred):
     )
 
     s3 = session.client('s3')
-
     return s3
 
 

@@ -2,6 +2,8 @@ import yaml
 import datetime
 from time import gmtime, strftime
 import pandas as pd
+import pickle
+from src.pipeline import ingesta_almacenamiento as ing
 
 def read_yaml_file(yaml_file):
     """
@@ -154,3 +156,25 @@ def feature_metadata(data, data_date, initial):
        }
 
     return pd.DataFrame(df, index=[0])
+
+
+
+def read_gather_s3(date_string, folder, cred_path, bucket):
+
+    s3 = ing.get_s3_resource(cred_path)
+    bucket = s3.Bucket(bucket)
+    prefix_objs = bucket.objects.filter(Prefix = folder)
+    
+    prefix_df = []
+
+    for obj in prefix_objs:
+        key = obj.key
+        data_day = key[-14:-4]
+        if data_day > date_string:
+            continue
+        print(data_day)
+        body = obj.get()['Body'].read()
+        temp = pickle.loads(body)
+        prefix_df.append(temp)
+    gather_data = pd.concat(prefix_df)
+    return gather_data.drop_duplicates()
