@@ -158,6 +158,27 @@ def feature_metadata(data, data_date, initial):
     return pd.DataFrame(df, index=[0])
 
 
+def bias_fairness_metadata(data, data_date):
+
+    file_name = 'feature-consecutive-inspections-{}.pkl'.format(data_date.strftime('%Y-%m-%d'))
+    dataset = "bias-and-fairness"
+    date_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+
+    df = {
+        "file_name": file_name,
+        "data_date": data_date,
+        "processing_data" : date_time,
+        "nrows" : data.shape[0],
+        "protected_group": data.attibute_name[0],
+        "categories_names" : ",".join(list(data.attribute_values)),
+        "source" : "postgres rds",
+        "dataset" : dataset
+       }
+
+    return pd.DataFrame(df, index=[0])
+
+
+
 def get_s3_resource(path_cred):
     """
     Esta función regresa un resource de S3 para poder guardar datos
