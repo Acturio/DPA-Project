@@ -96,7 +96,8 @@ class ModelSelectionTestTask(CopyToTable):
   def rows(self):
 
     file_name = "models/best-models/best-food-inspections-model-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
-    test = ModelSelectionTest(path_cred = self.path_cred, data = self.input(), my_date = self.date)
+    models_data = self.input()["best_model"]
+    test = ModelSelectionTest(path_cred = self.path_cred, data = models_data, my_date = self.date)
 
     print("Realizando prueba unitaria: Validación de Fecha")
     test_val = test.test_get_date_validation()

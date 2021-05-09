@@ -1,5 +1,5 @@
 from luigi.contrib.postgres import CopyToTable
-from src.utils.general import transform_metadata, read_yaml_file
+#from src.utils.general import transform_metadata, read_yaml_file
 from src.utils.utils import load_df
 from src.pipeline.LuigiTrainingTestTask import TrainingModelTestTask
 from src.pipeline.ingesta_almacenamiento import get_s3_client

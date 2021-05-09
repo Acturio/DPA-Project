@@ -93,8 +93,9 @@ class TrainingModelTestTask(CopyToTable):
   def rows(self):
 
     file_name = "models/training-models/food-inspections-models-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
+    data_models = self.input()["models"]
 
-    test = TrainingModelTest(path_cred = self.path_cred, data = self.input(), my_date = self.date)
+    test = TrainingModelTest(path_cred = self.path_cred, data = data_models, my_date = self.date)
 
     print("Realizando prueba unitaria: Validación de Fecha")
     test_val = test.test_get_date_validation()

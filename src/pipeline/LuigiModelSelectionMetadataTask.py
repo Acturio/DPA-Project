@@ -65,8 +65,10 @@ class ModelSelectionMetadataTask(CopyToTable):
 
 	def rows(self):
 
+		best_model_data = self.input()["best_model"]
+		
 		data = mod.metadata_best_model(
-			best_model = self.input(),
+			best_model = best_model_data,
 			data_date = self.date.strftime('%Y-%m-%d'))
 		print(data)
 		records = data.to_records(index=False)

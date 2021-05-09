@@ -30,6 +30,8 @@ def train_test(df, path_save_train = 'pkl_train.pkl', path_save_test='pkl_test.p
     X_train_id, X_test_id, y_train, y_test = train_test_split(X, y, test_size=0.2,stratify=y )
     print('Muestreo estratificado train/test completado satisfactoriamente en ', time.time() - start_time)
           
+
+
     return (X_train_id, X_test_id, y_train,y_test)
 
 
@@ -54,7 +56,7 @@ def sampling(df, path_save_train_sampling = 'pkl_train.pkl'   ):
           
     return (X_train_id, y_train)
 
-def auto_selection_variables ( X_train_id,  y_train ):
+def auto_selection_variables (X_train_id, y_train):
     start_time = time.time()
     classifier = RandomForestClassifier(oob_score=True, random_state=1234)
 
@@ -82,13 +84,14 @@ def auto_selection_variables ( X_train_id,  y_train ):
 
     auto_selection_variables = feature_importance[feature_importance.importance > 0.0001 ]['feature'].unique()
     
+    
     print("Selección de variables completada satisfactoriamente en ", time.time() - start_time, ' segundos')
     
     return (auto_selection_variables)
 
 
 
-def train_models(X_train_id, y_train, auto_variables, path_save_models):
+def train_models(X_train_id, y_train, auto_variables):
 
     X_train = X_train_id[auto_variables]
 
@@ -140,31 +143,34 @@ def train_models(X_train_id, y_train, auto_variables, path_save_models):
        
         models.append(model_gs)
                    
-    u.save_df(models, path_save_models)
             
     return (models)
 
 
 
 ### TRAINING FUNCTION ###
-def training(df_fe, path_save_models, exercise=True) :
+def training(df_fe, exercise=True) :
     
+    print("Inicia proceso de entrenamiento de modelos")
     start_time = time.time()
     
     if exercise == True : 
         X_train_id, y_train= sampling(df_fe)
         auto_variables = auto_selection_variables(X_train_id, y_train)
-        models = train_models(X_train_id, y_train, auto_variables, path_save_models)
+        models = train_models(X_train_id, y_train, auto_variables)
         print("Se concluye proceso de entrenamiento para ejercicio en ", time.time() - start_time, ' segundos')
     
     else : 
-        X_train_id = df_fe.drop(['label'], axis=1)
+        X_train_id = df_fe.drop(['label'], axis = 1)
         y_train = df_fe.label
         auto_variables = auto_selection_variables(X_train_id, y_train)
-        models = train_models(X_train_id, y_train, auto_variables, path_save_models)
+        models = train_models(X_train_id, y_train, auto_variables)
         print("Se concluye proceso de entrenamiento con datos completos en  ", time.time() - start_time, ' segundos')
+
+    model_and_features = {'models': models, 'features': auto_variables}
+
         
-    return (models)
+    return model_and_features
 
 
 
@@ -173,19 +179,19 @@ def metadata_models(models_ejercicio, date= ''):
     
     cv_results_f = pd.DataFrame([])
 
-    for i in range(len(models_ejercicio)):
+    for i in range(len(models_ejercicio['models'])):
 
-        cv_results = pd.DataFrame(models_ejercicio[i].cv_results_) 
-        cv_results['estimator']= models_ejercicio[i].estimator
-        cv_results['scoring']= models_ejercicio[i].scoring
+        cv_results = pd.DataFrame(models_ejercicio['models'][i].cv_results_) 
+        cv_results['estimator']= models_ejercicio['models'][i].estimator
+        cv_results['scoring']= models_ejercicio['models'][i].scoring
         cv_results['processing_date']= strftime("%Y-%m-%d %H:%M:%S", gmtime())
         cv_results['data_date']= date
-        
         
         cv_results = cv_results[['processing_date', 'data_date','estimator', 'scoring', 'params','mean_test_score','rank_test_score']]
 
         cv_results_f = pd.concat([cv_results_f, cv_results], axis=0)
     
+
     return (cv_results_f)
 
 
@@ -196,14 +202,18 @@ def best_model(models_ejercicio):
     
     scores = []
     best_estimator = []
-    for i in range(len(models_ejercicio)):
-            scores.append(models_ejercicio[i].best_score_) 
-            best_estimator.append(models_ejercicio[i].best_estimator_) 
+    for i in range(len(models_ejercicio['models'])):
+            scores.append(models_ejercicio['models'][i].best_score_) 
+            best_estimator.append(models_ejercicio['models'][i].best_estimator_) 
 
     max_score = max(scores)  
     max_score_index = scores.index(max_score)
-    best_model = best_estimator[max_score_index]
+    best_model = {
+        'best_model': best_estimator[max_score_index],
+        'features': models_ejercicio['features']
+    }
     
+
     return best_model
 
 
@@ -216,6 +226,7 @@ def metadata_best_model(best_model, data_date) :
     df['data_date']= [data_date]
     df['value_params'] = (best_model.get_params)
         
+
     return (df)
 
 

@@ -3,7 +3,7 @@ import datetime
 from time import gmtime, strftime
 import pandas as pd
 import pickle
-from src.pipeline import ingesta_almacenamiento as ing
+import boto3
 
 def read_yaml_file(yaml_file):
     """
@@ -158,10 +158,27 @@ def feature_metadata(data, data_date, initial):
     return pd.DataFrame(df, index=[0])
 
 
+def get_s3_resource(path_cred):
+    """
+    Esta función regresa un resource de S3 para poder guardar datos
+    en el bucket (checar script de aws_boto_s3).
+    :param: none (llama función get_s3_credentials para credenciales)
+    :return: recurso S3
+    """
+    s3_creds = get_s3_credentials(path_cred)
+
+    session = boto3.Session(
+        aws_access_key_id=s3_creds['aws_access_key_id'],
+        aws_secret_access_key=s3_creds['aws_secret_access_key']
+    )
+
+    s3 = session.resource('s3')
+    return s3
+
 
 def read_gather_s3(date_string, folder, cred_path, bucket):
 
-    s3 = ing.get_s3_resource(cred_path)
+    s3 = get_s3_resource(cred_path)
     bucket = s3.Bucket(bucket)
     prefix_objs = bucket.objects.filter(Prefix = folder)
     
