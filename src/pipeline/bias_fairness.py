@@ -91,7 +91,9 @@ def bias_fairness(df_fe, best_model, auto_variables,  fecha= '', path_save= '../
                   'Impact Parity','FDR Parity','FPR Parity','FOR Parity','FNR Parity','TPR Parity','TNR Parity','NPV Parity',
                   'Precision Parity','TypeI Parity','TypeII Parity','Equalized Odds','Unsupervised Fairness','Supervised Fairness']]
     #-------------------------------------------------------------------------------------------------------
-        
+    
+    fdf = fdf.where(pd.notnull(fdf),None)
+    
     u.save_df(fdf, path_save)
     
     print("Proceso sesgo e inequidad finalizado en ", time.time() - start_time)
