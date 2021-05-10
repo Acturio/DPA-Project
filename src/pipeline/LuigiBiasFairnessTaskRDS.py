@@ -21,7 +21,7 @@ class BiasFairnessTask(CopyToTable):
   date = luigi.DateParameter(default = None)
   initial_date = luigi.DateParameter(default = None)
   bucket_path = luigi.Parameter(default = cte.BUCKET)
-  exercise = luigi.BoolParameter(default=False, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
+  exercise = luigi.BoolParameter(default=True, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
   
   with open(cte.CREDENTIALS, 'r') as f:
     config = yaml.safe_load(f)
@@ -109,7 +109,8 @@ class BiasFairnessTask(CopyToTable):
       self.limit,
       self.date,
       self.initial_date,
-      self.bucket_path
+      self.bucket_path,
+      self.exercise
     )
 
   def input(self):

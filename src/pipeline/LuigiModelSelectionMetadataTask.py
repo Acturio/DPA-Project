@@ -20,7 +20,7 @@ class ModelSelectionMetadataTask(CopyToTable):
 	date = luigi.DateParameter(default = None)
 	initial_date = luigi.DateParameter(default = None)
 	bucket_path = luigi.Parameter(default = cte.BUCKET)
-	exercise = luigi.BoolParameter(default=False, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
+	exercise = luigi.BoolParameter(default=True, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
 
 	with open(cte.CREDENTIALS, 'r') as f:
 		config = yaml.safe_load(f)

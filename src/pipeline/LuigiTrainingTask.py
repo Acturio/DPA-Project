@@ -20,7 +20,7 @@ class TrainingModelTask(luigi.Task):
   date = luigi.DateParameter(default = None)
   initial_date = luigi.DateParameter(default = None)
   bucket_path = luigi.Parameter(default = cte.BUCKET)
-  exercise = luigi.BoolParameter(default=False, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
+  exercise = luigi.BoolParameter(default=True, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
 
   def requires(self):
     return FeatureMetadataTask(
@@ -61,12 +61,10 @@ class TrainingModelTask(luigi.Task):
   def run(self):
 
     data = self.input()
-    #models_filename = "results/models/training-models/food-inspections-models-" + self.date.strftime('%Y-%m-%d') + ".pkl"
     file_type = "models/training-models/food-inspections-models-"
 
     models = mod.training(
       df_fe = data, 
-      #path_save_models = models_filename, 
       exercise = self.exercise
       )
 

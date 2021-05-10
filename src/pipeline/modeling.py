@@ -154,11 +154,11 @@ def training(df_fe, exercise=True) :
     print("Inicia proceso de entrenamiento de modelos")
     start_time = time.time()
     
-    if exercise == True : 
-        X_train_id, y_train= sampling(df_fe)
+    if exercise: 
+        X_train_id, y_train = sampling(df_fe)
         auto_variables = auto_selection_variables(X_train_id, y_train)
         models = train_models(X_train_id, y_train, auto_variables)
-        print("Se concluye proceso de entrenamiento para ejercicio en ", time.time() - start_time, ' segundos')
+        print("Se concluye proceso de entrenamiento muestral para ejercicio en ", time.time() - start_time, ' segundos')
     
     else : 
         X_train_id = df_fe.drop(['label'], axis = 1)
