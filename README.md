@@ -1,22 +1,42 @@
-# DPA-Project: Food Inspections
+<table style="width:100%">
+	<tr>
+		<td>🟢 Maestría en Ciencia de Datos</td>
+		<td rowspan="2">p align = "right"><img src="images/itam_logo.png" width="390" height="170"></td>
+	</tr>
+	<tr>
+		<td>Métodos de Gran Escala</td>
+	</tr>
+		<td>
+			<table>
+				<tr>
+					<td>:black_circle: Colaboradores</td>
+					<td>Karina Lizette Gamboa Puente</td>
+					<td>Oscar Arturo Bringas López</td>
+					<td>Aide Jazmín González Cruz</td>
+					<td>Miguel López Cruz</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+# DPA-Project: Food Inspections :pizza: :hamburger: :coffee: :rice_cracker: :poultry_leg: :bento: :ramen:
+
+## :large_blue_circle: Tabla de contenido
+
+1. [Introducción](https://github.com/Acturio/DPA-Project/blob/main/README.md#introducci%C3%B3n-clipboard) :clipboard:
+2. [Información general](https://github.com/Acturio/DPA-Project/blob/main/README.md#informaci%C3%B3n-general-bookmark_tabs) :bookmark_tabs:
+3. [Requerimientos de infraestructura](https://github.com/Acturio/DPA-Project/blob/main/README.md#requerimientos-de-infraestructura-computer) :computer:
+4. [Instalación](https://github.com/Acturio/DPA-Project/blob/main/README.md#instalaci%C3%B3n-minidisc) :minidisc:
+5. [Organización del código](https://github.com/Acturio/DPA-Project/blob/main/README.md#organizaci%C3%B3n-del-c%C3%B3digo-octocat) :octocat:
+6. [Correr el pipeline](https://github.com/Acturio/DPA-Project/blob/main/README.md#correr_el_pipeline-green_circle) :green_circle:
+7. [Sesgo e inequidad](https://github.com/Acturio/DPA-Project/blob/main/README.md#sesgo_e_inequidad-bar_chart) :bar_chart:
+
+## Introducción :clipboard:
 
 Este proyecto esta enfocado a realizar una predicción de los establecimientos de comida en la Ciudad de Chicago que tengan más probabilidad de cometer una violación y por lo tanto se les hará una inspección, de esta manera se priorizarán las visitas a estos establecimientos.
 
-## Tabla de contenido
-
-1. Introducción
-2. Información general
-3. Requerimientos de infraestructura
-4. Instalación
-5. Organización del código
-6. Correr el Pipeline
-7. Colaboradores
-
-## Introducción
-
-Este proyecto esta enfocado a la construcción de una arquitectura de proyecto de datos, para ello se trabajarán con los datos de Food Inspection de la Ciudad de Chicago.
-
-## Información general
+## Información general :bookmark_tabs:
 
 A continuación se presenta un resúmen de los datos con los cuales se trabajará:
 
@@ -54,7 +74,7 @@ Con este proyecto pensamos contestar la siguiente pregunta:
 
 - La frecuencia de datos fuente es diaria, sin embargo en en este proyecto se realizará semanalmente.
 
-## Requerimientos de infraestructura.
+## Requerimientos de infraestructura. :computer:
 
 El presente proyecto se elabora siguiendo una estructura en la nube, usando los servicios de AWS cuyo diagrama se muestra a continuación:
 
@@ -64,7 +84,7 @@ El presente proyecto se elabora siguiendo una estructura en la nube, usando los 
 Se accede de manera local desde una PC/Laptop, y el filtro de entrada es nuestra máquina de bastion que funciona como cadenero de la infrestructura en la nube, y este por medio de SSH permite la conexión a la maquina EC2 que es la que contiene el código del proyecto y  tiene comunicación con la RDS.
 
 
-## Instalación
+## Instalación :minidisc:
 
 ### Requerimientos
 
@@ -154,7 +174,7 @@ Para crear el squema de metadata se corre el siguiente query
 psql service=db_service -f ruta_repositoro/sql/create_metadata.sql
 ```
 
-## Organización del código
+## Organización del código :octocat:
 
 El repositorio se encuentra organizado de la siguiente manera:
 
@@ -264,6 +284,27 @@ SELECT * FROM metadata.ingestion;
 SELECT * FROM metadata.almacenamiento;
 SELECT * FROM metadata.cleaning;
 SELECT * FROM metadata.feature;
+SELECT * FROM metadata.entrenamiento;
+SELECT * FROM metadata.seleccion;
+SELECT * FROM metadata.bias_fairness;
+```
+
+y para los `test`
+
+```
+SELECT * FROM metadata.test_ingestion;
+SELECT * FROM metadata.test_almacenamiento;
+SELECT * FROM metadata.test_cleaning;
+SELECT * FROM metadata.test_feature;
+SELECT * FROM metadata.test_entrenamiento;
+SELECT * FROM metadata.test_seleccion;
+SELECT * FROM metadata.test_bias_fairness;
+```
+
+la tabla de seguimiento de los `tasks` que corre luigi los podrá consultar con:
+
+```
+SELECT * FROM public.table_updates;
 ```
 
 - Una vez ejecutados correctamente las tareas, podrá verificar que sus archivos se encuentran en `AWS` en el bucket especificado y en la ruta `ingestion/initial/` para cargas iniciales y en la ruta `ingestion/consecutive/` para cargas consecutivas.
@@ -272,20 +313,48 @@ SELECT * FROM metadata.feature;
 
 - Si todo fue correcto, observará la siguiente salida:
 
-![](./results/img/checkpoint5.png) 
+![](./results/img/checkpoint6_1.png) 
 
 
 
-![](./results/img/checkpoint5_1.png) 
+![](./results/img/checkpoint6_2.png) 
 
-### Colaboradores
 
-| Nombre |
-| :------- |
-| Karina Lizette Gamboa Puente|
-| Oscar Arturo Bringas López|
-| Aide Jazmín González Cruz|
-| Miguel López Cruz|
+## Sesgo e inequidad :bar_chart:
 
+En este proyecto estamos considerando como variable protegida el tipo de inspección, de la base original (histórica) se pueden cuantificar 96 disintos tipos de inspección, sin embargo se creo una nueva variable (`type_inspection_limpia`) que agrupa estas sólo 10 tipos:
+
+- Canvass
+- License
+- Licuor
+- Complaint
+- Reinspection
+- Ilegal
+- Out of bussiness
+- Not ready
+- Pre license
+- Others
+
+Por lo que nuestro atributo protegido es esta variable `type_inspection_limpia`.
+
+El grupo de refrencia es `Canvass`, ya que es la categoría con mayor tamaño entre todos los grupos existentes, con un 53 % aproximadamente.
+
+<table>
+	<tr>
+		<td>![](./results/img/group.jpeg)</td>
+		<td>![](./results/img/group_p.jpeg)</td>
+	</tr>
+</table> 
+
+Analizando el proyecto y viendolo desde el punto de vista del usuario (dueño del establecimiento) llegamos a la conclusión de que es un modelo *asistivo*, ya que le va a decir si irán o no a inspeccioanr su establecimiento, por tanto podrá estar preparado.
+
+En este caso al ser un modelo asistivo tenemos que las variables a cuantificar son: `Recall parity`, `FN/GS Parity`, `FOR Parity` y `FNR Parity`, de acuerdo al `Farirness tree`, sin embargo como el modelo afectará a una pequeña fracción de la población, sólo nos enfocaremos a medir el ***Recall parity***.
+
+
+Los resultadados de sesgo e inequidad se guardan en la tabla sesgo.bias_fairness del RDS, se pueden consultar con el `query`:
+
+```
+SELECT * FROM sesgo.bias_fairness;
+```
 
 
