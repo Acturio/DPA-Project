@@ -1,10 +1,10 @@
 <table cellspacing="0" cellpadding="0" style="border: none;" weight="850px">
 	<tr>
-		<td style="text-aling: center; font-weight: bold; font-size: 24px">🟢 Maestría en Ciencia de Datos</td>
+		<td style="text-aling: center; font-weight: bold; font-size: 24px">:green_circle: Maestría en Ciencia de Datos</td>
 		<td rowspan="2"><img src="results/img/itam_logo.png" width="390" height="170"></td>
 	</tr>
 	<tr>
-		<td style="text-aling: center; font-weight: bold; font-size: 20px">:red_circle: Métodos de Gran Escala</td>
+		<td style="text-aling: center; font-weight: bold; font-size: 20px">:green_circle: Métodos de Gran Escala</td>
 	</tr>
 </table>
 
@@ -26,8 +26,8 @@
 3. [Requerimientos de infraestructura](https://github.com/Acturio/DPA-Project/blob/main/README.md#requerimientos-de-infraestructura-computer) :computer:
 4. [Instalación](https://github.com/Acturio/DPA-Project/blob/main/README.md#instalaci%C3%B3n-minidisc) :minidisc:
 5. [Organización del código](https://github.com/Acturio/DPA-Project/blob/main/README.md#organizaci%C3%B3n-del-c%C3%B3digo-octocat) :octocat:
-6. [Correr el pipeline](https://github.com/Acturio/DPA-Project/blob/main/README.md#correr_el_pipeline-green_circle) :green_circle:
-7. [Sesgo e inequidad](https://github.com/Acturio/DPA-Project/blob/main/README.md#sesgo_e_inequidad-bar_chart) :bar_chart:
+6. [Correr el pipeline](https://github.com/Acturio/DPA-Project/blob/main/README.md#correr-el-pipeline-green_circle) :green_circle:
+7. [Sesgo e inequidad](https://github.com/Acturio/DPA-Project/blob/main/README.md#sesgo-e-inequidad-bar_chart) :bar_chart:
 
 ## Introducción :clipboard:
 
@@ -336,12 +336,7 @@ Por lo que nuestro atributo protegido es esta variable `type_inspection_limpia`.
 
 El grupo de refrencia es `Canvass`, ya que es la categoría con mayor tamaño entre todos los grupos existentes, con un 53 % aproximadamente.
 
-<table>
-	<tr>
-		<td>![](./results/img/group.jpeg)</td>
-		<td>![](./results/img/group_p.jpeg)</td>
-	</tr>
-</table> 
+![](./results/img/group.jpeg) ![](./results/img/group_p.jpeg)
 
 Analizando el proyecto y viendolo desde el punto de vista del usuario (dueño del establecimiento) llegamos a la conclusión de que es un modelo *asistivo*, ya que le va a decir si irán o no a inspeccioanr su establecimiento, por tanto podrá estar preparado.
 
