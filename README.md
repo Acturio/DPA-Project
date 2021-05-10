@@ -332,16 +332,16 @@ En este proyecto estamos considerando como variable protegida el tipo de inspecc
 
 Por lo que nuestro atributo protegido es esta variable `type_inspection_limpia`.
 
-El grupo de refrencia es `Canvass`, ya que es la categoría con mayor tamaño entre todos los grupos existentes, con un 53 % aproximadamente.
+El grupo de refrencia es `Canvass`, ya que es la categoría con mayor tamaño entre todos los grupos existentes, con un 53% aproximadamente.
 
 ![](./results/img/group.jpeg) ![](./results/img/group_p.jpeg)
 
-Analizando el proyecto y viendolo desde el punto de vista del usuario (dueño del establecimiento) llegamos a la conclusión de que es un modelo *asistivo*, ya que le va a decir si irán o no a inspeccioanr su establecimiento, por tanto podrá estar preparado.
+Analizando el proyecto y viendolo desde el punto de vista del usuario (dueño del establecimiento) llegamos a la conclusión de que es un modelo ***asistivo***, ya que el modelo le dirá si van ó no a inspeccionar su establecimiento, por tanto podrá estar preparado.
 
-En este caso al ser un modelo asistivo tenemos que las variables a cuantificar son: `Recall parity`, `FN/GS Parity`, `FOR Parity` y `FNR Parity`, de acuerdo al `Farirness tree`, sin embargo como el modelo afectará a una pequeña fracción de la población, sólo nos enfocaremos a medir el ***Recall parity***.
+En este caso, al ser un modelo asistivo tenemos que las variables a cuantificar son: `Recall parity`, `FN/GS Parity`, `FOR Parity` y `FNR Parity`, de acuerdo al `Farirness tree`, sin embargo, como el modelo sólo afectará a una pequeña fracción de la población, nos enfocaremos a medir el ***Recall parity***.
 
 
-Los resultadados de sesgo e inequidad se guardan en la tabla sesgo.bias_fairness del RDS, se pueden consultar con el `query`:
+Los resultadados de sesgo e inequidad se guardan en la tabla `sesgo.bias_fairness` del RDS, se pueden consultar con el `query`:
 
 ```
 SELECT * FROM sesgo.bias_fairness;
