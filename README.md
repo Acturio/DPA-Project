@@ -1,14 +1,14 @@
 <table>
 	<tr>
-		<td>🟢 Maestría en Ciencia de Datos</td>
-		<td rowspan="2"><p align = "right"><img src="results/img/itam_logo.png" width="390" height="170"></p></td>
+		<td style="text-aling: center; font-weight: bold; font-size: 24px">🟢 Maestría en Ciencia de Datos</td>
+		<td rowspan="3"><p align = "right"><img src="results/img/itam_logo.png" width="390" height="170"></p></td>
 	</tr>
 	<tr>
-		<td>Métodos de Gran Escala</td>
+		<td style="text-aling: center; font-weight: bold; font-size: 20px">:red_circle: Métodos de Gran Escala</td>
 	</tr>
 		<td>
 			<table>
-				<tr><td>:black_circle: Colaboradores</td></tr>
+				<tr><td style="font-weight: bold;">:black_circle: Colaboradores</td></tr>
 				<tr><td>Karina Lizette Gamboa Puente</td></tr>
 				<tr><td>Oscar Arturo Bringas López</td></tr>
 				<tr><td>Aide Jazmín González Cruz</td></tr>
@@ -31,7 +31,7 @@
 6. [Correr el pipeline](https://github.com/Acturio/DPA-Project/blob/main/README.md#correr_el_pipeline-green_circle) :green_circle:
 7. [Sesgo e inequidad](https://github.com/Acturio/DPA-Project/blob/main/README.md#sesgo_e_inequidad-bar_chart) :bar_chart:
 
-## 1. Introducción :clipboard:
+## Introducción :clipboard:
 
 Este proyecto esta enfocado a realizar una predicción de los establecimientos de comida en la Ciudad de Chicago que tengan más probabilidad de cometer una violación y por lo tanto se les hará una inspección, de esta manera se priorizarán las visitas a estos establecimientos.
 
