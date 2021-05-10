@@ -160,7 +160,7 @@ def feature_metadata(data, data_date, initial):
 
 def bias_fairness_metadata(data, data_date):
 
-    file_name = 'feature-consecutive-inspections-{}.pkl'.format(data_date.strftime('%Y-%m-%d'))
+    file_name = 'bias-fairness-metadata-{}'.format(data_date.strftime('%Y-%m-%d'))
     dataset = "bias-and-fairness"
     date_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
@@ -169,8 +169,8 @@ def bias_fairness_metadata(data, data_date):
         "data_date": data_date,
         "processing_data" : date_time,
         "nrows" : data.shape[0],
-        "protected_group": data.attibute_name[0],
-        "categories_names" : ",".join(list(data.attribute_values)),
+        "protected_group": data.loc[0,"attribute_name"],
+        "categories_names" : ",".join(list(data.attribute_value)),
         "source" : "postgres rds",
         "dataset" : dataset
        }
