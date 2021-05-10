@@ -1,23 +1,21 @@
-<table>
+<table cellspacing="0" cellpadding="0" style="border: none;">
 	<tr>
 		<td style="text-aling: center; font-weight: bold; font-size: 24px">🟢 Maestría en Ciencia de Datos</td>
-		<td rowspan="3"><p align = "right"><img src="results/img/itam_logo.png" width="390" height="170"></p></td>
+		<td rowspan="2"><p align="right"><img src="results/img/itam_logo.png" width="390" height="170"></p></td>
 	</tr>
 	<tr>
 		<td style="text-aling: center; font-weight: bold; font-size: 20px">:red_circle: Métodos de Gran Escala</td>
 	</tr>
-		<td>
-			<table>
-				<tr><td style="font-weight: bold;">:black_circle: Colaboradores</td></tr>
-				<tr><td>Karina Lizette Gamboa Puente</td></tr>
-				<tr><td>Oscar Arturo Bringas López</td></tr>
-				<tr><td>Aide Jazmín González Cruz</td></tr>
-				<tr><td>Miguel López Cruz</td></tr>
-				<tr>
-			</table>
-		</td>
-	</tr>
 </table>
+
+### :black_circle: Colaboradores
+
+| Nombre |
+| :------- |
+| Karina Lizette Gamboa Puente|
+| Oscar Arturo Bringas López|
+| Aide Jazmín González Cruz|
+| Miguel López Cruz|
 
 # DPA-Project: Food Inspections :pizza: :hamburger: :coffee: :rice_cracker: :poultry_leg: :bento: :ramen:
 
