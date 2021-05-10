@@ -1,7 +1,7 @@
-<table cellspacing="0" cellpadding="0" style="border: none;">
+<table cellspacing="0" cellpadding="0" style="border: none;" weight="850px">
 	<tr>
 		<td style="text-aling: center; font-weight: bold; font-size: 24px">🟢 Maestría en Ciencia de Datos</td>
-		<td rowspan="2"><p align="right"><img src="results/img/itam_logo.png" width="390" height="170"></p></td>
+		<td rowspan="2"><img src="results/img/itam_logo.png" width="390" height="170"></td>
 	</tr>
 	<tr>
 		<td style="text-aling: center; font-weight: bold; font-size: 20px">:red_circle: Métodos de Gran Escala</td>
