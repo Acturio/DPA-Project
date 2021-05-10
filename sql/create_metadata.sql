@@ -86,6 +86,23 @@ CREATE TABLE metadata.seleccion
         value_params varchar 
 );
 
+-- Creation of table metadata.bias_fairness
+DROP TABLE IF EXISTS metadata.bias_fairness;
+CREATE TABLE metadata.bias_fairness
+(
+        file_name varchar,
+        data_date date,
+        processing_date TIMESTAMPTZ,
+				nrows integer,
+        protected_group varchar,
+        categories_names varchar,
+        source varchar,
+        dataset varchar
+);
+
+
+
+
 -- Drop luigi table
 DROP TABLE IF EXISTS public.table_updates;
 
