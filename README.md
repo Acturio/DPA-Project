@@ -1,7 +1,7 @@
-<table style="width:100%">
+<table>
 	<tr>
 		<td>🟢 Maestría en Ciencia de Datos</td>
-		<td rowspan="2">p align = "right"><img src="images/itam_logo.png" width="390" height="170"></td>
+		<td rowspan="2"><p align = "right"><img src="images/itam_logo.png" width="390" height="170"></p></td>
 	</tr>
 	<tr>
 		<td>Métodos de Gran Escala</td>
@@ -213,7 +213,7 @@ El repositorio se encuentra organizado de la siguiente manera:
 ```
 
 
-## Correr el Pipeline
+## Correr el pipeline :green_circle:
 
 - Se deberá configurar un ***Foxy-Proxy*** para que tu browser pueda mostrar contenido de los web services que ocuparemos en el EMR. Para ello deberás seguir las [instrucciones](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-connect-master-node-proxy.html) en este tutoria, ya que dependiendo del navegador que se tenga los pasos de configuración son diferentes, además es recomendable hacerlo sobre `Chrome` ya que es el navegador con más compatibilidad con la funciónque se busca.
 
