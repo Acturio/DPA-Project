@@ -228,7 +228,7 @@ ssh -i llave_publica_aws usuario@host_bastion
 ssh -i llave_publica_aws usuario@host_ec2
 ```
 
-Como sugerencia le recomendmos abrir 3 terminales con los 2 procedimientos decritos previamente.
+Como sugerencia le recomendamos abrir 3 terminales con los 2 procedimientos descritos previamente.
 
 - En la primera ventana ejecutamos `luigid` dentro de nuestro ambiente virtual, esto nos permitirá acceder al servicio de `Foxy-Proxy` que se configuró en el inicio de este apartado, y sirve para habilitar el scheduler en nuestro navegador local ingresado la dirección `http:\\localhost:8082`.
 
@@ -237,7 +237,7 @@ Como sugerencia le recomendmos abrir 3 terminales con los 2 procedimientos decri
 
 ```
 PYTHONPATH='.' luigi \
---module src.pipeline.LuigiModelSelectionMetadataTask ModelSelectionMetadataTask \
+--module src.pipeline.LuigiBiasFairnessMetadataTask BiasFairnessMetadataTask \
 --path-cred ./conf/local/credentials.yaml \
 --initial false \
 --limit 2000 \
@@ -263,7 +263,6 @@ Descripción:
 ***--exercise*** con esta bandera se le indica si toma una muestra con `true` y si es `false` toma todos los datos.
 
 - Para una **ingesta consecutiva** se corre la siguiente secuencia de comandos, de acuerdo a las opciones descritas anteriormente.
-
 
 
 
@@ -302,7 +301,11 @@ la tabla de seguimiento de los `tasks` que corre luigi los podrá consultar con:
 SELECT * FROM public.table_updates;
 ```
 
-- Una vez ejecutados correctamente las tareas, podrá verificar que sus archivos se encuentran en `AWS` en el bucket especificado y en la ruta `ingestion/initial/` para cargas iniciales y en la ruta `ingestion/consecutive/` para cargas consecutivas.
+- Una vez ejecutados correctamente las tareas, podrá verificar que sus archivos se encuentran en `AWS` en el bucket especificado: en la ruta `ingestion/initial/` para cargas iniciales y en la ruta `ingestion/consecutive/` para cargas consecutivas, `processed-data` los `pickles` con los datos transformados, `feature-engineering` los `pickles` con los datos transformados, `models/training-models` los `pickles` con los modelos, `models/best-models`  los `pickles` con el mejor modelo, y los resultadados de sesgo e inequidad se guardan en la tabla `sesgo.bias_fairness` del RDS, se pueden consultar con el `query`:
+
+```
+SELECT * FROM sesgo.bias_fairness;
+```
 
 - Así mismo verificar el estatus de las tareas en `http:\\localhost:8082` en el `Central Scheduler` de `luigi`, siempre y cuando haya omitido la opción `--local-schedule` a la hora de ejecutar los comandos. 
 
@@ -336,15 +339,11 @@ El grupo de refrencia es `Canvass`, ya que es la categoría con mayor tamaño en
 
 ![](./results/img/group.jpeg) ![](./results/img/group_p.jpeg)
 
-Analizando el proyecto y viendolo desde el punto de vista del usuario (dueño del establecimiento) llegamos a la conclusión de que es un modelo ***asistivo***, ya que el modelo le dirá si van ó no a inspeccionar su establecimiento, por tanto podrá estar preparado.
+Analizando el proyecto y viendolo desde el punto de vista del usuario (dueño del establecimiento) llegamos a la conclusión de que es un modelo ***asistivo***, ya que el modelo le dirá si van ó no a inspeccionar su establecimiento, por lo tanto podrá estar preparado para el día de la inspección.
 
-En este caso, al ser un modelo asistivo tenemos que las variables a cuantificar son: `Recall parity`, `FN/GS Parity`, `FOR Parity` y `FNR Parity`, de acuerdo al `Farirness tree`, sin embargo, como el modelo sólo afectará a una pequeña fracción de la población, nos enfocaremos a medir el ***Recall parity***.
+En este caso, al ser un modelo asistivo tenemos que las variables a cuantificar son: `Recall parity`, `FN/GS Parity`, `FOR Parity` y `FNR Parity`, de acuerdo al `Farirness tree` (rama derecha), sin embargo, como el modelo sólo afectará a una pequeña fracción de la población, nos enfocaremos a medir el ***Recall parity***.
 
 
-Los resultadados de sesgo e inequidad se guardan en la tabla `sesgo.bias_fairness` del RDS, se pueden consultar con el `query`:
 
-```
-SELECT * FROM sesgo.bias_fairness;
-```
 
 
