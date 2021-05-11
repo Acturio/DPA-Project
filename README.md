@@ -320,7 +320,7 @@ SELECT * FROM sesgo.bias_fairness;
 
 ## Sesgo e inequidad :bar_chart:
 
-En este proyecto estamos considerando como variable protegida el tipo de inspección, de la base original (histórica) se pueden cuantificar 96 disintos tipos de inspección, sin embargo se creo una nueva variable (`type_inspection_limpia`) que agrupa estas sólo 10 tipos:
+En este proyecto estamos considerando como variable protegida el tipo de inspección, de la base original (histórica) se pueden cuantificar 96 distintos tipos de inspección, sin embargo se creo una nueva variable (`type_inspection_limpia`) que agrupa estas sólo 10 categorías:
 
 - Canvass
 - License
@@ -335,13 +335,17 @@ En este proyecto estamos considerando como variable protegida el tipo de inspecc
 
 Por lo que nuestro atributo protegido es esta variable `type_inspection_limpia`.
 
-El grupo de refrencia es `Canvass`, ya que es la categoría con mayor tamaño entre todos los grupos existentes, con un 53% aproximadamente.
+El grupo de referencia es `Canvass`, ya que es la categoría con mayor tamaño entre todos los grupos existentes, con un 60.8% aproximadamente.
 
-![](./results/img/group.jpeg) ![](./results/img/group_p.jpeg)
+![](./results/img/proporcion_tipos_est.png) ![](./results/img/labels_tipos_est.png)
+
+y está proporción se "conserva" cuando se predice
+
+![](./results/img/scores_tipos_est.png)
 
 Analizando el proyecto y viendolo desde el punto de vista del usuario (dueño del establecimiento) llegamos a la conclusión de que es un modelo ***asistivo***, ya que el modelo le dirá si van ó no a inspeccionar su establecimiento, por lo tanto podrá estar preparado para el día de la inspección.
 
-En este caso, al ser un modelo asistivo tenemos que las variables a cuantificar son: `Recall parity`, `FN/GS Parity`, `FOR Parity` y `FNR Parity`, de acuerdo al `Farirness tree` (rama derecha), sin embargo, como el modelo sólo afectará a una pequeña fracción de la población, nos enfocaremos a medir el ***Recall parity***.
+En este caso, al ser un modelo asistivo tenemos que las variables a cuantificar son: `Recall parity`, `FN/GS Parity`, `FOR Parity` y `FNR Parity`, de acuerdo al `Farirness tree` (rama derecha), sin embargo, como el modelo sólo afectará a una pequeña fracción de la población, nos enfocaremos a medir el ***Recall parity***, sin embargo de acuerdo a la observación de la bibliografía de aequitas nos menciona que es equivalente a enfocarnos en el `FNR Parity`, por lo que mediremos la métrica ***FNR***.
 
 
 
