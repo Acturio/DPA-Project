@@ -337,11 +337,12 @@ Por lo que nuestro atributo protegido es esta variable `type_inspection_limpia`.
 
 El grupo de referencia es `Canvass`, ya que es la categoría con mayor tamaño entre todos los grupos existentes, con un 60.8% aproximadamente.
 
-![](./results/img/proporcion_tipos_est.png) ![](./results/img/labels_tipos_est.png)
+![](./results/img/proporcion_tipos_est.png) 
 
-y está proporción se "conserva" cuando se predice
 
-![](./results/img/scores_tipos_est.png)
+![](./results/img/labels_tipos_est.png)
+
+
 
 Analizando el proyecto y viendolo desde el punto de vista del usuario (dueño del establecimiento) llegamos a la conclusión de que es un modelo ***asistivo***, ya que el modelo le dirá si van ó no a inspeccionar su establecimiento, por lo tanto podrá estar preparado para el día de la inspección.
 
