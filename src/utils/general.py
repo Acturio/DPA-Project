@@ -178,6 +178,29 @@ def bias_fairness_metadata(data, data_date):
     return pd.DataFrame(df, index=[0])
 
 
+def predict_metadata(data, data_date):
+
+    file_name = 'predict-metadata-{}'.format(data_date.strftime('%Y-%m-%d'))
+    dataset = "predict"
+    date_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+
+    df = {
+        "file_name": file_name,
+        "data_date": data_date,
+        "processing_data" : date_time,
+        "nrows" : data.shape[0],
+        "ncols" : data.shape[1],
+        "label_1": data['label'].value_counts()[1],
+        "label_0": data['label'].value_counts()[0],
+        "score_1": data['score'].value_counts()[1],
+        "score_0": data['score'].value_counts()[0],
+        "source" : "postgres rds",
+        "dataset" : dataset
+       }
+
+    return pd.DataFrame(df, index=[0])
+
+
 
 def get_s3_resource(path_cred):
     """
