@@ -101,7 +101,22 @@ CREATE TABLE metadata.bias_fairness
 );
 
 
-
+-- Creation of table metadata.predict
+DROP TABLE IF EXISTS metadata.predict;
+CREATE TABLE metadata.predict
+(
+  	file_name varchar,
+	data_date date,
+	processing_date TIMESTAMPTZ,
+	nrows integer,
+	ncols integer,
+	label_1 integer,
+	label_0 integer,
+	score_1 integer,
+	score_0 integer,
+	source varchar,
+	dataset varchar
+);
 
 -- Drop luigi table
 DROP TABLE IF EXISTS public.table_updates;
@@ -178,7 +193,7 @@ CREATE TABLE metadata.test_seleccion
 DROP TABLE IF EXISTS metadata.test_bias_fairness;
 CREATE TABLE metadata.test_bias_fairness
 (
-  			file_name varchar,
+  	file_name varchar,
 	data_date date,
 	processing_date TIMESTAMPTZ,
 	test_name varchar,
@@ -186,6 +201,16 @@ CREATE TABLE metadata.test_bias_fairness
 );
 
 
+-- Creation of table metadata.test_predict
+DROP TABLE IF EXISTS metadata.test_predict;
+CREATE TABLE metadata.test_predict
+(
+  	file_name varchar,
+	data_date date,
+	processing_date TIMESTAMPTZ,
+	test_name varchar,
+	result boolean 
+);
 
 
 -- Sesgo e inequidad
@@ -262,7 +287,22 @@ CREATE TABLE sesgo.bias_fairness
 );
 
 
+-- Sesgo e inequidad
+-- Creation of schema predict
+DROP SCHEMA IF EXISTS predict CASCADE;
+CREATE SCHEMA predict;
 
+DROP TABLE IF EXISTS predict.predictions;
+CREATE TABLE predict.predictions
+(
+	fecha_load DATE,
+	fecha DATE,
+	inspection_id INTEGER,
+	label INTEGER,
+	score decimal(2,1),
+	facility_type VARCHAR,
+	inspection_type VARCHAR
+);
 
 
 
