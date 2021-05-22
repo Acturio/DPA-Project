@@ -67,12 +67,12 @@ def predict(df_fe, best_model, auto_variables, date_input, inicial):
     return results_conjunto_original
 
 
-def bias_fairness(df_fe, best_model, auto_variables, fecha= '', inicial):
+def bias_fairness(df_fe, best_model, auto_variables, inicial, fecha= ''):
     
     print('Generación de análisis de sesgo e inequidad en base a la metodología de Aequitas ')
     start_time = time.time()
     # Cargamos features, mejor modelo y variables
-    df = predict(df_fe, best_model, auto_variables, fecha, inicial)
+    df = predict(df_fe, best_model, auto_variables, inicial, fecha)
     
     print(df)
     
