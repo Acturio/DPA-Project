@@ -92,9 +92,11 @@ def clean(df):
     # Pasando a minúsculas
     df['facility_type'] = df['facility_type'].str.lower()
     df['inspection_type'] = df['inspection_type'].str.lower()
+    df['dba_name'] = df['dba_name'].str.lower()
 
     # Nos quedamos con que usaremos para el modelo
-    df = df[['inspection_id', 'facility_type', 'inspection_type','risk', 'zip', 'inspection_date','latitude','longitude','label']]  
+    df = df[['inspection_id', 'dba_name', 'facility_type', 'inspection_type','risk', 'zip', \
+             'inspection_date','latitude','longitude','label']] 
 
     return df   
 
