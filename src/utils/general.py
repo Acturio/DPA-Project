@@ -183,6 +183,8 @@ def predict_metadata(data, data_date):
     file_name = 'predict-metadata-{}'.format(data_date.strftime('%Y-%m-%d'))
     dataset = "predict"
     date_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    print(data["label"].value_counts())
+    print(data["score"].value_counts())
 
     df = {
         "file_name": file_name,
