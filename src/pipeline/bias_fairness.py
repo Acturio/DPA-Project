@@ -11,7 +11,7 @@ import pandas as pd
 import time
 
 
-def predict(df_fe, best_model, auto_variables, date_input, inicial):
+def predict(df_fe, best_model, auto_variables, inicial, date_input):
     """
     Recibe el data frame a predecir, regresa los labesl y scores predichos
     """
