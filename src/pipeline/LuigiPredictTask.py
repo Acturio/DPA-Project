@@ -27,7 +27,6 @@ class PredictTask(CopyToTable):
   date_bestmodel = luigi.DateParameter(default = None)
   #accion = luigi.Parameter(default = 'prediction')# o monitoreo
   
-  
   with open(cte.CREDENTIALS, 'r') as f:
     config = yaml.safe_load(f)
 
@@ -52,15 +51,24 @@ class PredictTask(CopyToTable):
 
   def requires(self):
   	#requiere dataframe_fe, mejor modelo y autovariables
+    path_cred = self.path_cred 
+    initial = self.initial 
+    limit = self.limit 
+    date = self.date 
+    initial_date = self.initial_date 
+    bucket_path = self.bucket_path 
+    exercise = self.exercise 
+    date_bestmodel = self.date_bestmodel 
+
     return {
       'best_model': ModelSelectionTask(
-        self.path_cred,
-        self.initial,
-        self.limit,
-        self.date,
-        self.initial_date,
-        self.bucket_path,
-        self.exercise), 
+        path_cred,
+        initial,
+        limit,
+        date_bestmodel,
+        initial_date,
+        bucket_path,
+        exercise), 
       'feature': FeatureEngineeringTask(
         self.path_cred,
         self.initial,
