@@ -6,6 +6,8 @@ from aequitas.group import Group
 from aequitas.bias import Bias
 from aequitas.fairness import Fairness
 from src.pipeline.ingesta_almacenamiento import get_s3_client
+import src.utils.constants as cte
+import pickle
 from datetime import datetime
 import numpy as np
 import pandas as pd
