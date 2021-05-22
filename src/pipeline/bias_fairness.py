@@ -5,6 +5,7 @@ from sklearn.metrics import precision_recall_curve , roc_auc_score, roc_curve, P
 from aequitas.group import Group
 from aequitas.bias import Bias
 from aequitas.fairness import Fairness
+from src.pipeline.ingesta_almacenamiento import get_s3_client
 from datetime import datetime
 import numpy as np
 import pandas as pd
