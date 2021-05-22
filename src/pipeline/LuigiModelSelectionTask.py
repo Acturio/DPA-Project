@@ -19,29 +19,35 @@ class ModelSelectionTask(luigi.Task):
   initial_date = luigi.DateParameter(default = None)
   bucket_path = luigi.Parameter(default = cte.BUCKET)
   exercise = luigi.BoolParameter(default=True, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
+  accion = luigi.Parameter(default = 'prediction')# or train
 
     # Se requiere TrainingMetadataTask
   def requires(self):
-    return TrainingModelMetadataTask(
-      self.path_cred,
-      self.initial,
-      self.limit,
-      self.date,
-      self.initial_date,
-      self.bucket_path,
-      self.exercise
-    )
+    if self.accion == 'prediction':
+      return True
+    else:
+      return TrainingModelMetadataTask(
+        self.path_cred,
+        self.initial,
+        self.limit,
+        self.date,
+        self.initial_date,
+        self.bucket_path,
+        self.exercise
+      )
 
 # Se carga el archivo sobre el cual se realizará el feature engineering
   def input(self):
-
-    file_name = "models/training-models/food-inspections-models-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
-    s3 = get_s3_client(self.path_cred)
-    s3_object = s3.get_object(Bucket = self.bucket_path, Key = file_name)
-    body = s3_object['Body']
-    model = pickle.loads(body.read())
-    
-    return model
+    if self.accion == 'prediction':
+      return True
+    else:
+      file_name = "models/training-models/food-inspections-models-" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
+      s3 = get_s3_client(self.path_cred)
+      s3_object = s3.get_object(Bucket = self.bucket_path, Key = file_name)
+      body = s3_object['Body']
+      model = pickle.loads(body.read())
+      
+      return model
 
 
   def output(self):
@@ -59,17 +65,17 @@ class ModelSelectionTask(luigi.Task):
 
   
   def run(self):
-
-    models = self.input()
-    file_type = "models/best-models/best-food-inspections-model-"
-    output_path = "{}{}.pkl".format(file_type, self.date.strftime('%Y-%m-%d'))
-    
-    best_model = mod.best_model(models)
-    
-    guardar_ingesta(
-      path_cred = self.path_cred,
-      bucket = self.bucket_path,
-      bucket_path = file_type,
-      data = best_model,
-      fecha = self.date.strftime('%Y-%m-%d')
-    )
+    if self.accion == 'train':
+      models = self.input()
+      file_type = "models/best-models/best-food-inspections-model-"
+      output_path = "{}{}.pkl".format(file_type, self.date.strftime('%Y-%m-%d'))
+      
+      best_model = mod.best_model(models)
+      
+      guardar_ingesta(
+        path_cred = self.path_cred,
+        bucket = self.bucket_path,
+        bucket_path = file_type,
+        data = best_model,
+        fecha = self.date.strftime('%Y-%m-%d')
+      )
