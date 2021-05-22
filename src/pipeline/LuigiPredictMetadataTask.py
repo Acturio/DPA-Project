@@ -44,10 +44,10 @@ class PredictMetadataTask(CopyToTable):
              ("processing_date", "TIMESTAMPTZ"),
              ("nrows", "INTEGER"),
              ("ncols", "INTEGER"),
-             ("label_1", "INTEGER"),
-             ("label_0", "INTEGER"),
-             ("score_1", "INTEGER"),
-             ("score_0", "INTEGER"),
+             #("label_1", "INTEGER"),
+             #("label_0", "INTEGER"),
+             #("score_1", "INTEGER"),
+             #("score_0", "INTEGER"),
              ("source","VARCHAR"),
              ("dataset", "VARCHAR")
              ]

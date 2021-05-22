@@ -110,10 +110,10 @@ CREATE TABLE metadata.predict
 	processing_date TIMESTAMPTZ,
 	nrows integer,
 	ncols integer,
-	label_1 integer,
-	label_0 integer,
-	score_1 integer,
-	score_0 integer,
+	--label_1 integer,
+	--label_0 integer,
+	--score_1 integer,
+	--score_0 integer,
 	source varchar,
 	dataset varchar
 );
