@@ -61,7 +61,8 @@ class TransformTask(luigi.Task):
       else:
           file_type = "processed-data/clean-consecutive-inspections-"
           
-      output_path = "s3://{}/{}{}.pkl".format(cte.BUCKET, file_type, self.date.strftime('%Y-%m-%d'))
+      #output_path = "s3://{}/{}{}.pkl".format(cte.BUCKET, file_type, self.date.strftime('%Y-%m-%d'))
+      output_path = "s3://{}/{}{}.pkl".format(cte.BUCKET, file_type, self.date)
 
       return luigi.contrib.s3.S3Target(path = output_path, client = client_s3)
 
