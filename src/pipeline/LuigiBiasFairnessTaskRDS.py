@@ -151,7 +151,7 @@ class BiasFairnessTask(CopyToTable):
       best_model = best_model,
       auto_variables = features,
       inicial = self.initial,
-      fecha = self.date.strftime('%Y-%m-%d')
+      fecha = self.date
     )
 
     records = data.to_records(index=False)
