@@ -57,13 +57,15 @@ def predict(df_fe, best_model, auto_variables, inicial, date_input):
     else:
          file_name = 'processed-data/clean-consecutive-inspections-{}.pkl'.format(date_input.strftime('%Y-%m-%d'))
 
+    print("FILE NAME",file_name)
     s3 = get_s3_client(cte.CREDENTIALS)
     s3_object = s3.get_object(Bucket = cte.BUCKET, Key = file_name)
     body = s3_object['Body']
     my_pickle = pickle.loads(body.read())
 
     df_clean = pd.DataFrame(my_pickle)
-    
+    print(df_clean)
+
     df_clean_results = df_clean[['inspection_id', 'dba_name', 'facility_type', 'inspection_type']]
     results_conjunto_original = results_conjunto.merge(df_clean_results, on='inspection_id', how='left')
     
