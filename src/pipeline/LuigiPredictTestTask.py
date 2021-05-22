@@ -19,7 +19,7 @@ import psycopg2
 
 class PredictTest(marbles.core.TestCase, marbles.mixins.DateTimeMixins):
 
-	def __init__(self, my_date, data, model):
+	def __init__(self, my_date, data):#, model
 		super(PredictTest, self).__init__()
 		self.date = my_date
 		self.data = data
@@ -138,9 +138,12 @@ class PredictTestTask(CopyToTable):
 
     file_name = "predict-" + self.date.strftime('%Y-%m-%d')
     #file_name_model = "best-food-inspections-model-" + self.date_bestmodel.strftime('%Y-%m-%d')
-    data = self.input()
+    data_in = self.input()
+    test = PredictTest(path_cred = self.path_cred, data = data_in,\
+                       my_date = self.date)
+    """
     test = PredictTest(path_cred = self.path_cred, data = data["data"],\
-                       my_date = self.date, model=data["best_model"])
+                       my_date = self.date, model=data["best_model"])"""
 
     print("Realizando prueba unitaria: Validación de Fecha")
     test_val = test.test_get_date_validation()
