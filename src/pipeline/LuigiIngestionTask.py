@@ -21,10 +21,12 @@ class IngestionTask(luigi.Task):
         
         if self.initial:
             # 'historical'
-            file_name = cte.BUCKET_PATH_HIST + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
+            #file_name = cte.BUCKET_PATH_HIST + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
+            file_name = cte.BUCKET_PATH_HIST + '{}.pkl'.format(self.date)
         else:
             # 'consecutive'
-            file_name = cte.BUCKET_PATH_CONS + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
+            #file_name = cte.BUCKET_PATH_CONS + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
+            file_name = cte.BUCKET_PATH_CONS + '{}.pkl'.format(self.date)
 
         local_path = "results/" + file_name
                
