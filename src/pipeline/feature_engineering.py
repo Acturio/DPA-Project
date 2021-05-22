@@ -211,6 +211,9 @@ def feature_generation(data):
     crearemos nuevas variables. Estas nuevas variables se guardarán en este 
     mismo data frame.
     """    
+    # Borramos la variable de nombre, porque aquí no la ocuparemos
+    data = data.drop('dba_name', 1)
+    
     # Creación de variables
     # Dividiendo fecha en mes y día, y creando semanas
     data = split_fecha("inspection_date", data)
