@@ -11,7 +11,7 @@ import pandas as pd
 import time
 
 
-def predict(df_fe, best_model, auto_variables):
+def predict(df_fe, best_model, auto_variables, date_input):
     """
     Recibe el data frame a predecir, regresa los labesl y scores predichos
     """
@@ -48,10 +48,23 @@ def predict(df_fe, best_model, auto_variables):
                                           'type_prelicense','type_others']].idxmax(axis=1) 
     results_conjunto = pd.concat([results,X_test_id], axis=1)
     
-    #df_clean_results = df_clean[['inspection_id', 'facility_type', 'inspection_type']]
-    #results_conjunto_original = results_conjunto.merge(df_clean_results, on='inspection_id', how='left')
+    #Leyendo variables de inicio
+    if self.initial:
+         file_name = 'processed-data/clean-historic-inspections-{}.pkl'.format(date_input.strftime('%Y-%m-%d'))
+    else:
+         file_name = 'processed-data/clean-consecutive-inspections-{}.pkl'.format(date_input.strftime('%Y-%m-%d'))
+
+    s3 = get_s3_client(cte.CREDENTIALS)
+    s3_object = s3.get_object(Bucket = cte.BUCKET, Key = file_name)
+    body = s3_object['Body']
+    my_pickle = pickle.loads(body.read())
+
+    df_clean = pd.DataFrame(my_pickle)
     
-    return results_conjunto
+    df_clean_results = df_clean[['inspection_id', 'dba_name', 'facility_type', 'inspection_type']]
+    results_conjunto_original = results_conjunto.merge(df_clean_results, on='inspection_id', how='left')
+    
+    return results_conjunto_original
 
 
 def bias_fairness(df_fe, best_model, auto_variables,  fecha= ''):
@@ -59,7 +72,7 @@ def bias_fairness(df_fe, best_model, auto_variables,  fecha= ''):
     print('Generación de análisis de sesgo e inequidad en base a la metodología de Aequitas ')
     start_time = time.time()
     # Cargamos features, mejor modelo y variables
-    df = predict(df_fe, best_model, auto_variables)
+    df = predict(df_fe, best_model, auto_variables, fecha)
     
     print(df)
     
@@ -67,7 +80,7 @@ def bias_fairness(df_fe, best_model, auto_variables,  fecha= ''):
     df_s_i = df[['score','label','type_inspection_limpia']]
     df_s_i.rename(columns = {'label':'label_value'}, inplace = True)
     
-    #G roup
+    #Group
     g = Group()
     xtab, attrbs = g.get_crosstabs(df_s_i)
     # Bias
