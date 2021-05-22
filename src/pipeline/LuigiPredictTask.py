@@ -42,8 +42,8 @@ class PredictTask(CopyToTable):
   	          
   columns = [("fecha_load", "DATE"),
              ("fecha", "DATE"),
-             ("inspection_id", "INTEGER"),#Cambiar por ID establecimiento
-             ("label", "INTEGER"),
+             ("establecimiento", "VARCHAR"),#Cambiar por ID establecimiento
+             #("label", "INTEGER"),
              ("score","DOUBLE"),
              ("facility_type","VARCHAR"),
              ("inspection_type","VARCHAR")
@@ -129,12 +129,12 @@ class PredictTask(CopyToTable):
       inicial = self.initial,
       date_input = self.initial_date
     )
-    
+
     # Para agregar columna con la fecha
     pred["fecha_load"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     pred["fecha"] = self.date.strftime('%Y-%m-%d')
 
-    pred = pred[["fecha_load","fecha","inspection_id","label",
+    pred = pred[["fecha_load","fecha","inspection_id",#"label",
                  "score","facility_type","inspection_type"]]
 
     records = pred.to_records(index=False)
