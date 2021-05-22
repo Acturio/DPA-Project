@@ -84,10 +84,8 @@ class PredictTestTask(luigi.Task):
 			self.initial_date,
       self.bucket_path,
       self.exercise,
-      self.rama,
       self.date_bestmodel
 		)
-
 
   def input(self):
 
