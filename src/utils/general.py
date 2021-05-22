@@ -192,10 +192,10 @@ def predict_metadata(data, data_date):
         "processing_data" : date_time,
         "nrows" : data.shape[0],
         "ncols" : data.shape[1],
-        "label_1": data['label'].value_counts()[1],
-        "label_0": data['label'].value_counts()[0],
-        "score_1": data['score'].value_counts()[1],
-        "score_0": data['score'].value_counts()[0],
+        "label_1": data[data.label==1,'label'].value_counts(),
+        "label_0": data[data.label==0,'label'].value_counts(),
+        "score_1": data[data.score==1,'score'].value_counts(),
+        "score_0": data[data.score==0,'score'].value_counts(),
         "source" : "postgres rds",
         "dataset" : dataset
        }
