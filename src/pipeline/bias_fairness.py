@@ -53,9 +53,9 @@ def predict(df_fe, best_model, auto_variables, inicial, date_input):
     
     #Leyendo variables de inicio
     if inicial:
-         file_name = 'processed-data/clean-historic-inspections-{}.pkl'.format(date_input('%Y-%m-%d'))
+         file_name = 'processed-data/clean-historic-inspections-{}.pkl'.format(date_input.strftime('%Y-%m-%d'))
     else:
-         file_name = 'processed-data/clean-consecutive-inspections-{}.pkl'.format(date_input('%Y-%m-%d'))
+         file_name = 'processed-data/clean-consecutive-inspections-{}.pkl'.format(date_input.strftime('%Y-%m-%d'))
 
     s3 = get_s3_client(cte.CREDENTIALS)
     s3_object = s3.get_object(Bucket = cte.BUCKET, Key = file_name)
