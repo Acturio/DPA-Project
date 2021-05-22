@@ -49,8 +49,9 @@ def predict(df_fe, best_model, auto_variables, inicial, date_input):
     X_test_id['type_inspection_limpia'] = X_test_id[['type_canvass','type_license','type_licuor','type_complaint',
                                           'type_reinsp','type_illegal','type_not_ready','type_out_of_buss',
                                           'type_prelicense','type_others']].idxmax(axis=1) 
+                                          
     results_conjunto = pd.concat([results,X_test_id], axis=1)
-    
+    print(results_conjunto)
     #Leyendo variables de inicio
     if inicial:
          file_name = 'processed-data/clean-historic-inspections-{}.pkl'.format(date_input.strftime('%Y-%m-%d'))
