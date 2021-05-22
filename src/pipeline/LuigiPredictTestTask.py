@@ -37,11 +37,11 @@ class PredictTest(marbles.core.TestCase, marbles.mixins.DateTimeMixins):
 		self.assertGreater(nrow, 0, note = "El archivo no tiene registros")
 		return True
 
-	def test_get_exist_best_model(self):
+	"""def test_get_exist_best_model(self):
 		data = self.model
 		empty_model = len(data)
 		self.assertGreater(empty_model, 0, note = "No existe un modelo con esa fecha.")
-		return True
+		return True"""
 
 class PredictTestTask(luigi.Task):
 
@@ -52,7 +52,7 @@ class PredictTestTask(luigi.Task):
   initial_date = luigi.DateParameter(default = None)
   bucket_path = luigi.Parameter(default = cte.BUCKET)
   exercise = luigi.BoolParameter(default=False, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
-  rama = luigi.Parameter(default = 'almacenamiento')# o monitoreo
+  #rama = luigi.Parameter(default = 'almacenamiento')# o monitoreo
   date_bestmodel = luigi.DateParameter(default = None)
 
   with open(cte.CREDENTIALS, 'r') as f:
@@ -117,7 +117,7 @@ class PredictTestTask(luigi.Task):
     data.columns = [desc[0] for desc in cur.description]
 
     #Model
-    file_best_model = "models/best-models/best-food-inspections-model-" + '{}.pkl'.format(self.date_bestmodel.strftime('%Y-%m-%d'))
+    """file_best_model = "models/best-models/best-food-inspections-model-" + '{}.pkl'.format(self.date_bestmodel.strftime('%Y-%m-%d'))
 
     s3 = get_s3_client(self.path_cred)
     s3_object = s3.get_object(Bucket = self.bucket_path, Key = file_best_model)
@@ -129,13 +129,14 @@ class PredictTestTask(luigi.Task):
       "best_model": model_and_features
     }
 
-    return data_model_features
+    return data_model_features"""
+    return data
 
 
   def rows(self):
 
     file_name = "predict-" + self.date.strftime('%Y-%m-%d')
-    file_name_model = "best-food-inspections-model-" + self.date_bestmodel.strftime('%Y-%m-%d')
+    #file_name_model = "best-food-inspections-model-" + self.date_bestmodel.strftime('%Y-%m-%d')
     data = self.input()
     test = PredictTest(path_cred = self.path_cred, data = data["data"],\
                        my_date = self.date, model=data["best_model"])
@@ -148,20 +149,29 @@ class PredictTestTask(luigi.Task):
     test_nrow = test.test_get_nrow_file_validation()
     print("Prueba uitaria aprobada")
 
-    print("Realizando prueba unitaria: Validación de existencia del modelo")    
-    test_model = test.test_get_exist_best_model()
-    print("Prueba uitaria aprobada")
+    #print("Realizando prueba unitaria: Validación de existencia del modelo")    
+    #test_model = test.test_get_exist_best_model()
+    #print("Prueba uitaria aprobada")
 
     date_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     data_test = {
+    	"file_name": [file_name, file_name],
+    	"data_date": [self.date, self.date],
+    	"processing_date": [date_time, date_time],
+    	"test_name": ["test_get_date_validation", 
+    	"test_get_nrow_file_validation"],
+    	"result": [test_val, test_nrow]
+    }
+
+    """data_test = {
     	"file_name": [file_name, file_name, file_name_model],
     	"data_date": [self.date, self.date, self.date_bestmodel],
-    	"processing_date": [date_time, date_time],
+    	"processing_date": [date_time, date_time, date_time],
     	"test_name": ["test_get_date_validation", 
     	"test_get_nrow_file_validation",
       "test_get_exist_best_model"],
     	"result": [test_val, test_nrow, test_model]
-    }
+    }"""
 
     data_test = pd.DataFrame(data_test)
     records = data_test.to_records(index=False)
