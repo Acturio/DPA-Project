@@ -18,7 +18,7 @@ import psycopg2
 
 class PredictTest(marbles.core.TestCase, marbles.mixins.DateTimeMixins):
 
-	def __init__(self, my_date, data):
+	def __init__(self, my_date, data, model):
 		super(PredictTest, self).__init__()
 		self.date = my_date
 		self.data = data
@@ -35,6 +35,12 @@ class PredictTest(marbles.core.TestCase, marbles.mixins.DateTimeMixins):
 		data = self.data
 		nrow = data.shape[0]
 		self.assertGreater(nrow, 0, note = "El archivo no tiene registros")
+		return True
+
+	def test_get_exist_best_model(self):
+		data = self.model
+		empty_model = len(data)
+		self.assertGreater(empty_model, 0, note = "No existe un modelo con esa fecha.")
 		return True
 
 class PredictTestTask(luigi.Task):
@@ -112,13 +118,29 @@ class PredictTestTask(luigi.Task):
     data = pd.DataFrame(rows)
     data.columns = [desc[0] for desc in cur.description]
 
-    return data
+    #Model
+    file_best_model = "models/best-models/best-food-inspections-model-" + '{}.pkl'.format(self.date_bestmodel.strftime('%Y-%m-%d'))
+
+    s3 = get_s3_client(self.path_cred)
+    s3_object = s3.get_object(Bucket = self.bucket_path, Key = file_best_model)
+    body = s3_object['Body']
+    model_and_features = pickle.loads(body.read())
+    
+    data_model_features = {
+      "data": data,
+      "best_model": model_and_features
+    }
+
+    return data_model_features
 
 
   def rows(self):
 
     file_name = "predict-" + self.date.strftime('%Y-%m-%d')
-    test = PredictTest(path_cred = self.path_cred, data = self.input(), my_date = self.date)
+    file_name_model = "best-food-inspections-model-" + self.date_bestmodel.strftime('%Y-%m-%d')
+    data = self.input()
+    test = PredictTest(path_cred = self.path_cred, data = data["data"],\
+                       my_date = self.date, model=data["best_model"])
 
     print("Realizando prueba unitaria: Validación de Fecha")
     test_val = test.test_get_date_validation()
@@ -128,14 +150,19 @@ class PredictTestTask(luigi.Task):
     test_nrow = test.test_get_nrow_file_validation()
     print("Prueba uitaria aprobada")
 
+    print("Realizando prueba unitaria: Validación de existencia del modelo")    
+    test_model = test.test_get_exist_best_model()
+    print("Prueba uitaria aprobada")
+
     date_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     data_test = {
-    	"file_name": [file_name, file_name],
-    	"data_date": [self.date, self.date],
+    	"file_name": [file_name, file_name, file_name_model],
+    	"data_date": [self.date, self.date, self.date_bestmodel],
     	"processing_date": [date_time, date_time],
     	"test_name": ["test_get_date_validation", 
-    		"test_get_nrow_file_validation"],
-    	"result": [test_val, test_nrow]
+    	"test_get_nrow_file_validation",
+      "test_get_exist_best_model"],
+    	"result": [test_val, test_nrow, test_model]
     }
 
     data_test = pd.DataFrame(data_test)
