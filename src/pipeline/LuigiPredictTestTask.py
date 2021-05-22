@@ -1,3 +1,4 @@
+from luigi.contrib.postgres import CopyToTable
 from src.pipeline import transformation as transf
 from src.pipeline import bias_fairness as bf
 from src.pipeline.ingesta_almacenamiento import get_s3_client, guardar_ingesta

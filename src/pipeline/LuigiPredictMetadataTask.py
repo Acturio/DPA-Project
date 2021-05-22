@@ -1,3 +1,4 @@
+from luigi.contrib.postgres import CopyToTable
 from src.pipeline import transformation as transf
 from src.pipeline import bias_fairness as bf
 from src.pipeline.ingesta_almacenamiento import get_s3_client, guardar_ingesta
@@ -13,7 +14,7 @@ import src.utils.constants as cte
 import yaml
 import psycopg2
 
-class PredictMetadataTask(luigi.Task):
+class PredictMetadataTask(CopyToTable):
 
   path_cred = luigi.Parameter(default = 'credentials.yaml')
   initial = luigi.BoolParameter(default=True, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
