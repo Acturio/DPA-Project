@@ -3,13 +3,14 @@ from src.pipeline import transformation as transf
 from src.pipeline import bias_fairness as bf
 from src.pipeline.ingesta_almacenamiento import get_s3_client, guardar_ingesta
 from src.utils import general as gral
-from src.pipeline.LuigiModelSelectionMetadataTask import ModelSelectionMetadataTask
+from src.pipeline.LuigiModelSelectionTask import ModelSelectionTask
 from src.pipeline.LuigiFeatureEngineeringTask import FeatureEngineeringTask
 
 import luigi
 #import boto3
 import pandas as pd
 import pickle
+import yaml
 import luigi.contrib.s3
 import src.utils.constants as cte
 from time import gmtime, strftime
@@ -23,8 +24,9 @@ class PredictTask(CopyToTable):
   initial_date = luigi.DateParameter(default = None)
   bucket_path = luigi.Parameter(default = cte.BUCKET)
   exercise = luigi.BoolParameter(default=False, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
-  rama = luigi.Parameter(default = 'almacenamiento')# o monitoreo
   date_bestmodel = luigi.DateParameter(default = None)
+  #accion = luigi.Parameter(default = 'prediction')# o monitoreo
+  
   
   with open(cte.CREDENTIALS, 'r') as f:
     config = yaml.safe_load(f)
@@ -50,22 +52,23 @@ class PredictTask(CopyToTable):
 
   def requires(self):
   	#requiere dataframe_fe, mejor modelo y autovariables
-    return {'best_model': ModelSelectionMetadataTask(
-      self.path_cred,
-      self.initial,
-      self.limit,
-      self.date,
-      self.initial_date,
-      self.bucket_path
-    ), 'feature': FeatureEngineeringTask(
-			self.path_cred,
-			self.initial,
-			self.limit,
-			self.date,
-			self.initial_date,
-      self.bucket_path
-		)}
-
+    return {
+      'best_model': ModelSelectionTask(
+        self.path_cred,
+        self.initial,
+        self.limit,
+        self.date,
+        self.initial_date,
+        self.bucket_path,
+        self.exercise), 
+      'feature': FeatureEngineeringTask(
+        self.path_cred,
+        self.initial,
+        self.limit,
+        self.date,
+        self.initial_date,
+        self.bucket_path)
+    }
 
   def input(self):
   
@@ -116,6 +119,7 @@ class PredictTask(CopyToTable):
       best_model = best_model,
       auto_variables = features
     )
+
     # Para agregar columna con la fecha
     pred["fecha_load"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     pred["fecha"] = self.date.strftime('%Y-%m-%d')
@@ -128,50 +132,4 @@ class PredictTask(CopyToTable):
     
     for element in r:
       yield element
-
-  """
-  def output(self):
-          
-    s3_c = gral.get_s3_credentials(self.path_cred)
-    client_s3 = luigi.contrib.s3.S3Client(
-      aws_access_key_id = s3_c["aws_access_key_id"],
-      aws_secret_access_key = s3_c["aws_secret_access_key"]
-      )
-  
-    file_type = "bias_fairness/bias_fairness-consecutive-"
-  
-    if self.initial:
-    	file_type = "bias_fairness/bias_fairness-historic-"  
-    	
-    output_path = "s3://{}/{}{}.pkl".format(cte.BUCKET, file_type, self.date.strftime('%Y-%m-%d'))
-
-    return luigi.contrib.s3.S3Target(path = output_path, client = client_s3)
-
-
-  def run(self):
-
-    data_input = self.input()
-
-    data = data_input["data"]
-    best_model = data_input["best_model"]
-    features = data_input["features"]
-
-    pred = bf.predict(
-      df_fe = data, 
-      best_model = best_model,
-      auto_variables = features
-    )
-    # Para agregar columna con la fecha
-    #pred["date_predict"] = self.date.strftime('%Y-%m-%d')
-
-    file_pred = file_name = "predictions/predict" + '{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
-
-    guardar_ingesta(
-      path_cred = self.path_cred, 
-      bucket = self.bucket_path, 
-      bucket_path = file_pred, 
-      data = pred,
-      fecha = self.date.strftime('%Y-%m-%d')
-    )
-"""
 
