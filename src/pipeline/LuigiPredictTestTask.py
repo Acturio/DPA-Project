@@ -43,7 +43,7 @@ class PredictTest(marbles.core.TestCase, marbles.mixins.DateTimeMixins):
 		self.assertGreater(empty_model, 0, note = "No existe un modelo con esa fecha.")
 		return True"""
 
-class PredictTestTask(luigi.Task):
+class PredictTestTask(CopyToTable):
 
   path_cred = luigi.Parameter(default = 'credentials.yaml')
   initial = luigi.BoolParameter(default=True, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
