@@ -94,11 +94,9 @@ class IngestionTestTask(CopyToTable):
 	def rows(self):
 
 		if self.initial:
-			#file_name = 'historic-inspections-{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
-			file_name = 'historic-inspections-' + self.date + '.pkl'
+			file_name = 'historic-inspections-{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
 		else:
-			#file_name = 'consecutive-inspections-{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
-			file_name = 'consecutive-inspections-' + self.date + '.pkl'
+			file_name = 'consecutive-inspections-{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
 
 		test = IngestionTests(path_cred = self.path_cred, data = self.input(), my_date = self.date)
 		print("Realizando prueba unitaria: Validación de Fecha")
