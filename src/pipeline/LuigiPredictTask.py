@@ -126,7 +126,7 @@ class PredictTask(CopyToTable):
       best_model = best_model,
       auto_variables = features,
       inicial = self.initial,
-      date_input = self.initial_date
+      date_input = self.date
     )
 
     # Para agregar columna con la fecha
