@@ -11,7 +11,7 @@ import pandas as pd
 import time
 
 
-def predict(df_fe, best_model, auto_variables, date_input):
+def predict(df_fe, best_model, auto_variables, date_input, inicial):
     """
     Recibe el data frame a predecir, regresa los labesl y scores predichos
     """
@@ -49,7 +49,7 @@ def predict(df_fe, best_model, auto_variables, date_input):
     results_conjunto = pd.concat([results,X_test_id], axis=1)
     
     #Leyendo variables de inicio
-    if self.initial:
+    if inicial:
          file_name = 'processed-data/clean-historic-inspections-{}.pkl'.format(date_input.strftime('%Y-%m-%d'))
     else:
          file_name = 'processed-data/clean-consecutive-inspections-{}.pkl'.format(date_input.strftime('%Y-%m-%d'))
@@ -67,12 +67,12 @@ def predict(df_fe, best_model, auto_variables, date_input):
     return results_conjunto_original
 
 
-def bias_fairness(df_fe, best_model, auto_variables,  fecha= ''):
+def bias_fairness(df_fe, best_model, auto_variables, fecha= '', inicial):
     
     print('Generación de análisis de sesgo e inequidad en base a la metodología de Aequitas ')
     start_time = time.time()
     # Cargamos features, mejor modelo y variables
-    df = predict(df_fe, best_model, auto_variables, fecha)
+    df = predict(df_fe, best_model, auto_variables, fecha, inicial)
     
     print(df)
     
