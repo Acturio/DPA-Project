@@ -125,9 +125,11 @@ class PredictTask(CopyToTable):
     pred = bf.predict(
       df_fe = data, 
       best_model = best_model,
-      auto_variables = features
+      auto_variables = features,
+      inicial = self.initial,
+      date_input = self.initial_date
     )
-
+    
     # Para agregar columna con la fecha
     pred["fecha_load"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     pred["fecha"] = self.date.strftime('%Y-%m-%d')
