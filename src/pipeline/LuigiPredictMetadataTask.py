@@ -22,7 +22,7 @@ class PredictMetadataTask(luigi.Task):
   initial_date = luigi.DateParameter(default = None)
   bucket_path = luigi.Parameter(default = cte.BUCKET)
   exercise = luigi.BoolParameter(default=False, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
-  rama = luigi.Parameter(default = 'almacenamiento')# o monitoreo
+  #rama = luigi.Parameter(default = 'almacenamiento')# o monitoreo
   date_bestmodel = luigi.DateParameter(default = None)
 
   with open(cte.CREDENTIALS, 'r') as f:
@@ -53,15 +53,15 @@ class PredictMetadataTask(luigi.Task):
 
   def requires(self):
     return PredictTestTask(
-      					self.path_cred,
-      					self.initial,
-     					self.limit,
-      					self.date,
-      					self.initial_date,
-      					self.bucket_path,
-                        self.rama,
-                        self.date_bestmodel
-      					)
+      self.path_cred,
+      self.initial,
+     	self.limit,
+      self.date,
+      self.initial_date,
+      self.bucket_path,
+      self.exercise,
+      self.date_bestmodel
+      )
 
 
   def input(self):

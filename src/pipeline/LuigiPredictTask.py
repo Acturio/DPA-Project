@@ -54,7 +54,6 @@ class PredictTask(CopyToTable):
     path_cred = self.path_cred 
     initial = self.initial 
     limit = self.limit 
-    date = self.date 
     initial_date = self.initial_date 
     bucket_path = self.bucket_path 
     exercise = self.exercise 
