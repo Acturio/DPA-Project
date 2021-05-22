@@ -95,7 +95,7 @@ class IngestionTestTask(CopyToTable):
 
 		if self.initial:
 			#file_name = 'historic-inspections-{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
-            file_name = 'historic-inspections-' + self.date + '.pkl'
+			file_name = 'historic-inspections-' + self.date + '.pkl'
 		else:
 			#file_name = 'consecutive-inspections-{}.pkl'.format(self.date.strftime('%Y-%m-%d'))
 			file_name = 'consecutive-inspections-' + self.date + '.pkl'
