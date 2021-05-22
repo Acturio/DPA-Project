@@ -45,6 +45,24 @@ def get_db_credentials(credentials_file):
 
     return db_creds
 
+def get_db_conn_sql_alchemy(credentials_file):
+    """
+    Regresa credenciales de conexión a postgres
+    :param: file_name
+    :return: db credentials
+    """
+    credentials = read_yaml_file(credentials_file)
+    db_creds = credentials['db']
+
+    path_conn = 'postgresql://'  + \
+                db_creds["user"] + ":" + \
+                db_creds["pass"] + "@" + \
+                db_creds["host"] + ":" + \
+                db_creds["port"] + "/" + \
+                db_creds["database"]
+
+    return path_conn
+
 
 def get_api_token(credentials_file):
     """
