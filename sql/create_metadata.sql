@@ -297,8 +297,8 @@ CREATE TABLE predict.predictions
 (
 	fecha_load DATE,
 	fecha DATE,
-	inspection_id INTEGER,
-	label INTEGER,
+	establecimiento VARCHAR,
+	--label INTEGER,
 	score decimal(2,1),
 	facility_type VARCHAR,
 	inspection_type VARCHAR
