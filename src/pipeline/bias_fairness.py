@@ -39,9 +39,12 @@ def predict(df_fe, best_model, auto_variables, inicial, date_input):
     score = score.replace(True,1).replace(False,0)
     score = score.to_numpy()
 
+    print(predicted_scores)
+    print(predict_proba)
+
     results = pd.DataFrame(y_test)
     results['score'] = score 
-    results['pred_score'] = predict_proba
+    results['pred_score'] = terminos_threshold[0]
     
     results_confusion_matrix =  pd.DataFrame(results[['label', 'score']].value_counts()).sort_values('label')
     results_confusion_matrix
