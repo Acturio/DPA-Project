@@ -19,6 +19,8 @@ class ModelSelectionTask(luigi.Task):
   initial_date = luigi.DateParameter(default = None)
   bucket_path = luigi.Parameter(default = cte.BUCKET)
   exercise = luigi.BoolParameter(default=True, parsing = luigi.BoolParameter.EXPLICIT_PARSING)
+  #accion = luigi.Parameter(default = 'prediction')# or train
+  
 
     # Se requiere TrainingMetadataTask
   def requires(self):
