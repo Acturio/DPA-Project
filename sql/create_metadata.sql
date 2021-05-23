@@ -304,5 +304,5 @@ CREATE TABLE predict.predictions
 	inspection_type VARCHAR
 );
 
-
+ALTER TABLE predict.predictions ADD COLUMN id SERIAL PRIMARY KEY;
 
