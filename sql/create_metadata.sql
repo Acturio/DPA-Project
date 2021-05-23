@@ -302,7 +302,7 @@ CREATE TABLE predict.predictions
 	score decimal(2,1),
 	pred_score decimal(10,8),
 	facility_type VARCHAR,
-	type_inspection VARCHAR,
+	inspection_type VARCHAR,
 	modelo VARCHAR
 );
 
