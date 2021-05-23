@@ -39,9 +39,6 @@ def predict(df_fe, best_model, auto_variables, inicial, date_input):
     score = score.replace(True,1).replace(False,0)
     score = score.to_numpy()
 
-    #print(predicted_scores)
-    print(predict_proba)
-
     results = pd.DataFrame(y_test)
     results['score'] = score 
     results['pred_score'] = predict_proba.values
@@ -53,7 +50,7 @@ def predict(df_fe, best_model, auto_variables, inicial, date_input):
     X_test_id['type_inspection_limpia'] = X_test_id[['type_canvass','type_license','type_licuor','type_complaint',
                                           'type_reinsp','type_illegal','type_not_ready','type_out_of_buss',
                                           'type_prelicense','type_others']].idxmax(axis=1) 
-    print(results)                                  
+                                    
     results_conjunto = pd.concat([results,X_test_id], axis=1)
     
     #Leyendo variables de inicio
