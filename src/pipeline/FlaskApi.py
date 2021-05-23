@@ -16,7 +16,7 @@ api = Api(app)
 db = SQLAlchemy(app)
 
 
-# Tabla deploy.mochup match_api
+# Tabla predict.predictions match_api
 class Match(db.Model):
   __table_args__ = {'schema': 'predict'}
   __tablename__ = 'predictions'
