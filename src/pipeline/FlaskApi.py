@@ -1,3 +1,4 @@
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restplus import Api, Resource, fields
 
@@ -5,7 +6,7 @@ from src.utils.general import get_db_conn_sql_alchemy
 
 
 # Connecting to db
-db_conn_str = get_db_conn_sql_alchemy("conf/local/credentials.yaml")
+db_conn_str = get_db_conn_sql_alchemy("./conf/local/credentials.yaml")
 
 # create flask app
 app = Flask(__name__)
@@ -17,55 +18,89 @@ db = SQLAlchemy(app)
 
 # Tabla deploy.mochup match_api
 class Match(db.Model):
-  __table_args__ = {'schema': 'deploy'}
-  __tablename__ = 'mochup_match_api'
+  __table_args__ = {'schema': 'predict'}
+  __tablename__ = 'predictions'
 
-  id_establecimiento = db.Column(db.Integer, primary_key=True)
-  nombre_establecimiento = db.Column(db.String)
-  tipo_inspeccion = db.Column(db.String)
-  tipo_establecimiento = db.Column(db.String)
-  prediccion = db.Column(db.Integer)
-  fecha_prediccion = db.Column(db.Date)
+  id = db.Column(db.Integer, primary_key=True)
+  establecimiento = db.Column(db.String)
+  inspection_type = db.Column(db.String)
+  facility_type = db.Column(db.String)
+  score = db.Column(db.Float)
+  fecha = db.Column(db.Date)
 
   def __repr__(self):
-    return(u'<{self.__clas__.__name__}: {self.id}>'.format{self=self})
+    return(u'<{self.__clas__.__name__}: {self.id}>'.format(self=self))
 
 
-model = api.model("prediccion_match_establecimiento", {
-  "nombre_establecimiento": fields.String,
-  "tipo_inspeccion": fields.String,
-  "tipo_establecimiento": fields.String,
-  "prediccion": fields.Integer,
-  "fecha_prediccion": fields.Date
+model = api.model("score_establecimiento", {
+  "id": fields.Integer,
+  "inspection_type": fields.String,
+  "facility_type": fields.String,
+  "score": fields.Float,
+  "fecha": fields.Date
 })
 
-model_list = api.model('prediccion_match_output', {
-  "id_establecimiento": fields.String,
-  "establecimiento": fields.Nested(model)
+model_list = api.model('score_output', {
+  "establecimiento": fields.String,
+  "predicciones": fields.Nested(model)
 })
 
 # endpoints
-@api.route('/predictions/<string:id_establecimiento>')
+@api.route("/predictions/<string:establecimiento>")
 class Predictions(Resource):
   @api.marshal_with(model_list, as_list=True)
-  def get(self, id_establecimiento):
-    match = Match.query.filter_by(id_establecimiento=id_establecimiento).\
-                  order_by(Match.fecha_prediccion.desc()).\
+  def get(self, establecimiento):
+    match = Match.query.filter_by(establecimiento=establecimiento).\
                   limit(10).\
                   all()
-    inspecciones = []
+    predicciones = []
     for element in match:
-      inspecciones.append({
-        "nombre_establecimiento": element.nombre_establecimiento,
-        "tipo_inspeccion": element.tipo_inspeccion,
-        "tipo_establecimiento": element.tipo_establecimiento,
-        "prediccion": element.prediccion,
-        "fecha_prediccion": element.fecha_prediccion
+      predicciones.append({
+        "id": element.id,
+        "inspection_type": element.inspection_type,
+        "facility_type": element.facility_type,
+        "score": element.score,
+        "fecha": element.fecha
       })
 
-    return {"id_establecimiento": id_establecimiento, 
-            "inspecciones": inspecciones
+    return {"establecimiento": establecimiento, 
+            "predicciones": predicciones
             }
 
-id __name__ = "__main__":
-  app.run(debug=True)
+
+model_date = api.model("score_date", {
+  "id": fields.Integer,
+  "establecimiento": fields.String,
+  "inspection_type": fields.String,
+  "facility_type": fields.String,
+  "score": fields.Float
+})
+
+model_date_list = api.model('score_date_output', {
+  "fecha": fields.Date,
+  "establecimientos": fields.Nested(model_date)
+})
+
+# endpoints
+@api.route("/dates/<string:fecha>")
+class Dates(Resource):
+  @api.marshal_with(model_date_list, as_list=True)
+  def get(self, fecha):
+    match = Match.query.filter_by(fecha=fecha).\
+                  all()
+    establecimientos = []
+    for element in match:
+      establecimientos.append({
+        "id": element.id,
+        "establecimiento": element.establecimiento,
+        "inspection_type": element.inspection_type,
+        "facility_type": element.facility_type,
+        "score": element.score
+      })
+
+    return {"fecha": fecha, 
+            "establecimientos": establecimientos
+            }
+
+if __name__ == "__main__":
+  app.run(host='0.0.0.0', debug=True)
