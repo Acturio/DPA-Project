@@ -136,8 +136,7 @@ class PredictTask(CopyToTable):
     pred["fecha"] = self.date.strftime('%Y-%m-%d')
 
     # Para agregar el modelo
-    file_best_model = "models/best-models/best-food-inspections-model-" + '{}.pkl'.format(self.date_bestmodel.strftime('%Y-%m-%d'))
-    pred["modelo"] = file_best_model
+    pred["modelo"] = data_input["best_model"]
 
     pred = pred[["fecha_load","fecha","dba_name","label","score","pred_score",\
                  "facility_type","inspection_type","modelo"]]
