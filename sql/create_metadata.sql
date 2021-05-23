@@ -287,7 +287,7 @@ CREATE TABLE sesgo.bias_fairness
 );
 
 
--- Sesgo e inequidad
+-- Predicciones
 -- Creation of schema predict
 DROP SCHEMA IF EXISTS predict CASCADE;
 CREATE SCHEMA predict;
@@ -302,8 +302,51 @@ CREATE TABLE predict.predictions
 	score decimal(2,1),
 	pred_score decimal(10,8),
 	facility_type VARCHAR,
-	inspection_type VARCHAR
+	type_inspection VARCHAR,
+	modelo VARCHAR
 );
 
 ALTER TABLE predict.predictions ADD COLUMN id SERIAL PRIMARY KEY;
+
+-- API
+-- Creation of schema api
+DROP SCHEMA IF EXISTS api CASCADE;
+CREATE SCHEMA api;
+
+DROP TABLE IF EXISTS api.predictions;
+CREATE TABLE api.predictions
+(
+	fecha_load DATE,
+	fecha DATE,
+	establecimiento VARCHAR,
+	label INTEGER,
+	score decimal(2,1),
+	pred_score decimal(10,8),
+	facility_type VARCHAR,
+	inspection_type VARCHAR,
+	modelo VARCHAR,
+	id INTEGER,
+	PRIMARY KEY (id)
+);
+
+-- Monitoreo
+-- Creation of schema monitor
+DROP SCHEMA IF EXISTS monitor CASCADE;
+CREATE SCHEMA monitor;
+
+DROP TABLE IF EXISTS monitor.predictions;
+CREATE TABLE monitor.predictions
+(
+	fecha_load DATE,
+	fecha DATE,
+	establecimiento VARCHAR,
+	label INTEGER,
+	score decimal(2,1),
+	pred_score decimal(10,8),
+	facility_type VARCHAR,
+	inspection_type VARCHAR,
+	modelo VARCHAR,
+	id INTEGER,
+	PRIMARY KEY (id)
+);
 
