@@ -26,6 +26,7 @@ class Match(db.Model):
   inspection_type = db.Column(db.String)
   facility_type = db.Column(db.String)
   score = db.Column(db.Float)
+  pred_score = db.Column(db.Float)
   fecha = db.Column(db.Date)
 
   def __repr__(self):
@@ -37,6 +38,7 @@ model = api.model("score_establecimiento", {
   "inspection_type": fields.String,
   "facility_type": fields.String,
   "score": fields.Float,
+  "pred_score": fields.Float,
   "fecha": fields.Date
 })
 
@@ -60,6 +62,7 @@ class Predictions(Resource):
         "inspection_type": element.inspection_type,
         "facility_type": element.facility_type,
         "score": element.score,
+        "pred_score": element.pred_score,
         "fecha": element.fecha
       })
 
@@ -73,7 +76,8 @@ model_date = api.model("score_date", {
   "establecimiento": fields.String,
   "inspection_type": fields.String,
   "facility_type": fields.String,
-  "score": fields.Float
+  "score": fields.Float,
+  "pred_score": fields.Float,
 })
 
 model_date_list = api.model('score_date_output', {
@@ -95,7 +99,8 @@ class Dates(Resource):
         "establecimiento": element.establecimiento,
         "inspection_type": element.inspection_type,
         "facility_type": element.facility_type,
-        "score": element.score
+        "score": element.score,
+        "pred_score": element.pred_score,
       })
 
     return {"fecha": fecha, 
