@@ -45,6 +45,7 @@ class PredictTask(CopyToTable):
              ("establecimiento", "VARCHAR"),
              ("label", "INTEGER"),
              ("score","DOUBLE"),
+             ("pred_score","DOUBLE"),
              ("facility_type","VARCHAR"),
              ("inspection_type","VARCHAR")
              ]
@@ -134,7 +135,7 @@ class PredictTask(CopyToTable):
     pred["fecha"] = self.date.strftime('%Y-%m-%d')
 
     pred = pred[["fecha_load","fecha","dba_name","label",
-                 "score","facility_type","inspection_type"]]
+                 "score","pred_score","facility_type","inspection_type"]]
 
     records = pred.to_records(index=False)
     r = list(records)
