@@ -47,7 +47,8 @@ class PredictTask(CopyToTable):
              ("score","DOUBLE"),
              ("pred_score","DOUBLE"),
              ("facility_type","VARCHAR"),
-             ("inspection_type","VARCHAR")
+             ("inspection_type","VARCHAR"),
+             ("modelo","VARCHAR")
              ]
 
   def requires(self):
@@ -134,8 +135,12 @@ class PredictTask(CopyToTable):
     pred["fecha_load"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     pred["fecha"] = self.date.strftime('%Y-%m-%d')
 
-    pred = pred[["fecha_load","fecha","dba_name","label",
-                 "score","pred_score","facility_type","inspection_type"]]
+    # Para agregar el modelo
+    file_best_model = "models/best-models/best-food-inspections-model-" + '{}.pkl'.format(self.date_bestmodel.strftime('%Y-%m-%d'))
+    pred["modelo"] = file_best_model
+
+    pred = pred[["fecha_load","fecha","dba_name","label","score","pred_score",\
+                 "facility_type","inspection_type","modelo"]]
 
     records = pred.to_records(index=False)
     r = list(records)
