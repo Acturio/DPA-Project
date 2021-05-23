@@ -44,7 +44,7 @@ def predict(df_fe, best_model, auto_variables, inicial, date_input):
 
     results = pd.DataFrame(y_test)
     results['score'] = score 
-    results['pred_score'] = predict_proba
+    results['pred_score'] = predict_proba.values
     
     results_confusion_matrix =  pd.DataFrame(results[['label', 'score']].value_counts()).sort_values('label')
     results_confusion_matrix
