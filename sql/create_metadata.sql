@@ -300,6 +300,7 @@ CREATE TABLE predict.predictions
 	establecimiento VARCHAR,
 	label INTEGER,
 	score decimal(2,1),
+	pred_score decimal(7,6),
 	facility_type VARCHAR,
 	inspection_type VARCHAR
 );
