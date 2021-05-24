@@ -68,13 +68,15 @@ CREATE TABLE metadata.feature
 DROP TABLE IF EXISTS metadata.entrenamiento;
 CREATE TABLE metadata.entrenamiento
 (
+	num_model integer,
         processing_date TIMESTAMPTZ,
         data_date date,
 	estimator varchar,
         scoring varchar,
-        params varchar,
         mean_test_score decimal(10,6),
         rank_test_score integer
+        parameter varchar,
+        value integer
 );
 
 -- Creation of table metadata.seleccion
@@ -93,7 +95,7 @@ CREATE TABLE metadata.bias_fairness
         file_name varchar,
         data_date date,
         processing_date TIMESTAMPTZ,
-				nrows integer,
+	nrows integer,
         protected_group varchar,
         categories_names varchar,
         source varchar,
