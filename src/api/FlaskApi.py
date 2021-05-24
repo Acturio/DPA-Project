@@ -16,9 +16,9 @@ api = Api(app)
 db = SQLAlchemy(app)
 
 
-# Tabla predict.predictions match_api
+# Tabla api.predictions match_api
 class Match(db.Model):
-  __table_args__ = {'schema': 'predict'}
+  __table_args__ = {'schema': 'api'}
   __tablename__ = 'predictions'
 
   id = db.Column(db.Integer, primary_key=True)
