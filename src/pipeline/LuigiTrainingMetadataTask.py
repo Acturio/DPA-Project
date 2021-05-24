@@ -35,13 +35,15 @@ class TrainingModelMetadataTask(CopyToTable):
 
 	table = 'metadata.entrenamiento'
 
-	columns = [("processing_date", "TIMESTAMPTZ"),
-             ("data_date", "DATE"),
-             ("estimator", "VARCHAR"),
-             ("scoring", "VARCHAR"),
-             ("params", "VARCHAR"),
-             ("mean_test_score", "DOUBLE"),
-             ("rank_test_score","INTEGER")
+	columns = [("num_model","INTEGER"),
+			 ("processing_date","TIMESTAMPTZ"),
+			 ("data_date","DATE"),
+			 ("estimator","VARCHAR"),
+			 ("scoring","VARCHAR"),
+			 ("mean_test_score","DOUBLE"),
+			 ("rank_test_score","INTEGER"),
+			 ("parameter","VARCHAR"),
+			 ("value","INTEGER")
              ]
 
 
@@ -49,11 +51,11 @@ class TrainingModelMetadataTask(CopyToTable):
 		return TrainingModelTestTask(
       					self.path_cred,
       					self.initial,
-     					  self.limit,
+     					self.limit,
       					self.date,
       					self.initial_date,
       					self.bucket_path,
-								self.exercise
+						self.exercise
       					)
 
 	def input(self):
