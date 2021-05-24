@@ -191,8 +191,27 @@ def metadata_models(models_ejercicio, date= ''):
 
         cv_results_f = pd.concat([cv_results_f, cv_results], axis=0)
     
+    # Parámetros por modelo
+    md_id= cv_results_f.reset_index()
+    models_results_params= pd.DataFrame([])
 
-    return (cv_results_f)
+    for i in range(len (md_id)): 
+
+        registro = md_id[['index',  'processing_date', 'data_date', 'estimator', 'scoring' ,  'mean_test_score', 'rank_test_score']][md_id.index == i]
+        registro['index']= i
+        dic_parameter= md_id['params'][i]
+        key_list = list(dic_parameter.keys())
+        val_list = list(dic_parameter.values())
+        dic_new= {'parameter': key_list, 'value': val_list, 'index': i}
+        params= pd.DataFrame(dic_new)
+
+        df_parameter= pd.merge( registro,params, how= 'left', on='index' )
+
+        models_results_params = pd.concat([models_results_params, df_parameter], axis=0)
+    
+    models_results_params.rename(columns = {'index':'num_model'}, inplace = True)
+
+    return (models_results_params)
 
 
 
