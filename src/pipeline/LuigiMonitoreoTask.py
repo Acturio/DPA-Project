@@ -32,7 +32,7 @@ class MonitoreoTask(CopyToTable):
   host = credentials['host']
   port = credentials['port']
 
-  table = 'metadata.bias_fairness'
+  table = 'monitor.predictions'
 
   columns = [("fecha_load", "DATE"),
              ("fecha", "DATE"),
