@@ -74,7 +74,7 @@ CREATE TABLE metadata.entrenamiento
 	estimator varchar,
         scoring varchar,
         mean_test_score decimal(10,6),
-        rank_test_score integer
+        rank_test_score integer,
         parameter varchar,
         value integer
 );
