@@ -69,7 +69,7 @@ def auto_selection_variables (X_train_id, y_train):
 
     gs = GridSearchCV(classifier,
                           hyper_param_grid,
-                          scoring='precision',
+                          scoring='recall',
                           cv = tscv,
                           n_jobs = 3)
 
