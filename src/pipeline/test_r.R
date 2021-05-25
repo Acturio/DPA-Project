@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 #library(dplyr)
 #library(Rpostgres)
 #library(DBI)
+=======
+>>>>>>> 185160fd7723de9ed54e7219bd6617bd8dccc55f
 library(infuser)
 
 args <- commandArgs(TRUE)
