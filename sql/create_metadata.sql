@@ -79,6 +79,15 @@ CREATE TABLE metadata.entrenamiento
         value decimal(10,6)
 );
 
+-- Creation of table metadata.entrenamiento
+DROP TABLE IF EXISTS metadata.mlflow;
+CREATE TABLE metadata.mlflow
+(
+	processing_date TIMESTAMPTZ,
+	data_date date,
+	mlflow varchar,
+);
+
 -- Creation of table metadata.seleccion
 DROP TABLE IF EXISTS metadata.seleccion;
 CREATE TABLE metadata.seleccion

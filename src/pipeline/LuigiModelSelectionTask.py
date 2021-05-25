@@ -6,7 +6,7 @@ import luigi.contrib.s3
 import src.utils.constants as cte
 from src.utils import general as gral
 from src.pipeline.ingesta_almacenamiento import get_s3_client, guardar_ingesta
-from src.pipeline.LuigiTrainingMetadataTask import TrainingModelMetadataTask
+from src.pipeline.LuigiMLFlowTaskR import MLFlowTaskR
 from src.pipeline import modeling as mod
 
 
@@ -24,7 +24,7 @@ class ModelSelectionTask(luigi.Task):
 
     # Se requiere TrainingMetadataTask
   def requires(self):
-    return TrainingModelMetadataTask(
+    return MLFlowTaskR(
       self.path_cred,
       self.initial,
       self.limit,

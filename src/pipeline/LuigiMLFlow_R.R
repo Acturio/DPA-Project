@@ -1,3 +1,10 @@
+cat("\n ")
+cat("¡¡AUXILIO!! Python necesita ayuda de R")
+cat("\n ")
+cat("¡R al rescate! Iniciando R!")
+cat("\n ")
+cat("Leyendo librerías")
+
 library(dplyr)
 library(RPostgres)
 library(DBI)
@@ -9,8 +16,12 @@ library(stringr)
 setwd('/home/acturio/documents/DPA-Project')
 Sys.setenv(MLFLOW_PYTHON_BIN="/home/acturio/.pyenv/versions/dpa-itam-3.7.4/bin/python")
 
+cat("\n ")
+cat("Abriendo proyecto de MLFlow")
 mlflow_set_experiment(experiment_name = "dpa-experiment")
 
+cat("\n ")
+cat("Leyendo credenciales")
 credentials <- read_yaml("./conf/local/credentials.yaml", fileEncoding = "UTF-8")
 db_cred <- credentials$db
 
@@ -20,6 +31,8 @@ db_port <- db_cred$port
 db_user <- db_cred$user  
 db_password <- db_cred$pass
 
+cat("\n ")
+cat("Conectándose a la base en postgres")
 con <- dbConnect(
   RPostgres::Postgres(), 
   dbname = db, 
@@ -30,13 +43,16 @@ con <- dbConnect(
   options = " -c search_path=metadata"
   )
 
+cat("\n ")
+cat("Leyendo datos de psotgres: metadatos de modelos")
 data <- tbl(con, "entrenamiento")
 
 model_results <- data %>%
   tidyr::pivot_wider(names_from = parameter, values_from = value) %>%
   arrange(data_date, estimator, num_model) %>% collect()
 
-
+cat("\n ")
+cat("Creando logs de hiperparámetros y métricas")
 for (i in 1:nrow(model_results)) {
 
   row <- model_results[i,]
@@ -70,4 +86,5 @@ for (i in 1:nrow(model_results)) {
    }
 }
 
-
+cat("\n ")
+cat("Proceso terminado")
