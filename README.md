@@ -25,7 +25,7 @@
 4. [Instalación](https://github.com/Acturio/DPA-Project/blob/main/README.md#instalaci%C3%B3n-minidisc) :minidisc:
 5. [Organización del código](https://github.com/Acturio/DPA-Project/blob/main/README.md#organizaci%C3%B3n-del-c%C3%B3digo-octocat) :octocat:
 6. [Correr el pipeline](https://github.com/Acturio/DPA-Project/blob/main/README.md#correr-el-pipeline-green_circle) :green_circle:
-7. [Sesgo e inequidad](https://github.com/Acturio/DPA-Project/blob/main/README.md#sesgo-e-inequidad-bar_chart) :bar_chart:
+7. [Predicciones y visualización](https://github.com/Acturio/DPA-Project/blob/main/README.md#predicciones-y-visuazaci%C3%B3n) :bar_chart:
 
 ## Introducción :clipboard:
 
@@ -210,7 +210,7 @@ El repositorio se encuentra organizado de la siguiente manera:
 
 ## Correr el pipeline :green_circle:
 
-- Se deberá configurar un ***Foxy-Proxy*** para que tu browser pueda mostrar contenido de los web services que ocuparemos en el EMR. Para ello deberás seguir las [instrucciones](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-connect-master-node-proxy.html) en este tutoria, ya que dependiendo del navegador que se tenga los pasos de configuración son diferentes, además es recomendable hacerlo sobre `Chrome` ya que es el navegador con más compatibilidad con la funciónque se busca.
+- Se deberá configurar un ***Foxy-Proxy*** para que tu browser pueda mostrar contenido de los web services que ocuparemos en el EMR. Para ello deberás seguir las [instrucciones](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-connect-master-node-proxy.html) en este tutorial, ya que dependiendo del navegador que se tenga los pasos de configuración son diferentes, además es recomendable hacerlo sobre `Chrome` ya que es el navegador con más compatibilidad con la funciónque se busca.
 
 
 - Desde la EC2 podrá ejecutar el siguiente pipele, es importante ubicarse en la raíz del proyecto
@@ -311,6 +311,38 @@ SELECT * FROM public.table_updates;
 ```
 SELECT * FROM sesgo.bias_fairness;
 ```
+
+En este proyecto estamos considerando como variable protegida el tipo de inspección, de la base original (histórica) se pueden cuantificar 96 distintos tipos de inspección, sin embargo se creo una nueva variable (`type_inspection_limpia`) que agrupa estas sólo 10 categorías:
+
+- Canvass
+- License
+- Licuor
+- Complaint
+- Reinspection
+- Ilegal
+- Out of bussiness
+- Not ready
+- Pre license
+- Others
+
+Por lo que nuestro atributo protegido es esta variable `type_inspection_limpia`.
+
+El grupo de referencia es `Canvass`, ya que es la categoría con mayor tamaño entre todos los grupos existentes, con un 60.8% aproximadamente.
+
+![](./results/img/proporcion_tipos_est.png) 
+
+
+![](./results/img/labels_tipos_est.png)
+
+
+
+Analizando el proyecto y viendolo desde el punto de vista del usuario (dueño del establecimiento) llegamos a la conclusión de que el modelo realizado es un modelo ***asistivo***, ya que el modelo le dirá si su establecimiento aprobaría o no la inspección en caso de revisión.
+
+En este caso, al ser un modelo asistivo tenemos que las variables a cuantificar son: `Recall parity`, `FN/GS Parity`, `FOR Parity` y `FNR Parity`, de acuerdo al `Farirness tree` (rama derecha), sin embargo, como el modelo sólo afectará a una pequeña fracción de la población, nos enfocaremos a medir el ***Recall parity***, sin embargo de acuerdo a la observación de la bibliografía de aequitas nos menciona que es equivalente a enfocarnos en el `FNR Parity`, por lo que mediremos la métrica ***FNR***.
+
+
+## Predicciones y visualización :bar_chart:
+
 - En el caso de las predicciones son guardadas en la tabla `predict.predictions`, y esta se copia a las tablas: `api.predictions` y `monitor.predictions`, para usarlas en la API y Dashboard respectivamente.
 
 - Para ejecutar la API se ejecutan los siguientes comandos
@@ -347,8 +379,7 @@ ssh -i ./.ssh/llave.pub\
 -NL localhost:8050:localhost:8050\
 usuario@bastion-host
 ```
-
-en este caso se corre lugid en el puerto 8082, la API en el puerto 5000 y el dashboard en el puerto 8050. 
+El comando `lugid`se corre en el puerto 8082, la API en el puerto 5000 y el dashboard en el puerto 8050. 
 
 - Para verificar el estatus de las tareas en `http:\\localhost:8082` en el `Central Scheduler` de `luigi`, siempre y cuando haya omitido la opción `--local-schedule` a la hora de ejecutar los comandos. 
 
@@ -356,12 +387,11 @@ en este caso se corre lugid en el puerto 8082, la API en el puerto 5000 y el das
 
 ![](./results/img/Checkpoint7.png) 
 
-Si todo corrío bien, deberá obetener la siguiente salida de la API en su navegador:
+Si todo corrió bien, deberá obetener la siguiente salida de la API en su navegador:
 
 ![](./results/img/api.png) 
 
-En esta API se desarrollaron 2 `end points`: uno necesita como parámetro la fecha de la predicción y el otro el nombre del establecimiento, los cuales regresarán datos generales de los establecimientos y la predicción en la variable `score` donde 1 indica que se le hará una inspección.
-
+En esta API se desarrollaron 2 `end points`: uno necesita como parámetro la fecha de la predicción y el otro el nombre del establecimiento, los cuales regresarán datos generales de los establecimientos y la predicción en la variable `score` donde 1 indica que el establecimiento no pasará la inspección en caso de una revisión.
 
 ![](./results/img/api_ejemplo.png) 
 
@@ -371,36 +401,6 @@ En esta API se desarrollaron 2 `end points`: uno necesita como parámetro la fec
 ![](./results/img/dash.png) 
 
 
-
-## Sesgo e inequidad :bar_chart:
-
-En este proyecto estamos considerando como variable protegida el tipo de inspección, de la base original (histórica) se pueden cuantificar 96 distintos tipos de inspección, sin embargo se creo una nueva variable (`type_inspection_limpia`) que agrupa estas sólo 10 categorías:
-
-- Canvass
-- License
-- Licuor
-- Complaint
-- Reinspection
-- Ilegal
-- Out of bussiness
-- Not ready
-- Pre license
-- Others
-
-Por lo que nuestro atributo protegido es esta variable `type_inspection_limpia`.
-
-El grupo de referencia es `Canvass`, ya que es la categoría con mayor tamaño entre todos los grupos existentes, con un 60.8% aproximadamente.
-
-![](./results/img/proporcion_tipos_est.png) 
-
-
-![](./results/img/labels_tipos_est.png)
-
-
-
-Analizando el proyecto y viendolo desde el punto de vista del usuario (dueño del establecimiento) llegamos a la conclusión de que es un modelo ***asistivo***, ya que el modelo le dirá si van ó no a inspeccionar su establecimiento, por lo tanto podrá estar preparado para el día de la inspección.
-
-En este caso, al ser un modelo asistivo tenemos que las variables a cuantificar son: `Recall parity`, `FN/GS Parity`, `FOR Parity` y `FNR Parity`, de acuerdo al `Farirness tree` (rama derecha), sin embargo, como el modelo sólo afectará a una pequeña fracción de la población, nos enfocaremos a medir el ***Recall parity***, sin embargo de acuerdo a la observación de la bibliografía de aequitas nos menciona que es equivalente a enfocarnos en el `FNR Parity`, por lo que mediremos la métrica ***FNR***.
 
 
 
