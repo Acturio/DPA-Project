@@ -43,7 +43,7 @@ class TrainingModelMetadataTask(CopyToTable):
 			 ("mean_test_score","DOUBLE"),
 			 ("rank_test_score","INTEGER"),
 			 ("parameter","VARCHAR"),
-			 ("value","INTEGER")
+			 ("value","DOUBLE")
              ]
 
 
