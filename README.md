@@ -25,7 +25,7 @@
 4. [Instalación](https://github.com/Acturio/DPA-Project/blob/main/README.md#instalaci%C3%B3n-minidisc) :minidisc:
 5. [Organización del código](https://github.com/Acturio/DPA-Project/blob/main/README.md#organizaci%C3%B3n-del-c%C3%B3digo-octocat) :octocat:
 6. [Correr el pipeline](https://github.com/Acturio/DPA-Project/blob/main/README.md#correr-el-pipeline-green_circle) :green_circle:
-7. [Predicciones y visualización](https://github.com/Acturio/DPA-Project/blob/main/README.md#predicciones-y-visualizaci%C3%B3n) :red_circle:
+7. [Predicciones y visualización](https://github.com/Acturio/DPA-Project/blob/main/README.md#predicciones-y-visualizaci%C3%B3n-bar_chart)) :bar_chart:
 
 
 ## Introducción :clipboard:
@@ -342,7 +342,7 @@ Analizando el proyecto y viendolo desde el punto de vista del usuario (dueño de
 En este caso, al ser un modelo asistivo tenemos que las variables a cuantificar son: `Recall parity`, `FN/GS Parity`, `FOR Parity` y `FNR Parity`, de acuerdo al `Farirness tree` (rama derecha), sin embargo, como el modelo sólo afectará a una pequeña fracción de la población, nos enfocaremos a medir el ***Recall parity***, sin embargo de acuerdo a la observación de la bibliografía de aequitas nos menciona que es equivalente a enfocarnos en el `FNR Parity`, por lo que mediremos la métrica ***FNR***.
 
 
-## Predicciones y visualización :red_circle:
+## Predicciones y visualización :bar_chart:
 
 - En el caso de las predicciones son guardadas en la tabla `predict.predictions`, y esta se copia a las tablas: `api.predictions` y `monitor.predictions`, para usarlas en la API y Dashboard respectivamente.
 
