@@ -120,7 +120,7 @@ def train_models(X_train_id, y_train, auto_variables):
                        'logistic': LogisticRegression(random_state=3333) 
                        } 
     
-    scoring_met= 'precision'
+    scoring_met= 'recall'
     algorithms = ['tree', 'random_forest','logistic']
     models = []
     start_time = time.time()
@@ -210,6 +210,8 @@ def metadata_models(models_ejercicio, date= ''):
         models_results_params = pd.concat([models_results_params, df_parameter], axis=0)
     
     models_results_params.rename(columns = {'index':'num_model'}, inplace = True)
+
+    models_results_params['value'] = (models_results_params['value']).astype('str').str.replace('l','').astype('float')
 
     return (models_results_params)
 
