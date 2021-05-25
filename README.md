@@ -25,11 +25,12 @@
 4. [Instalación](https://github.com/Acturio/DPA-Project/blob/main/README.md#instalaci%C3%B3n-minidisc) :minidisc:
 5. [Organización del código](https://github.com/Acturio/DPA-Project/blob/main/README.md#organizaci%C3%B3n-del-c%C3%B3digo-octocat) :octocat:
 6. [Correr el pipeline](https://github.com/Acturio/DPA-Project/blob/main/README.md#correr-el-pipeline-green_circle) :green_circle:
-7. [Sesgo e inequidad](https://github.com/Acturio/DPA-Project/blob/main/README.md#sesgo-e-inequidad-bar_chart) :bar_chart:
+7. [Predicciones y visualización](https://github.com/Acturio/DPA-Project/blob/main/README.md#predicciones-y-visualizaci%C3%B3n-bar_chart) :bar_chart:
+
 
 ## Introducción :clipboard:
 
-Este proyecto esta enfocado a realizar una predicción de los establecimientos de comida en la Ciudad de Chicago que tengan más probabilidad de cometer una violación y por lo tanto se les hará una inspección, de esta manera se priorizarán las visitas a estos establecimientos.
+El presente proyecto esta enfocado a ayudar a los establecimientos de comida de la Ciudad de Chicago para identificar sí en caso de recibir una visita de inspección por parte del Departamento de Salubridad, el establecimiento aprobararía o no dicha inspección.
 
 ## Información general :bookmark_tabs:
 
@@ -103,7 +104,7 @@ pyenv activate nombre_de_tu_ambiente
 
 3. **Librerías**
 
-- Una vez dentro del abiente instalar los paquetes descritos en el archivo requirements.txt con el siguiente comando:
+- Una vez dentro del ambiente instalar los paquetes descritos en el archivo requirements.txt con el siguiente comando:
 
 ```
 pip install -r requirements.txt
@@ -210,7 +211,7 @@ El repositorio se encuentra organizado de la siguiente manera:
 
 ## Correr el pipeline :green_circle:
 
-- Se deberá configurar un ***Foxy-Proxy*** para que tu browser pueda mostrar contenido de los web services que ocuparemos en el EMR. Para ello deberás seguir las [instrucciones](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-connect-master-node-proxy.html) en este tutoria, ya que dependiendo del navegador que se tenga los pasos de configuración son diferentes, además es recomendable hacerlo sobre `Chrome` ya que es el navegador con más compatibilidad con la funciónque se busca.
+- Se deberá configurar un ***Foxy-Proxy*** para que tu browser pueda mostrar contenido de los web services que ocuparemos en el EMR. Para ello deberás seguir las [instrucciones](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-connect-master-node-proxy.html) en este tutorial, ya que dependiendo del navegador que se tenga los pasos de configuración son diferentes, además es recomendable hacerlo sobre `Chrome` ya que es el navegador con más compatibilidad con la funciónque se busca.
 
 
 - Desde la EC2 podrá ejecutar el siguiente pipele, es importante ubicarse en la raíz del proyecto
@@ -237,12 +238,13 @@ Como sugerencia le recomendamos abrir 3 terminales con los 2 procedimientos desc
 
 ```
 PYTHONPATH='.' luigi \
---module src.pipeline.LuigiBiasFairnessMetadataTask BiasFairnessMetadataTask \
+--module src.pipeline.LuigiMonitoreoTask MonitoreoTask \
 --path-cred ./conf/local/credentials.yaml \
 --initial false \
 --limit 2000 \
---date '2021-04-16' \
+--date '2021-05-16' \
 --exercise true \
+--date-bestmodel '2021-05-09' 
 --local-scheduler
 ```
 
@@ -261,6 +263,8 @@ Descripción:
 ***--date*** con esta la bandera se indica desde que fecha se requiere la ingesta inicial. **Nota:** En caso de que se le pase como parámetro una fecha mayor al día de hoy, el pipeline fallará e indicará que no se permiten este tipo de fechas.
 
 ***--exercise*** con esta bandera se le indica si toma una muestra con `true` y si es `false` toma todos los datos.
+
+***--date-bestmodel*** se especifica la fecha del modelo elegido para hacer las predicciones.
 
 - Para una **ingesta consecutiva** se corre la siguiente secuencia de comandos, de acuerdo a las opciones descritas anteriormente.
 
@@ -281,6 +285,7 @@ SELECT * FROM metadata.feature;
 SELECT * FROM metadata.entrenamiento;
 SELECT * FROM metadata.seleccion;
 SELECT * FROM metadata.bias_fairness;
+SELECT * FROM metadata.predict;
 ```
 
 y para los `test`
@@ -293,6 +298,7 @@ SELECT * FROM metadata.test_feature;
 SELECT * FROM metadata.test_entrenamiento;
 SELECT * FROM metadata.test_seleccion;
 SELECT * FROM metadata.test_bias_fairness;
+SELECT * FROM metadata.test_predict;
 ```
 
 la tabla de seguimiento de los `tasks` que corre luigi los podrá consultar con:
@@ -306,19 +312,6 @@ SELECT * FROM public.table_updates;
 ```
 SELECT * FROM sesgo.bias_fairness;
 ```
-
-- Así mismo verificar el estatus de las tareas en `http:\\localhost:8082` en el `Central Scheduler` de `luigi`, siempre y cuando haya omitido la opción `--local-schedule` a la hora de ejecutar los comandos. 
-
-- Si todo fue correcto, observará la siguiente salida:
-
-![](./results/img/checkpoint6_1.png) 
-
-
-
-![](./results/img/checkpoint6_2.png) 
-
-
-## Sesgo e inequidad :bar_chart:
 
 En este proyecto estamos considerando como variable protegida el tipo de inspección, de la base original (histórica) se pueden cuantificar 96 distintos tipos de inspección, sin embargo se creo una nueva variable (`type_inspection_limpia`) que agrupa estas sólo 10 categorías:
 
@@ -344,9 +337,71 @@ El grupo de referencia es `Canvass`, ya que es la categoría con mayor tamaño e
 
 
 
-Analizando el proyecto y viendolo desde el punto de vista del usuario (dueño del establecimiento) llegamos a la conclusión de que es un modelo ***asistivo***, ya que el modelo le dirá si van ó no a inspeccionar su establecimiento, por lo tanto podrá estar preparado para el día de la inspección.
+Analizando el proyecto y viendolo desde el punto de vista del usuario (dueño del establecimiento) llegamos a la conclusión de que el modelo realizado es un modelo ***asistivo***, ya que el modelo le dirá si su establecimiento aprobaría o no la inspección en caso de revisión.
 
 En este caso, al ser un modelo asistivo tenemos que las variables a cuantificar son: `Recall parity`, `FN/GS Parity`, `FOR Parity` y `FNR Parity`, de acuerdo al `Farirness tree` (rama derecha), sin embargo, como el modelo sólo afectará a una pequeña fracción de la población, nos enfocaremos a medir el ***Recall parity***, sin embargo de acuerdo a la observación de la bibliografía de aequitas nos menciona que es equivalente a enfocarnos en el `FNR Parity`, por lo que mediremos la métrica ***FNR***.
+
+
+## Predicciones y visualización :bar_chart:
+
+- En el caso de las predicciones son guardadas en la tabla `predict.predictions`, y esta se copia a las tablas: `api.predictions` y `monitor.predictions`, para usarlas en la API y Dashboard respectivamente.
+
+- Para ejecutar la API se ejecutan los siguientes comandos
+
+```
+export flask_app=src/api/FlaskApi.py
+flask run
+```
+
+- Para el caso del dashboard se necesita correr el siguiente comando:
+
+```
+python src/api/FlaskDasboard.py
+```
+
+Para visualizar los resultados de estas salidas es necesario concatenar a nuestro `portforwarding` los diferentes puertos de cada elemento, para ello se usa la opción `-NL` seguida de los puertos, por ejemplo:
+
+Para la `EC2`
+
+```
+ssh -i ./.ssh/llave.pub\
+-NL localhost:8082:localhost:8082\
+-NL localhost:5000:localhost:5000\
+-NL localhost:8050:localhost:8050\
+usuario@ec2-host
+```
+
+Para `Bastion` algo similar, sólo con el cambio de la `IP`
+
+```
+ssh -i ./.ssh/llave.pub\
+-NL localhost:8082:localhost:8082\
+-NL localhost:5000:localhost:5000\
+-NL localhost:8050:localhost:8050\
+usuario@bastion-host
+```
+El comando `lugid`se corre en el puerto 8082, la API en el puerto 5000 y el dashboard en el puerto 8050. 
+
+- Para verificar el estatus de las tareas en `http:\\localhost:8082` en el `Central Scheduler` de `luigi`, siempre y cuando haya omitido la opción `--local-schedule` a la hora de ejecutar los comandos. 
+
+- Si todo fue correcto, observará la siguiente salida:
+
+![](./results/img/Checkpoint7.png) 
+
+Si todo corrió bien, deberá obetener la siguiente salida de la API en su navegador:
+
+![](./results/img/api.png) 
+
+En esta API se desarrollaron 2 `end points`: uno necesita como parámetro la fecha de la predicción y el otro el nombre del establecimiento, los cuales regresarán datos generales de los establecimientos y la predicción en la variable `score` donde 1 indica que el establecimiento no pasará la inspección en caso de una revisión.
+
+![](./results/img/api_ejemplo.png) 
+
+
+- Finalmente la salida del dashboard es la siguiente:
+
+![](./results/img/dash.png) 
+
+
 
 
 
