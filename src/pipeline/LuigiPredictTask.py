@@ -118,7 +118,7 @@ class PredictTask(CopyToTable):
   def rows(self):
 
     data_input = self.input()
-
+    
     data = data_input["data"]
     best_model = data_input["best_model"]
     features = data_input["features"]
@@ -130,13 +130,15 @@ class PredictTask(CopyToTable):
       inicial = self.initial,
       date_input = self.date
     )
-    print(pred)
+
     # Para agregar columna con la fecha
     pred["fecha_load"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     pred["fecha"] = self.date.strftime('%Y-%m-%d')
+    
     print(data_input["best_model"])
+    #print(data_input["best_model"].dtype)
     # Para agregar el modelo
-    pred["modelo"] = data_input["best_model"]
+    pred["modelo"] = str(data_input["best_model"])
 
     pred = pred[["fecha_load","fecha","dba_name","label","score","pred_score",\
                  "facility_type","inspection_type","modelo"]]
