@@ -130,11 +130,11 @@ class PredictTask(CopyToTable):
       inicial = self.initial,
       date_input = self.date
     )
-
+    print(pred)
     # Para agregar columna con la fecha
     pred["fecha_load"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     pred["fecha"] = self.date.strftime('%Y-%m-%d')
-
+    print(data_input["best_model"])
     # Para agregar el modelo
     pred["modelo"] = data_input["best_model"]
 
