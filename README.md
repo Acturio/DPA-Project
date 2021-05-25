@@ -328,6 +328,8 @@ python src/api/FlaskDasboard.py
 
 Para visualizar los resultados de estas salidas es necesario concatenar a nuestro `portforwarding` los diferentes puertos de cada elemento, para ello se usa la opción `-NL` seguida de los puertos, por ejemplo:
 
+Para la `EC2`
+
 ```
 ssh -i ./.ssh/llave.pub\
 -NL localhost:8082:localhost:8082\
@@ -336,7 +338,23 @@ ssh -i ./.ssh/llave.pub\
 usuario@ec2-host
 ```
 
+Para `Bastion` algo similar, sólo con el cambio de la `IP`
+
+```
+ssh -i ./.ssh/llave.pub\
+-NL localhost:8082:localhost:8082\
+-NL localhost:5000:localhost:5000\
+-NL localhost:8050:localhost:8050\
+usuario@bastion-host
+```
+
 en este caso se corre lugid en el puerto 8082, la API en el puerto 5000 y el dashboard en el puerto 8050. 
+
+- Para verificar el estatus de las tareas en `http:\\localhost:8082` en el `Central Scheduler` de `luigi`, siempre y cuando haya omitido la opción `--local-schedule` a la hora de ejecutar los comandos. 
+
+- Si todo fue correcto, observará la siguiente salida:
+
+![](./results/img/Checkpoint7.png) 
 
 Si todo corrío bien, deberá obetener la siguiente salida de la API en su navegador:
 
@@ -348,15 +366,9 @@ En esta API se desarrollaron 2 `end points`: uno necesita como parámetro la fec
 ![](./results/img/api_ejemplo.png) 
 
 
-- La salida del dashboar es la siguiente:
+- Finalmente la salida del dashboard es la siguiente:
 
 ![](./results/img/dash.png) 
-
-- Así mismo verificar el estatus de las tareas en `http:\\localhost:8082` en el `Central Scheduler` de `luigi`, siempre y cuando haya omitido la opción `--local-schedule` a la hora de ejecutar los comandos. 
-
-- Si todo fue correcto, observará la siguiente salida:
-
-![](./results/img/Checkpoint7.png) 
 
 
 
