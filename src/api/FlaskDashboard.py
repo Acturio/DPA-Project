@@ -35,7 +35,6 @@ rows = cur.fetchall()
 df = pd.DataFrame(rows)
 df.columns = [desc[0] for desc in cur.description]
 
-print(df.head())
 modelo = df.iloc[0,8]
 
 df1= pd.DataFrame(df.value_counts(['inspection_type', 'score']))
@@ -108,12 +107,12 @@ dcc.Graph(
                 {'x': df1_1['inspection_type'], 
                  'y': df1_1['inspections'], 
                  'type': 'bar', 
-                 'name': 'Not pass inspection'},
+                 'name': 'Pass inspection'},
                 
                 {'x':  df1_0['inspection_type'], 
                  'y': df1_0['inspections'], 
                  'type': 'bar', 
-                 'name': u'Pass inspection'} ,
+                 'name': u'Not Pass inspection'} ,
             ],
                 
        
