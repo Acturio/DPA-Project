@@ -25,7 +25,7 @@
 4. [Instalación](https://github.com/Acturio/DPA-Project/blob/main/README.md#instalaci%C3%B3n-minidisc) :minidisc:
 5. [Organización del código](https://github.com/Acturio/DPA-Project/blob/main/README.md#organizaci%C3%B3n-del-c%C3%B3digo-octocat) :octocat:
 6. [Correr el pipeline](https://github.com/Acturio/DPA-Project/blob/main/README.md#correr-el-pipeline-green_circle) :green_circle:
-7. [Predicciones y visualización](https://github.com/Acturio/DPA-Project/blob/main/README.md#predicciones-y-visualizaci%C3%B3n-bar_chart)) :bar_chart:
+7. [Predicciones y visualización](https://github.com/Acturio/DPA-Project/blob/main/README.md#predicciones-y-visualizaci%C3%B3n-bar_chart) :bar_chart:
 
 
 ## Introducción :clipboard:
