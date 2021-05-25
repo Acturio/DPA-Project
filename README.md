@@ -29,7 +29,7 @@
 
 ## Introducción :clipboard:
 
-Este proyecto esta enfocado a realizar una predicción de los establecimientos de comida en la Ciudad de Chicago que tengan más probabilidad de cometer una violación y por lo tanto se les hará una inspección, de esta manera se priorizarán las visitas a estos establecimientos.
+El presente proyecto esta enfocado a ayudar a los establecimientos de comida de la Ciudad de Chicago para identificar sí en caso de recibir una visita de inspección por parte del Departamento de Salubridad, el establecimiento aprobararía o no dicha inspección.
 
 ## Información general :bookmark_tabs:
 
@@ -103,7 +103,7 @@ pyenv activate nombre_de_tu_ambiente
 
 3. **Librerías**
 
-- Una vez dentro del abiente instalar los paquetes descritos en el archivo requirements.txt con el siguiente comando:
+- Una vez dentro del ambiente instalar los paquetes descritos en el archivo requirements.txt con el siguiente comando:
 
 ```
 pip install -r requirements.txt
@@ -237,12 +237,13 @@ Como sugerencia le recomendamos abrir 3 terminales con los 2 procedimientos desc
 
 ```
 PYTHONPATH='.' luigi \
---module src.pipeline.LuigiBiasFairnessMetadataTask BiasFairnessMetadataTask \
+--module src.pipeline.LuigiMonitoreoTask MonitoreoTask \
 --path-cred ./conf/local/credentials.yaml \
 --initial false \
 --limit 2000 \
---date '2021-04-16' \
+--date '2021-05-16' \
 --exercise true \
+--date-bestmodel '2021-05-09' 
 --local-scheduler
 ```
 
@@ -261,6 +262,8 @@ Descripción:
 ***--date*** con esta la bandera se indica desde que fecha se requiere la ingesta inicial. **Nota:** En caso de que se le pase como parámetro una fecha mayor al día de hoy, el pipeline fallará e indicará que no se permiten este tipo de fechas.
 
 ***--exercise*** con esta bandera se le indica si toma una muestra con `true` y si es `false` toma todos los datos.
+
+***--date-bestmodel*** se especifica la fecha del modelo elegido para hacer las predicciones.
 
 - Para una **ingesta consecutiva** se corre la siguiente secuencia de comandos, de acuerdo a las opciones descritas anteriormente.
 
@@ -281,6 +284,7 @@ SELECT * FROM metadata.feature;
 SELECT * FROM metadata.entrenamiento;
 SELECT * FROM metadata.seleccion;
 SELECT * FROM metadata.bias_fairness;
+SELECT * FROM metadata.predict;
 ```
 
 y para los `test`
@@ -293,6 +297,7 @@ SELECT * FROM metadata.test_feature;
 SELECT * FROM metadata.test_entrenamiento;
 SELECT * FROM metadata.test_seleccion;
 SELECT * FROM metadata.test_bias_fairness;
+SELECT * FROM metadata.test_predict;
 ```
 
 la tabla de seguimiento de los `tasks` que corre luigi los podrá consultar con:
@@ -306,16 +311,53 @@ SELECT * FROM public.table_updates;
 ```
 SELECT * FROM sesgo.bias_fairness;
 ```
+- En el caso de las predicciones son guardadas en la tabla `predict.predictions`, y esta se copia a las tablas: `api.predictions` y `monitor.predictions`, para usarlas en la API y Dashboard respectivamente.
+
+- Para ejecutar la API se ejecutan los siguientes comandos
+
+```
+export flask_app=src/api/FlaskApi.py
+flask run
+```
+
+- Para el caso del dashboard se necesita correr el siguiente comando:
+
+```
+python src/api/FlaskDasboard.py
+```
+
+Para visualizar los resultados de estas salidas es necesario concatenar a nuestro `portforwarding` los diferentes puertos de cada elemento, para ello se usa la opción `-NL` seguida de los puertos, por ejemplo:
+
+```
+ssh -i ./.ssh/llave.pub\
+-NL localhost:8082:localhost:8082\
+-NL localhost:5000:localhost:5000\
+-NL localhost:8050:localhost:8050\
+usuario@ec2-host
+```
+
+en este caso se corre lugid en el puerto 8082, la API en el puerto 5000 y el dashboard en el puerto 8050. 
+
+Si todo corrío bien, deberá obetener la siguiente salida de la API en su navegador:
+
+![](./results/img/api.png) 
+
+En esta API se desarrollaron 2 `end points`: uno necesita como parámetro la fecha de la predicción y el otro el nombre del establecimiento, los cuales regresarán datos generales de los establecimientos y la predicción en la variable `score` donde 1 indica que se le hará una inspección.
+
+
+![](./results/img/api_ejemplo.png) 
+
+
+- La salida del dashboar es la siguiente:
+
+![](./results/img/dash.png) 
 
 - Así mismo verificar el estatus de las tareas en `http:\\localhost:8082` en el `Central Scheduler` de `luigi`, siempre y cuando haya omitido la opción `--local-schedule` a la hora de ejecutar los comandos. 
 
 - Si todo fue correcto, observará la siguiente salida:
 
-![](./results/img/checkpoint6_1.png) 
+![](./results/img/Checkpoint7.png) 
 
-
-
-![](./results/img/checkpoint6_2.png) 
 
 
 ## Sesgo e inequidad :bar_chart:
