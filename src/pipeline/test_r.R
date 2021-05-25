@@ -1,6 +1,3 @@
-#library(dplyr)
-#library(Rpostgres)
-#library(DBI)
 library(infuser)
 
 args <- commandArgs(TRUE)
