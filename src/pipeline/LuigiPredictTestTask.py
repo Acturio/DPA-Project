@@ -28,7 +28,7 @@ class PredictTest(marbles.core.TestCase, marbles.mixins.DateTimeMixins):
 		self.assertDateTimesPast(
       		sequence = [self.date], 
       		strict = True, 
-      		msg = "La fecha solicitada debe ser menor a la fecha de hoy"
+      		msg = "La fecha solicitada del modelo debe ser menor a la fecha de hoy"
 		)
 		return True
 
